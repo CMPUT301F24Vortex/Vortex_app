@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Vortex_App</string>
+
+    // Mainscreen
+    <string name="mainscreen_button_entrant">Entrant</string>
+    <string name="mainscreen_button_organizer">Organizer</string>
+    <string name="mainscreen_button_admin">Admin</string>
+
+
+</resources>
