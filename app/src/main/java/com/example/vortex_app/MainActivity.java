@@ -1,5 +1,6 @@
 package com.example.vortex_app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -28,26 +29,27 @@ public class MainActivity extends AppCompatActivity {
         Button buttonMainscreenOrganizer = findViewById(R.id.button_mainscreen_organizer);
         Button buttonMainscreenAdmin = findViewById(R.id.button_mainscreen_admin);
 
-
         // Initialize onClickListeners for the 3 buttons
         buttonMainscreenEntrant.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                // Navigate to EntrantActivity
+                Intent intent = new Intent(MainActivity.this, EntrantActivity.class);
+                startActivity(intent);
             }
         });
 
         buttonMainscreenOrganizer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                // Code to navigate to OrganizerActivity can be added here
             }
         });
 
         buttonMainscreenAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                // Code to navigate to AdminActivity can be added here
             }
         });
     }
