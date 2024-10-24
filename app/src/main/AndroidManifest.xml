@@ -18,12 +18,18 @@
         <activity
             android:name=".EventsActivity"
             android:exported="false" />
+
+        <activity android:name=".EventActivity" />
+        <activity android:name=".EventInfoActivity" />
+
         <activity
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
             android:name=".EntrantActivity"
             android:exported="false" />
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
