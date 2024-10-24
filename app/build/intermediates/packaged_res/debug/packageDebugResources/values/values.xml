@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="light_gray">#F0F0F0</color>
+    <color name="red">#FA3939</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">Vortex_App</string>
+    <string name="center_name">Center Name</string>
+    <string name="centers">Centers</string>
+    <string name="facilities">Facilities</string>
+    <string name="mainscreen_button_admin">Admin</string>
+    <string name="mainscreen_button_entrant">Entrant</string>
+    <string name="mainscreen_button_organizer">Organizer</string>
+    <style name="Base.Theme.Vortex_App" parent="Theme.Material3.DayNight.NoActionBar">
+        
+        
+    </style>
+    <style name="Theme.Vortex_App" parent="Base.Theme.Vortex_App"/>
+</resources>

@@ -1,0 +1,5 @@
+com.example.vortex_app.test.app-core-1.6.1-0 /Users/gyurim/.gradle/caches/transforms-4/6830a08a238b54d0dac17148d16fdb04/transformed/core-1.6.1/res
+com.example.vortex_app.test.app-androidTest-1 /Users/gyurim/AndroidStudioProjects/Vortex_app/app/build/generated/res/resValues/androidTest/debug
+com.example.vortex_app.test.app-mergeDebugAndroidTestResources-2 /Users/gyurim/AndroidStudioProjects/Vortex_app/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/merged.dir
+com.example.vortex_app.test.app-mergeDebugAndroidTestResources-3 /Users/gyurim/AndroidStudioProjects/Vortex_app/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/stripped.dir
+com.example.vortex_app.test.app-debugAndroidTest-4 /Users/gyurim/AndroidStudioProjects/Vortex_app/app/build/intermediates/merged_res/debugAndroidTest/mergeDebugAndroidTestResources

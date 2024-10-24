@@ -1,0 +1,138 @@
+[
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/menu_bottom_nav_menu.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/menu/bottom_nav_menu.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/drawable_profile.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/drawable/profile.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/drawable_home.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/drawable/home.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/drawable_ic_location_on.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/drawable/ic_location_on.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/xml_data_extraction_rules.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/xml_backup_rules.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/drawable_baseline_location_on_24.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/drawable/baseline_location_on_24.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/layout_facitilies.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/layout/facitilies.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/drawable_notification.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/drawable/notification.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/drawable_circle.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/drawable/circle.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/layout_center_item.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/layout/center_item.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/layout_activity_main.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/layout_centers.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/layout/centers.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/layout_activity_notifications.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/layout/activity_notifications.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/drawable_event.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/drawable/event.xml"
+    },
+    {
+        "merged": "com.example.vortex_app-debug-31:/layout_activity_entrant.xml.flat",
+        "source": "com.example.vortex_app-main-33:/layout/activity_entrant.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/drawable_ic_launcher_background.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/layout_activity_entrant.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/layout/activity_entrant.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/layout_facility_item.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/layout/facility_item.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/layout_activity_events.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/layout/activity_events.xml"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-debug-31:/layout_activity_profile.xml.flat",
+        "source": "/Users/gyurim/.gradle/daemon/8.7/com.example.vortex_app-main-33:/layout/activity_profile.xml"
+    }
+]

@@ -1,0 +1,3 @@
+com.example.vortex_app.test
+style WhiteBackgroundDialogTheme
+style WhiteBackgroundTheme
