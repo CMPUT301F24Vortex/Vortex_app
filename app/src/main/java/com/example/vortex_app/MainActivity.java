@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+
+
         // Get references to button objects on the screen
         Button buttonMainscreenEntrant = findViewById(R.id.button_mainscreen_entrant);
         Button buttonMainscreenOrganizer = findViewById(R.id.button_mainscreen_organizer);
