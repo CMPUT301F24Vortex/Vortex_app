@@ -3,26 +3,35 @@ package com.example.vortex_app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EntrantActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private CenterAdapter centerAdapter;
     private List<Center> centerList;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = FirebaseFirestore.getInstance();
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_entrant);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -74,6 +83,25 @@ public class EntrantActivity extends AppCompatActivity {
             }
             return false;
         });
+    }
+
+    // Method to add an invitation to Firestore
+    public void addInvitation(String userId, String eventId, boolean accepted) {
+        DocumentReference newInvitationRef = db.collection("invitations").document(); // Auto-generate an ID
+        String invitationId = newInvitationRef.getId(); // Get the generated ID
+
+        Map<String, Object> invitationData = new HashMap<>();
+        invitationData.put("userId", userId);
+        invitationData.put("eventId", eventId);
+        invitationData.put("accepted", accepted);
+
+        newInvitationRef.set(invitationData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "Invitation added with ID: " + invitationId);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("Firestore", "Error adding invitation", e);
+                });
     }
 
     // Method to populate the list with data (this can be dynamic or static for now)

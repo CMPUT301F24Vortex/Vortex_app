@@ -1,17 +1,29 @@
 package com.example.vortex_app;
-
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.vortex_app.NotificationHelper;
+
+
 public class MainActivity extends AppCompatActivity {
+
+    private static final int NOTIFICATION_PERMISSION_CODE = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +35,17 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
+        // Create Notification Channel
+        NotificationHelper.createNotificationChannel(this);
+
+        // Request notification permission
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION_CODE);
+            }
+        }
 
         // Get references to button objects on the screen
         Button buttonMainscreenEntrant = findViewById(R.id.button_mainscreen_entrant);
@@ -52,5 +75,20 @@ public class MainActivity extends AppCompatActivity {
                 // Code to navigate to AdminActivity can be added here
             }
         });
+
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == NOTIFICATION_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Notification permission granted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Notification permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
