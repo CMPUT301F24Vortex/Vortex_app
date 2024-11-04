@@ -1,7 +1,10 @@
 package com.example.vortex_app;
 
+
 import android.app.Activity;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +16,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    private static final String PREFS_NAME = "UserPrefs";
+    private static final String KEY_SIGNED_UP = "hasSignedUp";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +43,19 @@ public class MainActivity extends AppCompatActivity {
         buttonMainscreenEntrant.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Navigate to EntrantActivity
-                Intent intent = new Intent(MainActivity.this, EntrantActivity.class);
-                startActivity(intent);
+                // Check if the user has already signed up
+                SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+                boolean hasSignedUp = prefs.getBoolean(KEY_SIGNED_UP, false);
+
+                if (hasSignedUp) {
+                    // If signed up, go to EntrantActivity
+                    Intent intent = new Intent(MainActivity.this, EntrantActivity.class);
+                    startActivity(intent);
+                } else {
+                    // If not signed up, go to SignupActivity
+                    Intent intent = new Intent(MainActivity.this, SignupActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
