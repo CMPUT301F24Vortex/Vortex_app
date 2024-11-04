@@ -14,6 +14,8 @@ import java.util.ArrayList;
 public class AddEvent extends AppCompatActivity {
 
     private RecyclerView recyclerView;
+
+
     private OrganizerEventAdapter eventAdapter;
     private ArrayList<Event> eventList;
     private EditText eventNameInput;
