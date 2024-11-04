@@ -5,6 +5,14 @@
     <string name="mainscreen_button_entrant">Entrant</string>
     <string name="mainscreen_button_organizer">Organizer</string>
     <string name="mainscreen_button_admin">Admin</string>
+    <string name="centers">Centers</string>
+    <string name="event_name">Event Name</string>
+    <string name="events">Events</string>
+    <string name="center_name">center name</string>
+    <string name="center_item_name">Center Name</string>
+    <string name="address">Address</string>
+    <string name="_123_main_st">123 Main St</string>
+    <string name="button_join_waiting_list">Join the Waiting List</string>
 
 
 </resources>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "176672717067",
+    "project_id": "vortex-app-ae425",
+    "storage_bucket": "vortex-app-ae425.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176672717067:android:b194ed8de30bbd59b20a0e",
+        "android_client_info": {
+          "package_name": "com.example.vortex_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPffYjUR_vaLZZG7zciSiLP7SE9QEDN5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
