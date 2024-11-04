@@ -46,3 +46,4 @@ public class Event {
     public String getDifficulty() { return difficulty; }
     public boolean isRequiresGeolocation() { return requiresGeolocation; }
 }
+
