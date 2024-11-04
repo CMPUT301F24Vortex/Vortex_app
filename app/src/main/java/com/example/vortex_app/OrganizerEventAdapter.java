@@ -1,6 +1,5 @@
 package com.example.vortex_app;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -12,22 +11,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
-public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
+public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.EventViewHolder> {
 
     private List<Event> eventList;
-    private Context context;  // Context to start a new activity
-    private OnItemClickListener listener;
+    private Context context;
+    private OnItemClickListener listener; // Add listener variable
 
+    // Interface for click listener
     public interface OnItemClickListener {
         void onItemClick(Event event);
     }
 
-
-
-    public EventAdapter(Context context, List<Event> eventList) {
+    // Constructor to pass context and event list
+    public OrganizerEventAdapter(Context context, List<Event> eventList) {
         this.context = context;
         this.eventList = eventList;
-
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -41,6 +39,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         return new EventViewHolder(view);
     }
 
+
+
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         // Get the current event
@@ -50,12 +50,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.eventName.setText(event.getName());
         holder.eventImage.setImageResource(event.getImageResId());
 
-        // Set up click listener for the item view to navigate to EventInfoActivity
         holder.itemView.setOnClickListener(v -> {
             // Create an intent to navigate to EventInfoActivity
-            Intent intent = new Intent(context, EventInfoActivity.class);
+            Intent intent = new Intent(context, OrganizerMenu.class);
 
             // Pass the necessary event data using intent extras
+            intent.putExtra("EVENT_NAME", event.getName());
             intent.putExtra("CLASS_DAY", event.getClassDay());
             intent.putExtra("TIME", event.getTime());
             intent.putExtra("PERIOD", event.getPeriod());
@@ -69,6 +69,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         });
     }
+
 
     @Override
     public int getItemCount() {

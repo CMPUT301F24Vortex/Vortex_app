@@ -1,5 +1,6 @@
 package com.example.vortex_app;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -42,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
         buttonMainscreenOrganizer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Code to navigate to OrganizerActivity can be added here
+                Intent intent = new Intent(MainActivity.this, OrganizerActivity.class);
+                startActivity(intent);
             }
         });
 

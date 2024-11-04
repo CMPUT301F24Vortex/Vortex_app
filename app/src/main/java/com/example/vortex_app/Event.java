@@ -1,6 +1,7 @@
 package com.example.vortex_app;
+import java.io.Serializable;
 
-public class Event {
+public class Event implements Serializable{
     private String name;
     private int imageResId;
     private String classDay;
@@ -8,7 +9,7 @@ public class Event {
     private String period;
     private String registrationDueDate;
     private String registrationOpenDate;
-    private String price;
+    private double price;
     private String location;
     private int maxPeople;
     private String difficulty;
@@ -24,7 +25,7 @@ public class Event {
         this.period = period;
         this.registrationDueDate = registrationDueDate;
         this.registrationOpenDate = registrationOpenDate;
-        this.price = price;
+        this.price = Double.parseDouble(price);
         this.location = location;
         this.maxPeople = maxPeople;
         this.difficulty = difficulty;
@@ -38,7 +39,7 @@ public class Event {
     public String getPeriod() { return period; }
     public String getRegistrationDueDate() { return registrationDueDate; }
     public String getRegistrationOpenDate() { return registrationOpenDate; }
-    public String getPrice() { return price; }
+    public double getPrice() { return price; }
     public String getLocation() { return location; }
     public int getMaxPeople() { return maxPeople; }
     public String getDifficulty() { return difficulty; }

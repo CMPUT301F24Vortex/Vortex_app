@@ -21,6 +21,11 @@
 
         <activity android:name=".EventActivity" />
         <activity android:name=".EventInfoActivity" />
+        <activity android:name=".OrganizerMenu"/>
+        <activity android:name=".AddEvent"/>
+
+        <activity android:name=".OrganizerActivity"
+            android:exported="false"/>
 
         <activity
             android:name=".ProfileActivity"
@@ -39,6 +44,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
