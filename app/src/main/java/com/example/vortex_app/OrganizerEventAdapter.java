@@ -11,24 +11,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
-public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
+public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.EventViewHolder> {
 
     private List<Event> eventList;
+    private Context context;
+    private OnItemClickListener listener; // Add listener variable
 
-    private Context context;  // Context to start a new activity
-    private OnItemClickListener listener;
-
+    // Interface for click listener
     public interface OnItemClickListener {
         void onItemClick(Event event);
     }
 
-
-
-
-    public EventAdapter(Context context, List<Event> eventList) {
+    // Constructor to pass context and event list
+    public OrganizerEventAdapter(Context context, List<Event> eventList) {
         this.context = context;
         this.eventList = eventList;
-
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -42,43 +39,43 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         return new EventViewHolder(view);
     }
 
+
+
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
+        // Get the current event
         Event event = eventList.get(position);
 
-        // Set event details in the ViewHolder
+        // Bind the event data to the views
         holder.eventName.setText(event.getName());
         holder.eventImage.setImageResource(event.getImageResId());
 
-        // Set click listener for each event item
         holder.itemView.setOnClickListener(v -> {
-            // Create an Intent to navigate to the Event Info activity
-            Intent intent = new Intent(context, EventInfoActivity.class);
+            // Create an intent to navigate to EventInfoActivity
+            Intent intent = new Intent(context, OrganizerMenu.class);
 
-            // Pass event details to the EventInfoActivity
+            // Pass the necessary event data using intent extras
             intent.putExtra("EVENT_NAME", event.getName());
             intent.putExtra("CLASS_DAY", event.getClassDay());
             intent.putExtra("TIME", event.getTime());
             intent.putExtra("PERIOD", event.getPeriod());
-            intent.putExtra("REGISTRATION_DUE_DATE", event.getRegistrationDueDate());
-            intent.putExtra("REGISTRATION_OPEN_DATE", event.getRegistrationOpenDate());
+            intent.putExtra("REG_DUE_DATE", event.getRegistrationDueDate());
+            intent.putExtra("REG_OPEN_DATE", event.getRegistrationOpenDate());
             intent.putExtra("PRICE", event.getPrice());
             intent.putExtra("LOCATION", event.getLocation());
             intent.putExtra("MAX_PEOPLE", event.getMaxPeople());
             intent.putExtra("DIFFICULTY", event.getDifficulty());
-            intent.putExtra("REQUIRES_GEOLOCATION", event.isRequiresGeolocation());
+            context.startActivity(intent);  // Start the EventInfoActivity
 
-            // Start the EventInfoActivity with the intent
-            context.startActivity(intent);
         });
     }
+
 
     @Override
     public int getItemCount() {
         return eventList.size();
     }
 
-    // ViewHolder class for Event items
     public static class EventViewHolder extends RecyclerView.ViewHolder {
 
         TextView eventName;
@@ -91,4 +88,3 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         }
     }
 }
-

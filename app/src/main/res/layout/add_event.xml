@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/event_name_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Event Name" />
+
+    <EditText
+        android:id="@+id/event_location_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Event Location" />
+
+    <EditText
+        android:id="@+id/event_class_day_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Date" />
+
+    <EditText
+        android:id="@+id/event_time_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Time" />
+
+    <EditText
+        android:id="@+id/event_period_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="period" />
+
+    <EditText
+        android:id="@+id/event_reg_due_date_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Registration Date" />
+
+    <EditText
+        android:id="@+id/event_price_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Price" />
+
+    <EditText
+        android:id="@+id/event_max_people_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Maximum People" />
+
+    <EditText
+        android:id="@+id/event_reg_open_date_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Registration open date" />
+
+    <EditText
+        android:id="@+id/event_difficulty_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Difficulty Level" />
+
+
+
+
+
+    <!-- Add more EditTexts for other event details as needed -->
+
+    <Button
+        android:id="@+id/add_event_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Event" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight = '1'
+        android:paddingTop="16dp"/>
+
+</LinearLayout>

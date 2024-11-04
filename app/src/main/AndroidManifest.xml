@@ -21,6 +21,11 @@
 
         <activity android:name=".EventActivity" />
         <activity android:name=".EventInfoActivity" />
+        <activity android:name=".OrganizerMenu"/>
+        <activity android:name=".AddEvent"/>
+
+        <activity android:name=".OrganizerActivity"
+            android:exported="false"/>
 
         <activity android:name=".WaitingListActivity" />
 
@@ -43,7 +48,9 @@
             </intent-filter>
         </activity>
 
+
         <activity android:name=".SignupActivity" />
+
     </application>
 
 </manifest>
