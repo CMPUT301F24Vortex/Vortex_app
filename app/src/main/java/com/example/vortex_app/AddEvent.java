@@ -100,6 +100,7 @@ public class AddEvent extends AppCompatActivity {
                 eventLocation,
                 maxPeople,
                 eventDifficultyInput.getText().toString()
+
         );
 
         // Add the new event to the list

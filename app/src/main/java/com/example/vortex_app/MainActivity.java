@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (hasSignedUp) {
                     // If signed up, go to EntrantActivity
-                    Intent intent = new Intent(MainActivity.this, EntrantActivity.class);
+                    Intent intent = new Intent(MainActivity.this, EventActivity.class);
                     startActivity(intent);
                 } else {
                     // If not signed up, go to SignupActivity
