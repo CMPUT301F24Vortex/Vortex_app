@@ -57,6 +57,8 @@ public class OrgQRCodeActivity extends AppCompatActivity {
         qrImage.setImageBitmap(bitmap);
 
 
+        //dsafgdfg
+
 
 
 
