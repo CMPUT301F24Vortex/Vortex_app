@@ -2,55 +2,108 @@ package com.example.vortex_app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NotificationsActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+    private NotificationAdapter adapter;
+    private List<NotificationModel> notificationList = new ArrayList<>();
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_notifications);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-        // Get a reference to the Bottom Navigation View
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-        // Set Notifications as the default selected item when this activity is opened
-        bottomNavigationView.setSelectedItemId(R.id.nav_notifications);
+        // Set the selected item to Events to highlight it correctly
+        bottomNavigationView.setSelectedItemId(R.id.nav_events);
 
         // Set a new navigation item selected listener
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
-                // Navigate to Home (EntrantActivity)
+                // Navigate to HomeActivity (EntrantActivity) when the Home icon is clicked
                 Intent intent = new Intent(this, EntrantActivity.class);
                 startActivity(intent);
                 return true;
-            } else if (itemId == R.id.nav_events) {
-                // Navigate to EventsActivity
-                Intent intent = new Intent(this, EventsActivity.class);
-                startActivity(intent);
-                return true;
             } else if (itemId == R.id.nav_profile) {
-                // Navigate to ProfileActivity
+                // Navigate to ProfileActivity when the Profile icon is clicked
                 Intent intent = new Intent(this, ProfileActivity.class);
                 startActivity(intent);
                 return true;
             } else if (itemId == R.id.nav_notifications) {
-                // Already in Notifications, do nothing
+                // Already in Notifs, do nothing
                 return true;
+            } else if (itemId == R.id.nav_events) {
+                // Navigate to NotificationsActivity when the Notifications icon is clicked
+                Intent intent = new Intent(this, NotificationsActivity.class);
+                startActivity(intent);
             }
             return false;
         });
+
+
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        adapter = new NotificationAdapter(notificationList, this::handleNotificationClick);
+        recyclerView.setAdapter(adapter);
+
+        db = FirebaseFirestore.getInstance();
+        fetchNotifications();
+    }
+
+    private void fetchNotifications() {
+        db.collection("notifications")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        notificationList.clear();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String title = document.getString("title");
+                            String message = document.getString("message");
+                            String status = document.getString("status");
+                            String id = document.getId();
+
+                            NotificationModel notification = new NotificationModel(title, message, status, id);
+                            notificationList.add(notification);
+                        }
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Log.w("Firestore", "Error getting notifications.", task.getException());
+                    }
+                });
+    }
+
+    private void handleNotificationClick(NotificationModel notification) {
+        // Update status in Firestore
+        db.collection("notifications").document(notification.getId())
+                .update("status", "read")
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "Notification marked as read.");
+                    fetchNotifications(); // Refresh the list
+                })
+                .addOnFailureListener(e -> Log.e("Firestore", "Error updating status", e));
     }
 }

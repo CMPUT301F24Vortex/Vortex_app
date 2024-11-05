@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.vortex_app" />
+                  <option name="mobileSdkAppId" value="1:176672717067:android:b194ed8de30bbd59b20a0e" />
+                  <option name="projectId" value="vortex-app-ae425" />
+                  <option name="projectNumber" value="176672717067" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
