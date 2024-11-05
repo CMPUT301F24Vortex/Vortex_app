@@ -44,6 +44,24 @@
         </activity>
 
         <activity android:name=".SignupActivity" />
+
+
+
+
+
+        <activity android:name=".OrganizerMenu"/>
+        <activity android:name=".AddEvent"/>
+
+        <activity android:name=".OrganizerActivity"
+            android:exported="false"/>
+
+
+
+        <activity android:name=".OrgQRCodeActivity"
+            android:exported="false"/>
+
+
+
     </application>
 
 </manifest>

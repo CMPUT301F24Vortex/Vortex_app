@@ -1,0 +1,124 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main">
+
+    <!-- CardView for White Box Background -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="350dp"
+        android:layout_height="527dp"
+        android:layout_margin="16dp"
+        android:background="@android:color/white"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.686">
+
+        <!-- LinearLayout to Arrange Buttons Vertically -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                android:id="@+id/text_event_name"
+                android:layout_width="308dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:text="Event Name"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+
+            <Button
+                android:id="@+id/button_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:text="@string/information"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/button_waiting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:text="@string/waiting_list"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/button_Qrcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:text="@string/qr_code"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/button_selected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:text="@string/selected_list"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/button_media"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:text="@string/media"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/button_cancellation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:text="@string/cancellation_list"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/button_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:text="@string/location"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/button_final"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="@string/final_list"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

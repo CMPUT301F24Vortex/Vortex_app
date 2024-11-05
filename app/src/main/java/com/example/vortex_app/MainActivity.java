@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Code to navigate to OrganizerActivity can be added here
+                Intent intent = new Intent(MainActivity.this, OrganizerActivity.class);
+                startActivity(intent);
             }
         });
 

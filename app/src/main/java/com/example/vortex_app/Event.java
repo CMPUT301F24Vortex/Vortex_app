@@ -14,6 +14,7 @@ public class Event {
     private String difficulty;
     private boolean requiresGeolocation;
 
+
     // Constructor with all parameters
     public Event(String name, int imageResId, String classDay, String time, String period,
                  String registrationDueDate, String registrationOpenDate, String price,
