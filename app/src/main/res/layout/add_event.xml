@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-
+            android:background="@drawable/white_box_background"
             android:hint="Event name"
             android:inputType="textPersonName"
             android:minHeight="48dp"
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-
+            android:background="@drawable/white_box_background"
             android:hint="Location"
             android:inputType="textPersonName"
             android:minHeight="48dp"
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-
+            android:background="@drawable/white_box_background"
             android:hint="Date"
             android:inputType="textPersonName"
             android:minHeight="48dp"
@@ -61,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-
+            android:background="@drawable/white_box_background"
             android:hint="Time"
             android:minHeight="48dp"
             android:padding="10dp" />
@@ -71,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-
+            android:background="@drawable/white_box_background"
             android:hint="Period"
             android:inputType="textPersonName"
             android:minHeight="48dp"
@@ -82,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-
+            android:background="@drawable/white_box_background"
             android:hint="Registration due date"
             android:minHeight="48dp"
             android:padding="10dp" />
@@ -92,7 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-
+            android:background="@drawable/white_box_background"
             android:hint="Price"
             android:minHeight="48dp"
             android:padding="10dp" />
@@ -102,7 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-
+            android:background="@drawable/white_box_background"
             android:hint="Maximum People"
             android:minHeight="48dp"
             android:padding="10dp" />
@@ -112,7 +112,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-
+            android:background="@drawable/white_box_background"
             android:hint="Registration Open"
             android:minHeight="48dp"
             android:padding="10dp" />
@@ -122,7 +122,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-
+            android:background="@drawable/white_box_background"
             android:hint="Difficulty"
             android:minHeight="48dp"
             android:padding="10dp" />

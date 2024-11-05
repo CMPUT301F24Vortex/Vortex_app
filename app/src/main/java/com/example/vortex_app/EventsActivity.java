@@ -33,7 +33,7 @@ public class EventsActivity extends AppCompatActivity {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
                 // Navigate to HomeActivity (EntrantActivity) when the Home icon is clicked
-                Intent intent = new Intent(this, EntrantActivity.class);
+                Intent intent = new Intent(this, EventActivity.class);
                 startActivity(intent);
                 return true;
             } else if (itemId == R.id.nav_profile) {
