@@ -13,11 +13,12 @@ public class Event implements Serializable{
     private String location;
     private int maxPeople;
     private String difficulty;
+    private boolean requiresGeolocation;
 
-    // Full constructor with all the parameters
+    // Constructor with all parameters
     public Event(String name, int imageResId, String classDay, String time, String period,
                  String registrationDueDate, String registrationOpenDate, String price,
-                 String location, int maxPeople, String difficulty) {
+                 String location, int maxPeople, String difficulty, boolean requiresGeolocation) {
         this.name = name;
         this.imageResId = imageResId;
         this.classDay = classDay;
@@ -29,6 +30,7 @@ public class Event implements Serializable{
         this.location = location;
         this.maxPeople = maxPeople;
         this.difficulty = difficulty;
+        this.requiresGeolocation = requiresGeolocation;
     }
 
     // Getters for each field
@@ -43,4 +45,6 @@ public class Event implements Serializable{
     public String getLocation() { return location; }
     public int getMaxPeople() { return maxPeople; }
     public String getDifficulty() { return difficulty; }
+    public boolean isRequiresGeolocation() { return requiresGeolocation; }
 }
+

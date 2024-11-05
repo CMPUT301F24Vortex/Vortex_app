@@ -1,6 +1,5 @@
 package com.example.vortex_app;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -15,12 +14,14 @@ import java.util.List;
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
     private List<Event> eventList;
+
     private Context context;  // Context to start a new activity
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {
         void onItemClick(Event event);
     }
+
 
 
 
@@ -43,30 +44,32 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
-        // Get the current event
         Event event = eventList.get(position);
 
-        // Bind the event data to the views
+        // Set event details in the ViewHolder
         holder.eventName.setText(event.getName());
         holder.eventImage.setImageResource(event.getImageResId());
 
-        // Set up click listener for the item view to navigate to EventInfoActivity
+        // Set click listener for each event item
         holder.itemView.setOnClickListener(v -> {
-            // Create an intent to navigate to EventInfoActivity
+            // Create an Intent to navigate to the Event Info activity
             Intent intent = new Intent(context, EventInfoActivity.class);
 
-            // Pass the necessary event data using intent extras
+            // Pass event details to the EventInfoActivity
+            intent.putExtra("EVENT_NAME", event.getName());
             intent.putExtra("CLASS_DAY", event.getClassDay());
             intent.putExtra("TIME", event.getTime());
             intent.putExtra("PERIOD", event.getPeriod());
-            intent.putExtra("REG_DUE_DATE", event.getRegistrationDueDate());
-            intent.putExtra("REG_OPEN_DATE", event.getRegistrationOpenDate());
+            intent.putExtra("REGISTRATION_DUE_DATE", event.getRegistrationDueDate());
+            intent.putExtra("REGISTRATION_OPEN_DATE", event.getRegistrationOpenDate());
             intent.putExtra("PRICE", event.getPrice());
             intent.putExtra("LOCATION", event.getLocation());
             intent.putExtra("MAX_PEOPLE", event.getMaxPeople());
             intent.putExtra("DIFFICULTY", event.getDifficulty());
-            context.startActivity(intent);  // Start the EventInfoActivity
+            intent.putExtra("REQUIRES_GEOLOCATION", event.isRequiresGeolocation());
 
+            // Start the EventInfoActivity with the intent
+            context.startActivity(intent);
         });
     }
 
@@ -75,6 +78,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         return eventList.size();
     }
 
+    // ViewHolder class for Event items
     public static class EventViewHolder extends RecyclerView.ViewHolder {
 
         TextView eventName;
@@ -87,3 +91,4 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         }
     }
 }
+

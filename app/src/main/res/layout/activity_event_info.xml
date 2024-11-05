@@ -6,6 +6,7 @@
     android:padding="16dp">
 
     <TextView
+        android:id="@+id/text_event_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Event Info"
@@ -13,6 +14,8 @@
         android:textColor="@android:color/holo_red_light"
         android:layout_marginBottom="20dp"
         android:gravity="center" />
+
+
 
     <TextView
         android:id="@+id/label_class_day"
