@@ -48,4 +48,7 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:32.3.1")) // Firebase BOM for version management
     implementation("com.google.firebase:firebase-firestore") // Firestore dependency without version
+
+    implementation("com.google.zxing:core:3.5.1")
+
 }

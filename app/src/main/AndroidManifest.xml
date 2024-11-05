@@ -37,6 +37,8 @@
             android:name=".EntrantActivity"
             android:exported="false" />
 
+        <activity android:name=".OrgQRCodeActivity"
+            android:exported="false"/>
 
         <activity
             android:name=".MainActivity"
@@ -50,6 +52,8 @@
 
 
         <activity android:name=".SignupActivity" />
+
+
 
     </application>
 

@@ -99,8 +99,10 @@ public class AddEvent extends AppCompatActivity {
                 price,
                 eventLocation,
                 maxPeople,
+
                 eventDifficultyInput.getText().toString(),
                 true //set true for now
+
         );
 
         // Add the new event to the list
