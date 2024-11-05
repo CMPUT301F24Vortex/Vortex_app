@@ -14,6 +14,7 @@ public class Event implements Serializable{
     private int maxPeople;
     private String difficulty;
     private boolean requiresGeolocation;
+    private String eventID;
 
     // Constructor with all parameters
     public Event(String name, int imageResId, String classDay, String time, String period,
@@ -46,4 +47,13 @@ public class Event implements Serializable{
     public int getMaxPeople() { return maxPeople; }
     public String getDifficulty() { return difficulty; }
     public boolean isRequiresGeolocation() { return requiresGeolocation; }
+
+    public String getEventID() {
+        return eventID;
+    }
+
+
+    public void setEventID(String eventID) {
+        this.eventID = eventID;
+    }
 }

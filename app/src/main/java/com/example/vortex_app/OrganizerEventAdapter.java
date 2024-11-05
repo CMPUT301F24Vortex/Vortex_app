@@ -65,6 +65,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             intent.putExtra("LOCATION", event.getLocation());
             intent.putExtra("MAX_PEOPLE", event.getMaxPeople());
             intent.putExtra("DIFFICULTY", event.getDifficulty());
+            intent.putExtra("EVENTID", event.getEventID());
             context.startActivity(intent);  // Start the EventInfoActivity
 
         });

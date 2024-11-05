@@ -55,7 +55,7 @@ public class OrgQRCodeActivity extends AppCompatActivity {
 
         // set imageview to qr code
         qrImage.setImageBitmap(bitmap);
-
+        qrHashValue.setText(eventID);
 
         //dsafgdfg
 

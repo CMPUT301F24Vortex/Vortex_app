@@ -40,6 +40,7 @@ public class OrganizerMenu extends AppCompatActivity {
         String location = getIntent().getStringExtra("LOCATION");
         int maxPeople = getIntent().getIntExtra("MAX_PEOPLE", 0);
         String difficulty = getIntent().getStringExtra("DIFFICULTY");
+        String eventID = getIntent().getStringExtra("EVENTID");
 
         //add other necessary data
 
@@ -82,7 +83,10 @@ public class OrganizerMenu extends AppCompatActivity {
         buttonOrganizerQr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                // Create an intent to navigate to OrgQRCodeActivity
+                Intent intent = new Intent(OrganizerMenu.this, OrgQRCodeActivity.class);
+                intent.putExtra("eventID", eventID);
+                startActivity(intent);  // Start the OrgQRCodeActivity
 
 
             }
