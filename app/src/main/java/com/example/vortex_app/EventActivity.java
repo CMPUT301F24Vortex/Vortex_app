@@ -45,11 +45,11 @@ public class EventActivity extends AppCompatActivity {
         if ("Center 1".equals(centerName)) {
             eventList.add(new Event("Event 1 at Center 1", R.drawable.sample_event_image,
                     "Monday", "3:00pm - 5:00pm", "2025-03-01 ~ 2025-06-05",
-                    "2025-01-28", "2025-01-01", "$60",
+                    "2025-01-28", "2025-01-01", "60",
                     "8621 112st NW, Alberta", 20, "Beginner", true));  // Geolocation required
             eventList.add(new Event("Event 2 at Center 1", R.drawable.sample_event_image,
                     "Tuesday", "1:00pm - 3:00pm", "2025-03-01 ~ 2025-06-05",
-                    "2025-01-28", "2025-01-01", "$50",
+                    "2025-01-28", "2025-01-01", "50",
                     "8621 112st NW, Alberta", 20, "Intermediate", false));  // Geolocation not required
         }
     }
