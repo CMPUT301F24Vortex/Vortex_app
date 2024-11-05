@@ -1,88 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/event_name_input"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Event Name" />
+        android:layout_height="match_parent"
+        android:background="@color/lightGray"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <EditText
-        android:id="@+id/event_location_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Event Location" />
+        <TextView
+            android:id="@+id/class_info"
+            android:layout_width="378dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center_horizontal"
+            android:text="Class Information"
+            android:textColor="#FF0000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/event_class_day_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Date" />
+        <EditText
+            android:id="@+id/event_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
 
-    <EditText
-        android:id="@+id/event_time_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Time" />
+            android:hint="Event name"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:padding="10dp" />
 
-    <EditText
-        android:id="@+id/event_period_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="period" />
+        <EditText
+            android:id="@+id/event_location_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
 
-    <EditText
-        android:id="@+id/event_reg_due_date_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Registration Date" />
+            android:hint="Location"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:padding="10dp" />
 
-    <EditText
-        android:id="@+id/event_price_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Price" />
+        <EditText
+            android:id="@+id/event_class_day_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
 
-    <EditText
-        android:id="@+id/event_max_people_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Maximum People" />
+            android:hint="Date"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:padding="10dp" />
 
-    <EditText
-        android:id="@+id/event_reg_open_date_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Registration open date" />
+        <EditText
+            android:id="@+id/event_time_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
 
-    <EditText
-        android:id="@+id/event_difficulty_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Difficulty Level" />
+            android:hint="Time"
+            android:minHeight="48dp"
+            android:padding="10dp" />
 
+        <EditText
+            android:id="@+id/event_period_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
 
+            android:hint="Period"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:padding="10dp" />
 
+        <EditText
+            android:id="@+id/event_reg_due_date_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
 
+            android:hint="Registration due date"
+            android:minHeight="48dp"
+            android:padding="10dp" />
 
-    <!-- Add more EditTexts for other event details as needed -->
+        <EditText
+            android:id="@+id/event_price_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
 
-    <Button
-        android:id="@+id/add_event_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Event" />
+            android:hint="Price"
+            android:minHeight="48dp"
+            android:padding="10dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight = '1'
-        android:paddingTop="16dp"/>
+        <EditText
+            android:id="@+id/event_max_people_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
 
-</LinearLayout>
+            android:hint="Maximum People"
+            android:minHeight="48dp"
+            android:padding="10dp" />
+
+        <EditText
+            android:id="@+id/event_reg_open_date_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+
+            android:hint="Registration Open"
+            android:minHeight="48dp"
+            android:padding="10dp" />
+
+        <EditText
+            android:id="@+id/event_difficulty_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+
+            android:hint="Difficulty"
+            android:minHeight="48dp"
+            android:padding="10dp" />
+
+        <Button
+            android:id="@+id/add_event_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#FF0000"
+            android:text="Enter"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+</ScrollView>
