@@ -49,7 +49,7 @@ public class SignupActivity extends AppCompatActivity {
                     Toast.makeText(SignupActivity.this, "Sign-Up Successful!", Toast.LENGTH_SHORT).show();
 
                     // Navigate to EntrantActivity
-                    Intent intent = new Intent(SignupActivity.this, EntrantActivity.class);
+                    Intent intent = new Intent(SignupActivity.this, EventActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();  // Close SignupActivity

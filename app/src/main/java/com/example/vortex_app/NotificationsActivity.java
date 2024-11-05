@@ -33,7 +33,7 @@ public class NotificationsActivity extends AppCompatActivity {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
                 // Navigate to Home (EntrantActivity)
-                Intent intent = new Intent(this, EntrantActivity.class);
+                Intent intent = new Intent(this, EventActivity.class);
                 startActivity(intent);
                 return true;
             } else if (itemId == R.id.nav_events) {
