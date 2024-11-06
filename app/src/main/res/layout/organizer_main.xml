@@ -9,7 +9,7 @@
     <!-- CardView for White Box Background -->
     <androidx.cardview.widget.CardView
         android:layout_width="350dp"
-        android:layout_height="527dp"
+        android:layout_height="540dp"
         android:layout_margin="16dp"
         android:background="@android:color/white"
         app:cardCornerRadius="8dp"
@@ -24,19 +24,26 @@
         <!-- LinearLayout to Arrange Buttons Vertically -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="555dp"
             android:background="@android:color/white"
             android:orientation="vertical"
             android:padding="18dp">
 
             <TextView
                 android:id="@+id/text_event_name"
-                android:layout_width="308dp"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="43dp"
                 android:layout_marginBottom="15dp"
                 android:text="Event Name"
-                android:textColor="@android:color/black"
-                android:textSize="20sp" />
+                android:textColor="@color/black"
+                android:textSize="25sp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="15dp"
+                android:background="@android:color/darker_gray" />
 
 
             <Button
@@ -112,7 +119,7 @@
             <Button
                 android:id="@+id/button_final"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="54dp"
                 android:background="@android:color/transparent"
                 android:text="@string/final_list"
                 android:textColor="@android:color/black"

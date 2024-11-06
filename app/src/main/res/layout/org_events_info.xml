@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/text_event_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Event Info"
+        android:textSize="24sp"
+        android:textColor="@android:color/holo_red_light"
+        android:layout_marginBottom="20dp"
+        android:gravity="center" />
+
+
+
+    <TextView
+        android:id="@+id/label_class_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Class Day"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/text_class_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Monday Tuesday Wednesday"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/label_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/text_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3:00pm-5:00pm"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/label_period"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Period"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/text_period"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2025-03-01 ~ 2025-06-05"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/label_registration_due_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Registration Due Date"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/text_registration_due_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2025-01-28"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/label_registration_open_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Registration Opening Date"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/text_registration_open_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2025-01-01"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/label_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Price"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/text_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$60"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/label_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+    <TextView
+        android:id="@+id/text_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="83139 291st"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/label_max_people"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Maximum people in Class"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+    <TextView
+        android:id="@+id/text_max_people"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/label_difficulty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="Difficulty"
+        android:textSize="18sp" />
+    <TextView
+        android:id="@+id/text_difficulty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/image_event"
+        android:layout_width="274dp"
+        android:layout_height="175dp"
+        android:layout_gravity="center"
+        android:src="@drawable/sample_event_image" />
+
+    <Button
+        android:layout_width="110dp"
+        android:layout_height="58dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="30dp"
+        android:text= "Edit"
+        android:textSize="20sp"
+        android:backgroundTint="@color/red"
+        />
+
+
+</LinearLayout>
