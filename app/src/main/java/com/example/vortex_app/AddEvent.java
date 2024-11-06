@@ -51,7 +51,12 @@ public class AddEvent extends AppCompatActivity {
         eventDifficultyInput = findViewById(R.id.event_difficulty_input);
         addButton = findViewById(R.id.add_event_button);
 
-        eventList = new ArrayList<>();
+        eventList = (ArrayList<Event>) getIntent().getSerializableExtra("EVENT_LIST");
+
+        if (eventList == null) {
+            eventList = new ArrayList<>();
+        }
+
         eventAdapter = new OrganizerEventAdapter(this, eventList);
         recyclerView.setAdapter(OrganizerEventAdapter);
 
