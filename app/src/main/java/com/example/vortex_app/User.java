@@ -24,4 +24,6 @@ public class User {
     public String getPhoneNumber() {
         return phoneNumber;
     }
+
+    public String getName() {return firstName + " " + lastName;}
 }
