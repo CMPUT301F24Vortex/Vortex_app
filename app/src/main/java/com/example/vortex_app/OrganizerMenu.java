@@ -36,11 +36,10 @@ public class OrganizerMenu extends AppCompatActivity {
         String period = getIntent().getStringExtra("PERIOD");
         String regDueDate = getIntent().getStringExtra("REG_DUE_DATE");
         String regOpenDate = getIntent().getStringExtra("REG_OPEN_DATE");
-        double price = getIntent().getDoubleExtra("PRICE", 0.0);
+        double price = getIntent().getDoubleExtra("PRICE", 0);
         String location = getIntent().getStringExtra("LOCATION");
         int maxPeople = getIntent().getIntExtra("MAX_PEOPLE", 0);
         String difficulty = getIntent().getStringExtra("DIFFICULTY");
-        String eventID = getIntent().getStringExtra("EVENTID");
 
         //add other necessary data
 
@@ -66,6 +65,19 @@ public class OrganizerMenu extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                Intent intent = new Intent(OrganizerMenu.this, OrganizerInfo.class);
+                // Pass the event details to OrganizerInfo activity
+                intent.putExtra("EVENT_NAME", eventName);
+                intent.putExtra("CLASS_DAY", classDay);
+                intent.putExtra("TIME", time);
+                intent.putExtra("PERIOD", period);
+                intent.putExtra("REG_DUE_DATE", regDueDate);
+                intent.putExtra("REG_OPEN_DATE", regOpenDate);
+                intent.putExtra("PRICE", String.valueOf(price));
+                intent.putExtra("LOCATION", location);
+                intent.putExtra("MAX_PEOPLE", maxPeople);
+                intent.putExtra("DIFFICULTY", difficulty);
+                startActivity(intent);
 
 
             }
@@ -83,10 +95,7 @@ public class OrganizerMenu extends AppCompatActivity {
         buttonOrganizerQr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Create an intent to navigate to OrgQRCodeActivity
-                Intent intent = new Intent(OrganizerMenu.this, OrgQRCodeActivity.class);
-                intent.putExtra("eventID", eventID);
-                startActivity(intent);  // Start the OrgQRCodeActivity
+
 
 
             }

@@ -16,8 +16,8 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:backgroundTint="#FF0000"
-        android:textAllCaps="false"
         android:text="Add Event"
+        android:textAllCaps="false"
         android:textColor="@android:color/white" />
 
 

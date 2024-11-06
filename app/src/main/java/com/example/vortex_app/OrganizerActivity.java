@@ -46,6 +46,7 @@ public class OrganizerActivity extends AppCompatActivity {
         addEventButton.setOnClickListener(v -> {
             // Navigate to AddEvent activity
             Intent intent = new Intent(OrganizerActivity.this, AddEvent.class);
+            intent.putExtra("EVENT_LIST", eventList);
             startActivity(intent);
         });
 
@@ -57,6 +58,8 @@ public class OrganizerActivity extends AppCompatActivity {
 
             }
         });
+
+
     }
 
 }
