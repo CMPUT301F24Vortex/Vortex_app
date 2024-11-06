@@ -25,6 +25,10 @@
             android:name=".EventsActivity"
             android:exported="false"
             android:launchMode="singleTop"/>
+        <activity
+            android:name=".NotificationDetailActivity"
+            android:exported="false"
+            android:launchMode="singleTop"/>
 
         <activity android:name=".EventActivity" />
         <activity android:name=".EventInfoActivity" />

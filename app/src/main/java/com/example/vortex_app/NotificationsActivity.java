@@ -32,7 +32,6 @@ public class NotificationsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
 
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         // Set the selected item to Events to highlight it correctly
@@ -45,11 +44,13 @@ public class NotificationsActivity extends AppCompatActivity {
                 // Navigate to HomeActivity (EntrantActivity) when the Home icon is clicked
                 Intent intent = new Intent(this, EntrantActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             } else if (itemId == R.id.nav_profile) {
                 // Navigate to ProfileActivity when the Profile icon is clicked
                 Intent intent = new Intent(this, ProfileActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             } else if (itemId == R.id.nav_notifications) {
                 // Already in Notifs, do nothing
@@ -66,7 +67,8 @@ public class NotificationsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new NotificationAdapter(notificationList, this::handleNotificationClick);
+        // Pass context and click handler to open detail view on click
+        adapter = new NotificationAdapter(notificationList, this);
         recyclerView.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
@@ -106,4 +108,19 @@ public class NotificationsActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> Log.e("Firestore", "Error updating status", e));
     }
+
+    private void openNotificationDetail(NotificationModel notification) {
+        // Mark the notification as read and open NotificationDetailActivity
+        db.collection("notifications").document(notification.getId())
+                .update("status", "read")
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Notification marked as read."))
+                .addOnFailureListener(e -> Log.e("Firestore", "Error updating status", e));
+
+        Intent intent = new Intent(this, NotificationDetailActivity.class);
+        intent.putExtra("title", notification.getTitle());
+        intent.putExtra("message", notification.getMessage());
+        intent.putExtra("status", notification.getStatus());
+        startActivity(intent);
+    }
+
 }
