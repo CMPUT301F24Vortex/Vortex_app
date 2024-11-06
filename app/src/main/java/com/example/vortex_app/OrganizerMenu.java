@@ -40,6 +40,7 @@ public class OrganizerMenu extends AppCompatActivity {
         String location = getIntent().getStringExtra("LOCATION");
         int maxPeople = getIntent().getIntExtra("MAX_PEOPLE", 0);
         String difficulty = getIntent().getStringExtra("DIFFICULTY");
+        String eventID = getIntent().getStringExtra("EVENTID");
 
         //add other necessary data
 
@@ -77,6 +78,7 @@ public class OrganizerMenu extends AppCompatActivity {
                 intent.putExtra("LOCATION", location);
                 intent.putExtra("MAX_PEOPLE", maxPeople);
                 intent.putExtra("DIFFICULTY", difficulty);
+
                 startActivity(intent);
 
 
@@ -86,7 +88,9 @@ public class OrganizerMenu extends AppCompatActivity {
         buttonOrganizerWaiting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(OrganizerMenu.this, OrgWaitingListActivity.class);
+                intent.putExtra("EVENTID", eventID);
+                startActivity(intent);
 
 
             }
@@ -95,7 +99,9 @@ public class OrganizerMenu extends AppCompatActivity {
         buttonOrganizerQr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(OrganizerMenu.this, OrgQRCodeActivity.class);
+                intent.putExtra("EVENTID", eventID);
+                startActivity(intent);
 
 
             }
@@ -104,7 +110,9 @@ public class OrganizerMenu extends AppCompatActivity {
         buttonOrganizerSelected.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(OrganizerMenu.this, SelectedEntrantsActivity.class);
+                intent.putExtra("EVENTID", eventID);
+                startActivity(intent);
 
 
             }
@@ -119,7 +127,9 @@ public class OrganizerMenu extends AppCompatActivity {
         buttonOrganizerCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(OrganizerMenu.this, CancelledEntrantsActivity.class);
+                intent.putExtra("EVENTID", eventID);
+                startActivity(intent);
 
 
             }
@@ -127,12 +137,18 @@ public class OrganizerMenu extends AppCompatActivity {
         buttonOrganizerLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(OrganizerMenu.this, LocationActivity.class);
+                intent.putExtra("EVENTID", eventID);
+                startActivity(intent);
 
             }
         });
         buttonOrganizerFinal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(OrganizerMenu.this, FinalEntrantsActivity.class);
+                intent.putExtra("EVENTID", eventID);
+                startActivity(intent);
 
             }
         });

@@ -60,6 +60,12 @@
         <activity android:name=".OrgQRCodeActivity"
             android:exported="false"/>
 
+        <activity android:name=".CancelledEntrantsActivity" />
+        <activity android:name=".SelectedEntrantsActivity" />
+        <activity android:name=".FinalEntrantsActivity" />
+        <activity android:name=".OrgWaitingListActivity" />
+        <activity android:name=".LocationActivity" />
+
 
 
     </application>
