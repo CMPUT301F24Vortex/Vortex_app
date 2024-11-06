@@ -13,6 +13,8 @@
     <string name="address">Address</string>
     <string name="_123_main_st">123 Main St</string>
     <string name="button_join_waiting_list">Join the Waiting List</string>
+    <string name="notification_details">Notification Details</string>
+    <string name="notification_icon">Notification Icon</string>
 
 
 </resources>

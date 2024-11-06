@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class NotificationsActivity extends AppCompatActivity {
@@ -86,9 +87,10 @@ public class NotificationsActivity extends AppCompatActivity {
                             String title = document.getString("title");
                             String message = document.getString("message");
                             String status = document.getString("status");
+                            Date Date = document.getDate("timestamp");
                             String id = document.getId();
 
-                            NotificationModel notification = new NotificationModel(title, message, status, id);
+                            NotificationModel notification = new NotificationModel(title, message, status, id, Date);
                             notificationList.add(notification);
                         }
                         adapter.notifyDataSetChanged();

@@ -10,7 +10,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Date;
+import java.util.Locale;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
 
@@ -46,6 +49,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.titleTextView.setText(notification.getTitle());
         holder.messageTextView.setText(notification.getMessage());
         holder.statusTextView.setText(notification.getStatus());
+        // Format the timestamp before displaying it
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        String formattedDate = formatter.format(notification.getTimeStamp());
+
+        holder.dateTextView.setText(formattedDate);
 
         // Set click listener to open NotificationDetailActivity
         holder.itemView.setOnClickListener(v -> {
@@ -67,13 +75,15 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView titleTextView, messageTextView, statusTextView;
+        //TextView dateTextView;
+        TextView titleTextView, messageTextView, statusTextView, dateTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.titleTextView);
             messageTextView = itemView.findViewById(R.id.messageTextView);
             statusTextView = itemView.findViewById(R.id.statusTextView);
+            dateTextView = itemView.findViewById(R.id.dateTextView);
         }
     }
 }
