@@ -36,6 +36,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
     @Override
     public void onBindViewHolder(EventViewHolder holder, int position) {
         Event event = eventList.get(position);
+        Log.d("OrganizerEventAdapter", "Event name: " + event.getName());
         holder.eventName.setText(event.getName());
         holder.itemView.setOnClickListener(v -> listener.onEventClick(event));
     }
@@ -46,9 +47,10 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {
-        TextView eventName;
+        TextView eventName ;
         public EventViewHolder(View itemView) {
             super(itemView);
+
             eventName = itemView.findViewById(R.id.text_event_name);
         }
     }

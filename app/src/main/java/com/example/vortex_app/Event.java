@@ -36,9 +36,13 @@ public class Event {
         this.requiresGeolocation = requiresGeolocation;
     }
 
-    public Event(String eventName) {
+    public Event(String name, String eventID) {
+
+        this.name = name;
+        this.eventID = eventID;
 
     }
+
 
     // Getters for each field
     public String getName() { return name; }
@@ -52,16 +56,10 @@ public class Event {
     public String getLocation() { return location; }
     public int getMaxPeople() { return maxPeople; }
     public String getDifficulty() { return difficulty; }
+    public String getEventID(){ return eventID;}
     public boolean isRequiresGeolocation() { return requiresGeolocation; }
 
-    public String getEventID() {
-        return eventID;
-    }
 
-
-    public void setEventID(String eventID) {
-        this.eventID = eventID;
-    }
 
 
 }

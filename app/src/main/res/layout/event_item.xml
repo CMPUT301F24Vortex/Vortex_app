@@ -17,7 +17,7 @@
         android:id="@+id/text_event_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Event Name"
+        android:text="EventName"
         android:textSize="16sp"
         android:layout_marginTop="8dp" />
 

@@ -38,20 +38,23 @@ public class OrganizerActivity extends AppCompatActivity {
             @Override
             public void onEventClick(Event event) {
 
+                String eventID = event.getEventID();
                 String eventName = event.getName();
-
                 Intent intent = new Intent(OrganizerActivity.this, OrganizerMenu.class);
-                intent.putExtra("eventID", eventName); //need to change to EventID
+                intent.putExtra("EVENT_NAME", eventName);
+                intent.putExtra("EVENT_ID", eventID);
                 startActivity(intent);
             }
         });
 
         recyclerView.setAdapter(eventAdapter);
-        buttonNavigate = findViewById(R.id.button_add_event);  // Button in XML
+
+
+        buttonNavigate = findViewById(R.id.button_add_event);
         buttonNavigate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Navigate to OrganizerMenu activity when button is clicked
+
                 Intent intent = new Intent(OrganizerActivity.this, AddEvent.class);
                 startActivity(intent);
             }
@@ -68,13 +71,14 @@ public class OrganizerActivity extends AppCompatActivity {
                         eventList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             String eventName = document.getString("eventName");
-                            Event event = new Event(eventName);
+                            String eventID = document.getId();
+                            Event event = new Event(eventName, eventID );
                             eventList.add(event);
                         }
                         eventAdapter.notifyDataSetChanged();
-                    } else {
-                        Log.w("EventActivity", "Error getting documents.", task.getException());
+
                     }
+
                 });
     }
 }
