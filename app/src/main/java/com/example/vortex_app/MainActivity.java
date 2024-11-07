@@ -42,18 +42,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Check if the user has already signed up
-                SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-                boolean hasSignedUp = prefs.getBoolean(KEY_SIGNED_UP, false);
-
-                if (hasSignedUp) {
-                    // If signed up, go to EntrantActivity
-                    Intent intent = new Intent(MainActivity.this, EntrantActivity.class);
-                    startActivity(intent);
-                } else {
-                    // If not signed up, go to SignupActivity
-                    Intent intent = new Intent(MainActivity.this, SignupActivity.class);
-                    startActivity(intent);
-                }
+//                SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+//                boolean hasSignedUp = prefs.getBoolean(KEY_SIGNED_UP, false);
+                Intent intent = new Intent(MainActivity.this, EntrantActivity.class);
+                startActivity(intent);
             }
         });
 
