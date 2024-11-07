@@ -39,14 +39,15 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.recyclerview)
 
-    // Use firebase-bom to manage Firebase dependencies
+    // Firebase dependencies managed by firebase-bom
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
     implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-storage") // Replace with firebase-bom managed version
+    implementation("com.google.firebase:firebase-storage")
 
+    // ZXing library for QR code functionality
     implementation("com.google.zxing:core:3.5.1")
 
-    // Glide dependency
+    // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.12.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
