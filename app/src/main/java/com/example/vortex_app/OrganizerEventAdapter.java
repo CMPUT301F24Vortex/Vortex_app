@@ -2,6 +2,7 @@ package com.example.vortex_app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,63 +15,30 @@ import java.util.List;
 public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.EventViewHolder> {
 
     private List<Event> eventList;
-    private Context context;
-    private OnItemClickListener listener; // Add listener variable
+    private OnEventClickListener listener;
 
-    // Interface for click listener
-    public interface OnItemClickListener {
-        void onItemClick(Event event);
+    public interface OnEventClickListener {
+        void onEventClick(Event event);
     }
 
-    // Constructor to pass context and event list
-    public OrganizerEventAdapter(Context context, List<Event> eventList) {
-        this.context = context;
+    public OrganizerEventAdapter(List<Event> eventList, OnEventClickListener listener) {
         this.eventList = eventList;
+        this.listener = listener;
     }
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener; // Set the listener
-    }
-
-    @NonNull
-    @Override
-    public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_item, parent, false);
-        return new EventViewHolder(view);
-    }
-
-
 
     @Override
-    public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
-        // Get the current event
+    public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.event_item, parent, false);
+        return new EventViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(EventViewHolder holder, int position) {
         Event event = eventList.get(position);
-
-        // Bind the event data to the views
         holder.eventName.setText(event.getName());
-        holder.eventImage.setImageResource(event.getImageResId());
-
-        holder.itemView.setOnClickListener(v -> {
-            // Create an intent to navigate to EventInfoActivity
-            Intent intent = new Intent(context, OrganizerMenu.class);
-
-            // Pass the necessary event data using intent extras
-            intent.putExtra("EVENT_NAME", event.getName());
-            intent.putExtra("CLASS_DAY", event.getClassDay());
-            intent.putExtra("TIME", event.getTime());
-            intent.putExtra("PERIOD", event.getPeriod());
-            intent.putExtra("REG_DUE_DATE", event.getRegistrationDueDate());
-            intent.putExtra("REG_OPEN_DATE", event.getRegistrationOpenDate());
-            intent.putExtra("PRICE", event.getPrice());
-            intent.putExtra("LOCATION", event.getLocation());
-            intent.putExtra("MAX_PEOPLE", event.getMaxPeople());
-            intent.putExtra("DIFFICULTY", event.getDifficulty());
-            intent.putExtra("EVENTID", event.getEventID());
-            context.startActivity(intent);  // Start the EventInfoActivity
-
-        });
+        holder.itemView.setOnClickListener(v -> listener.onEventClick(event));
     }
-
 
     @Override
     public int getItemCount() {
@@ -78,14 +46,16 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {
-
         TextView eventName;
-        ImageView eventImage;
-
-        public EventViewHolder(@NonNull View itemView) {
+        public EventViewHolder(View itemView) {
             super(itemView);
             eventName = itemView.findViewById(R.id.text_event_name);
-            eventImage = itemView.findViewById(R.id.image_event);
         }
     }
 }
+
+
+
+
+
+

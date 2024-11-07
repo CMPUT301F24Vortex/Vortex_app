@@ -9,13 +9,20 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddEvent extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
-
+    private FirebaseFirestore db;
+    private CollectionReference eventsRef;
     private OrganizerEventAdapter eventAdapter;
     private ArrayList<Event> eventList;
     private EditText eventNameInput;
@@ -29,16 +36,19 @@ public class AddEvent extends AppCompatActivity {
     private EditText eventMaxPeopleInput;
     private EditText eventDifficultyInput;
     private Button addButton;
-    private RecyclerView.Adapter OrganizerEventAdapter;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_event); // Ensure this layout is created
+        setContentView(R.layout.add_event);
+
+        db = FirebaseFirestore.getInstance();
+        eventsRef = db.collection("events");
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         eventNameInput = findViewById(R.id.event_name_input);
         eventLocationInput = findViewById(R.id.event_location_input);
         eventClassDayInput = findViewById(R.id.event_class_day_input);
@@ -50,15 +60,11 @@ public class AddEvent extends AppCompatActivity {
         eventMaxPeopleInput = findViewById(R.id.event_max_people_input);
         eventDifficultyInput = findViewById(R.id.event_difficulty_input);
         addButton = findViewById(R.id.add_event_button);
-
-        eventList = (ArrayList<Event>) getIntent().getSerializableExtra("EVENT_LIST");
+        //eventList = (ArrayList<Event>) getIntent().getSerializableExtra("EVENT_LIST");
 
         if (eventList == null) {
             eventList = new ArrayList<>();
         }
-
-        eventAdapter = new OrganizerEventAdapter(this, eventList);
-        recyclerView.setAdapter(OrganizerEventAdapter);
 
         addButton.setOnClickListener(v -> addEvent());
     }
@@ -92,30 +98,38 @@ public class AddEvent extends AppCompatActivity {
             return;
         }
 
-        // Create a new Event object
-        Event newEvent = new Event(
-                eventName,
-                R.drawable.sample_event_image, // Placeholder for image resource
-                classDay,
-                time,
-                period,
-                regDueDate,
-                regOpenDate,
-                price,
-                eventLocation,
-                maxPeople,
+        Map<String, Object> event = new HashMap<>();
+        event.put("eventName", eventName);
+        event.put("eventLocation", eventLocation);
+        event.put("classDay", classDay);
+        event.put("time", time);
+        event.put("period", period);
+        event.put("regDueDate", regDueDate);
+        event.put("regOpenDate", regOpenDate);
+        event.put("price", price);
+        event.put("maxPeople", maxPeople);
+        event.put("difficulty", eventDifficultyInput.getText().toString());
+        event.put("geoLoc", true);
 
-                eventDifficultyInput.getText().toString(),
-                true //set true for now
+        db.collection("events")
+                .add(event)
+                .addOnSuccessListener(documentReference -> {
+                    Event newEvent = new Event(eventName, R.drawable.sample_event_image, classDay, time, period, regDueDate, regOpenDate, price, eventLocation, maxPeople, eventDifficultyInput.getText().toString(), true);
+                    eventList.add(newEvent);
+                    eventAdapter.notifyDataSetChanged();
+                    Toast.makeText(this, "Event added", Toast.LENGTH_SHORT).show();
+                    clearInputFields();
+                    launchOrganizerActivity();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error adding event", Toast.LENGTH_SHORT).show();
+                });
+    }
 
-        );
-
-        // Add the new event to the list
-        eventList.add(newEvent);
-        eventAdapter.notifyDataSetChanged();
 
 
-        // Clear input fields
+
+    private void clearInputFields() {
         eventNameInput.setText("");
         eventLocationInput.setText("");
         eventClassDayInput.setText("");
@@ -127,14 +141,14 @@ public class AddEvent extends AppCompatActivity {
         eventMaxPeopleInput.setText("");
         eventDifficultyInput.setText("");
 
-        launchOrganizerActivity();
-
-
     }
+
+
+
 
     private void launchOrganizerActivity() {
         Intent intent = new Intent(AddEvent.this, OrganizerActivity.class);
-        intent.putExtra("EVENT_LIST", eventList); // Pass the event list to EventListActivity
+        //intent.putExtra("EVENT_LIST", eventList); // Pass the event list to EventListActivity
         startActivity(intent);
     }
 
