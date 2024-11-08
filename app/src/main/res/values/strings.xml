@@ -13,6 +13,9 @@
     <string name="address">Address</string>
     <string name="_123_main_st">123 Main St</string>
     <string name="button_join_waiting_list">Join the Waiting List</string>
+
+    <string name="notification_details">Notification Details</string>
+
     <string name="information">Information</string>
     <string name="waiting_list">Waiting List</string>
     <string name="qr_code">QR code</string>
@@ -22,6 +25,7 @@
     <string name="location">Location</string>
     <string name="final_list">Final List</string>
     <string name="event_id">EVENT_ID</string>
+
 
 
 </resources>

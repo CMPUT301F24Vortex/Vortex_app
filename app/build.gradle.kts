@@ -33,10 +33,20 @@ android {
 }
 
 dependencies {
+
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-firestore:24.5.0")
+    implementation ("com.google.firebase:firebase-messaging:23.0.5")
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.auth)
+    implementation(libs.runner)
+
     implementation(libs.recyclerview)
 
     // Firebase dependencies managed by firebase-bom
@@ -50,6 +60,7 @@ dependencies {
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.12.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
