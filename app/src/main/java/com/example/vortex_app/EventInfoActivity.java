@@ -11,14 +11,24 @@ import com.example.vortex_app.WaitingListActivity;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * EventInfoActivity displays detailed information about a specific event.
+ * It also allows users to join a waiting list, with optional geolocation warnings.
+ */
 public class EventInfoActivity extends AppCompatActivity {
 
+    /**
+     * Called when the activity is first created. Sets up the layout, retrieves event data from the intent,
+     * and initializes UI components.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     *                           Note: Otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_info);
-
-
 
         // Retrieve the event details from the intent
         String eventName = getIntent().getStringExtra("EVENT_NAME");
@@ -33,13 +43,11 @@ public class EventInfoActivity extends AppCompatActivity {
         String difficulty = getIntent().getStringExtra("DIFFICULTY");
         boolean requiresGeolocation = getIntent().getBooleanExtra("REQUIRES_GEOLOCATION", false);
 
-        // Set the data to TextViews or other UI components in the activity
-        // Example:
+        // Display the event name
         TextView eventNameTextView = findViewById(R.id.text_event_name);
         eventNameTextView.setText(eventName);
 
-        // Repeat for other fields and display them on the UI
-
+        // Additional logic to handle other fields and UI components
         // Example: show warning if geolocation is required
         if (requiresGeolocation) {
             // Display warning message about geolocation requirement
@@ -61,7 +69,9 @@ public class EventInfoActivity extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Shows a warning dialog if geolocation is required.
+     */
     private void showGeolocationWarningDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_geolocation_warning, null);
@@ -85,7 +95,9 @@ public class EventInfoActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    // Method to navigate to WaitingListActivity
+    /**
+     * Navigates the user to the WaitingListActivity.
+     */
     private void navigateToWaitingList() {
         Intent intent = new Intent(this, WaitingListActivity.class);
         startActivity(intent);

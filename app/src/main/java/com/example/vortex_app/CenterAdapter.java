@@ -9,22 +9,45 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
+/**
+ * Adapter class for displaying a list of centers in a RecyclerView.
+ * This adapter binds data from the Center objects to views in the RecyclerView.
+ */
 public class CenterAdapter extends RecyclerView.Adapter<CenterAdapter.CenterViewHolder> {
 
     private List<Center> centerList;
     private OnItemClickListener listener;
 
-    // Define the interface for item click events
+    /**
+     * Interface for handling item click events.
+     */
     public interface OnItemClickListener {
+        /**
+         * Called when an item is clicked.
+         *
+         * @param center The Center object that was clicked.
+         */
         void onItemClick(Center center);
     }
 
-    // Adapter constructor
+    /**
+     * Constructs a CenterAdapter with a list of centers and an item click listener.
+     *
+     * @param centerList The list of Center objects to be displayed.
+     * @param listener   The listener to handle item click events.
+     */
     public CenterAdapter(List<Center> centerList, OnItemClickListener listener) {
         this.centerList = centerList;
         this.listener = listener;
     }
 
+    /**
+     * Called when RecyclerView needs a new ViewHolder of the given type to represent an item.
+     *
+     * @param parent   The ViewGroup into which the new View will be added after it is bound to an adapter position.
+     * @param viewType The view type of the new View.
+     * @return A new CenterViewHolder that holds a View for each item in the list.
+     */
     @NonNull
     @Override
     public CenterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -33,6 +56,13 @@ public class CenterAdapter extends RecyclerView.Adapter<CenterAdapter.CenterView
         return new CenterViewHolder(view);
     }
 
+    /**
+     * Called by RecyclerView to display the data at the specified position.
+     * This method should update the contents of the ViewHolder to reflect the item at the given position.
+     *
+     * @param holder   The CenterViewHolder which should be updated to represent the contents of the item at the given position.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull CenterViewHolder holder, int position) {
         // Get the current center object
@@ -52,17 +82,29 @@ public class CenterAdapter extends RecyclerView.Adapter<CenterAdapter.CenterView
         });
     }
 
+    /**
+     * Returns the total number of items in the data set held by the adapter.
+     *
+     * @return The total number of items in this adapter.
+     */
     @Override
     public int getItemCount() {
         return centerList.size();
     }
 
-    // ViewHolder class for handling each item in the RecyclerView
+    /**
+     * ViewHolder class for handling each item in the RecyclerView.
+     */
     public static class CenterViewHolder extends RecyclerView.ViewHolder {
 
         TextView centerName, centerAddress;
         ImageView locationIcon;  // ImageView to display the location icon
 
+        /**
+         * Constructs a CenterViewHolder, initializing the views to display a center's data.
+         *
+         * @param itemView The view of the individual item.
+         */
         public CenterViewHolder(@NonNull View itemView) {
             super(itemView);
             centerName = itemView.findViewById(R.id.text_center_name);

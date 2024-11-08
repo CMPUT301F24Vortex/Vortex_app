@@ -22,8 +22,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.bumptech.glide.Glide;
 
-
+/**
+ * EditProfileActivity allows users to edit their profile details, including their avatar.
+ * Data is stored and retrieved from Firebase Firestore and Firebase Storage.
+ */
 public class EditProfileActivity extends AppCompatActivity {
+
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private static final String TAG = "EditProfileActivity";
@@ -34,6 +38,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private Uri imageUri;
     private String oldAvatarUrl;
 
+    // Launcher for file chooser intent
     private final ActivityResultLauncher<Intent> fileChooserLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -41,6 +46,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     imageUri = result.getData().getData();
                     avatarImageView.setImageURI(imageUri);
 
+                    // Upload new avatar and update Firestore
                     if (imageUri != null) {
                         if (oldAvatarUrl != null && !oldAvatarUrl.isEmpty()) {
                             StorageReference oldAvatarRef = storage.getReferenceFromUrl(oldAvatarUrl);
@@ -70,6 +76,14 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             });
 
+    /**
+     * Called when the activity is created. Initializes Firebase instances,
+     * UI components, and loads user data.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down, this Bundle contains the data it most
+     *                           recently supplied in onSaveInstanceState(Bundle). Note: Otherwise it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +92,7 @@ public class EditProfileActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
 
+        // Initialize UI components
         firstNameEditText = findViewById(R.id.firstNameEditText);
         lastNameEditText = findViewById(R.id.lastNameEditText);
         emailEditText = findViewById(R.id.emailEditText);
@@ -102,6 +117,9 @@ public class EditProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Loads user data from Firestore and populates the UI fields.
+     */
     private void loadUserData() {
         DocumentReference docRef = db.collection("user_profile").document("XKcYtstm0zrzcdIgvLwb");
         docRef.get().addOnCompleteListener(task -> {
@@ -130,6 +148,9 @@ public class EditProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Saves updated user data to Firestore.
+     */
     private void saveUserData() {
         String firstName = firstNameEditText.getText().toString();
         String lastName = lastNameEditText.getText().toString();
@@ -147,6 +168,11 @@ public class EditProfileActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
+    /**
+     * Displays a popup menu with edit options for the avatar.
+     *
+     * @param view The view that triggered the popup menu.
+     */
     private void showPopupMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(this, view);
         MenuInflater inflater = popupMenu.getMenuInflater();
@@ -155,6 +181,12 @@ public class EditProfileActivity extends AppCompatActivity {
         popupMenu.show();
     }
 
+    /**
+     * Handles item selection from the popup menu.
+     *
+     * @param item The selected menu item.
+     * @return True if the event was handled, false otherwise.
+     */
     private boolean onMenuItemClick(MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.option_edit) {
@@ -173,6 +205,9 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Opens a file chooser to select an image for the avatar.
+     */
     private void openFileChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");

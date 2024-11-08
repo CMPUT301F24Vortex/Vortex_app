@@ -7,12 +7,25 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * OrganizerInfo displays detailed information about a specific event for the organizer.
+ * This activity retrieves event details from the intent and sets the data to corresponding TextViews.
+ */
 public class OrganizerInfo extends AppCompatActivity {
 
-
+    /**
+     * Called when the activity is created. Sets up the layout and retrieves event details from the intent,
+     * displaying the information in various TextViews.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     *                           Note: Otherwise, it is null.
+     */
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.org_events_info);
+
         // Retrieve the event details from the intent
         String eventName = getIntent().getStringExtra("EVENT_NAME");
         String classDay = getIntent().getStringExtra("CLASS_DAY");
@@ -25,8 +38,7 @@ public class OrganizerInfo extends AppCompatActivity {
         int maxPeople = getIntent().getIntExtra("MAX_PEOPLE", 0);
         String difficulty = getIntent().getStringExtra("DIFFICULTY");
 
-
-        // Set the data to TextViews or other UI components in the activity
+        // Initialize TextViews for displaying event information
         TextView eventNameTextView = findViewById(R.id.text_event_name);
         TextView classDayTextView = findViewById(R.id.text_class_day);
         TextView timeTextView = findViewById(R.id.text_time);
@@ -49,10 +61,5 @@ public class OrganizerInfo extends AppCompatActivity {
         locationTextView.setText(location);
         maxPeopleTextView.setText(String.valueOf(maxPeople));
         difficultyTextView.setText(difficulty);
-
-
-
     }
-
-
 }

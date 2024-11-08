@@ -36,7 +36,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignupActivity" />
+
         <activity android:name=".OrganizerMenu"/>
         <activity android:name=".AddEvent"/>
         <activity android:name=".OrganizerActivity"
