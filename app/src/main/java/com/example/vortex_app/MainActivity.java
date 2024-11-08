@@ -1,8 +1,15 @@
 package com.example.vortex_app;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+
+
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -46,9 +53,15 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
 
+
     private static final int NOTIFICATION_PERMISSION_CODE = 1;
     private static final String TAG = "MainActivity"; // Define TAG here
     //private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1 ;
+
+
+    private static final String PREFS_NAME = "UserPrefs";
+    private static final String KEY_SIGNED_UP = "hasSignedUp";
+
 
 
     @Override
@@ -110,7 +123,9 @@ public class MainActivity extends AppCompatActivity {
         buttonMainscreenEntrant.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Navigate to EntrantActivity
+                // Check if the user has already signed up
+//                SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+//                boolean hasSignedUp = prefs.getBoolean(KEY_SIGNED_UP, false);
                 Intent intent = new Intent(MainActivity.this, EntrantActivity.class);
                 startActivity(intent);
             }
@@ -120,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Code to navigate to OrganizerActivity can be added here
+                Intent intent = new Intent(MainActivity.this, OrganizerActivity.class);
+                startActivity(intent);
             }
         });
 

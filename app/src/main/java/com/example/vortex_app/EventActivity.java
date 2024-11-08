@@ -42,20 +42,18 @@ public class EventActivity extends AppCompatActivity {
     // Method to load event data based on the center
     private void loadEventData(String centerName) {
         eventList = new ArrayList<>();
-
         if ("Center 1".equals(centerName)) {
-            eventList.add(new Event("Event 1 at Center 1", R.drawable.sample_event_image, "Monday", "3:00pm - 5:00pm", "2025-03-01 ~ 2025-06-05", "2025-01-28", "2025-01-01", "$60", "8621 112st NW, Alberta", 20, "Beginner"));
-            eventList.add(new Event("Event 2 at Center 1", R.drawable.sample_event_image, "Tuesday", "1:00pm - 3:00pm", "2025-03-01 ~ 2025-06-05", "2025-01-28", "2025-01-01", "$50", "8621 112st NW, Alberta", 20, "Intermediate"));
-        } else if ("Center 2".equals(centerName)) {
-            // Make sure you provide all fields for Center 2 as well
-            eventList.add(new Event("Event 1 at Center 2", R.drawable.sample_event_image, "Wednesday", "10:00am - 12:00pm", "2025-03-01 ~ 2025-06-05", "2025-01-28", "2025-01-01", "$70", "1234 Oak St, Alberta", 25, "Advanced"));
-            eventList.add(new Event("Event 2 at Center 2", R.drawable.sample_event_image, "Thursday", "2:00pm - 4:00pm", "2025-03-01 ~ 2025-06-05", "2025-01-28", "2025-01-01", "$80", "1234 Oak St, Alberta", 30, "Beginner"));
-        } else {
-            // Default events for other centers
-            eventList.add(new Event("General Event 1", R.drawable.sample_event_image, "Friday", "9:00am - 11:00am", "2025-03-01 ~ 2025-06-05", "2025-01-28", "2025-01-01", "$40", "5678 Maple St, Alberta", 15, "Beginner"));
-            eventList.add(new Event("General Event 2", R.drawable.sample_event_image, "Saturday", "11:00am - 1:00pm", "2025-03-01 ~ 2025-06-05", "2025-01-28", "2025-01-01", "$45", "5678 Maple St, Alberta", 18, "Intermediate"));
+            eventList.add(new Event("Event 1 at Center 1", R.drawable.sample_event_image,
+                    "Monday", "3:00pm - 5:00pm", "2025-03-01 ~ 2025-06-05",
+                    "2025-01-28", "2025-01-01", "60",
+                    "8621 112st NW, Alberta", 20, "Beginner", true));  // Geolocation required
+            eventList.add(new Event("Event 2 at Center 1", R.drawable.sample_event_image,
+                    "Tuesday", "1:00pm - 3:00pm", "2025-03-01 ~ 2025-06-05",
+                    "2025-01-28", "2025-01-01", "50",
+                    "8621 112st NW, Alberta", 20, "Intermediate", false));  // Geolocation not required
         }
-
     }
+
 }
+
 

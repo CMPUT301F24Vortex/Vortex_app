@@ -17,12 +17,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Vortex_App"
         tools:targetApi="31">
+
         <activity
             android:name=".NotificationsActivity"
             android:exported="false"
             android:launchMode="singleTop"/>
         <activity
             android:name=".EventsActivity"
+
             android:exported="false"
             android:launchMode="singleTop"/>
         <activity
@@ -30,9 +32,13 @@
             android:exported="false"
             android:launchMode="singleTop"/>
 
+
+            android:exported="false" />
+
         <activity android:name=".EventActivity" />
         <activity android:name=".EventInfoActivity" />
-
+        <activity android:name=".OrganizerInfo"/>
+        <activity android:name=".WaitingListActivity" />
         <activity
             android:name=".ProfileActivity"
             android:exported="false"
@@ -40,6 +46,7 @@
         <activity
             android:name=".EntrantActivity"
             android:exported="false" />
+
 
         <service
             android:name=".MyFirebaseMessagingService"
@@ -55,12 +62,28 @@
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SignupActivity" />
+        <activity android:name=".OrganizerMenu"/>
+        <activity android:name=".AddEvent"/>
+        <activity android:name=".OrganizerActivity"
+            android:exported="false"/>
+        <activity android:name=".OrgQRCodeActivity"
+            android:exported="false"/>
+        <activity android:name=".CancelledEntrantsActivity" />
+        <activity android:name=".SelectedEntrantsActivity" />
+        <activity android:name=".FinalEntrantsActivity" />
+        <activity android:name=".OrgWaitingListActivity" />
+        <activity android:name=".LocationActivity" />
+
+        <!-- Add EditProfileActivity here -->
+        <activity android:name=".EditProfileActivity" android:exported="false" />
+
     </application>
 
 </manifest>
