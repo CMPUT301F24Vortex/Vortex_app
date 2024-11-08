@@ -1,10 +1,12 @@
 package com.example.vortex_app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +50,28 @@ public class EventActivity extends AppCompatActivity {
         // Set up the RecyclerView adapter
         eventAdapter = new EventAdapter(this, eventList);  // Pass 'this' (the context) and the event list
         recyclerView.setAdapter(eventAdapter);
+
+        // Bottom Navigation View setup and event handling
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_profile) {
+                Intent intent = new Intent(this, ProfileActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.nav_events) {
+                Intent intent = new Intent(this, EventsActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.nav_notifications) {
+                Intent intent = new Intent(this, NotificationsActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.nav_home) {
+                return true;
+            }
+            return false;
+        });
     }
 
     /**
