@@ -92,7 +92,7 @@ public class EntrantActivity extends AppCompatActivity {
      * This method can be replaced or expanded with dynamic data in a real application.
      */
     private void loadCenterData() {
-        centerList.add(new Center("Center 1333", "123 Main St"));
+        centerList.add(new Center("Center 1", "123 Main St"));
         centerList.add(new Center("Center 2", "456 Oak St"));
         centerList.add(new Center("Center 3", "789 Pine St"));
         centerList.add(new Center("Center 4", "101 Maple Ave"));

@@ -2,6 +2,7 @@ package com.example.vortex_app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,6 +36,7 @@ public class EventActivity extends AppCompatActivity {
 
         // Get the center name passed from the previous activity
         String centerName = getIntent().getStringExtra("CENTER_NAME");
+        Log.d("EventActivity", "Center Name received: " + centerName);
 
         // Set the center name in the TextView
         TextView centerNameTextView = findViewById(R.id.center_name);

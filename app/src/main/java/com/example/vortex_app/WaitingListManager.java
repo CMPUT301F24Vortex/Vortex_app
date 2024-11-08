@@ -9,6 +9,13 @@ import java.util.List;
  */
 public class WaitingListManager {
     private static List<User> waitingList = new ArrayList<>();
+    // Populate the waiting list with some example users for demonstration
+    static {
+        waitingList.add(new User("John", "Doe", "john.doe@example.com", "1234567890"));
+        waitingList.add(new User("Jane", "Smith", "jane.smith@example.com", "0987654321"));
+        waitingList.add(new User("Alice", "Johnson", "alice.johnson@example.com", "5678901234"));
+        waitingList.add(new User("Bob", "Brown", "bob.brown@example.com", "4561237890"));
+    }
 
     /**
      * Adds a user to the waiting list if they are not already present.
