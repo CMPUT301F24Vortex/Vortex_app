@@ -1,19 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+
+<!-- NestedScrollView for form inputs -->
+<androidx.core.widget.NestedScrollView
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:layout_margin="16dp"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/lightGray"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
+        <!-- Event Title -->
         <TextView
             android:id="@+id/class_info"
-            android:layout_width="378dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="30dp"
@@ -23,6 +32,7 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
+        <!-- Event Name Input -->
         <EditText
             android:id="@+id/event_name_input"
             android:layout_width="match_parent"
@@ -33,6 +43,8 @@
             android:inputType="textPersonName"
             android:minHeight="48dp"
             android:padding="10dp" />
+
+        <!-- Add other input fields here as per your existing layout -->
 
         <EditText
             android:id="@+id/event_location_input"
@@ -127,6 +139,7 @@
             android:minHeight="48dp"
             android:padding="10dp" />
 
+        <!-- Example button -->
         <Button
             android:id="@+id/add_event_button"
             android:layout_width="match_parent"
@@ -136,14 +149,19 @@
             android:text="Enter"
             android:textAllCaps="false"
             android:textColor="#FFFFFF" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_weight="1" />
-
     </LinearLayout>
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
+
+
+<!-- RecyclerView positioned below the form -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
