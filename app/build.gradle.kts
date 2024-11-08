@@ -54,4 +54,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    //implementation(files("/home/alex/Android/Sdk/platforms/android-35/android.jar"))
 }
