@@ -21,6 +21,7 @@
     <string name="cancellation_list">Cancellation List</string>
     <string name="location">Location</string>
     <string name="final_list">Final List</string>
+    <string name="event_id">EVENT_ID</string>
 
 
 </resources>

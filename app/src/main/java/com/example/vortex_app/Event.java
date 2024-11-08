@@ -1,7 +1,7 @@
 package com.example.vortex_app;
 import java.io.Serializable;
 
-public class Event implements Serializable{
+public class Event {
     private String name;
     private int imageResId;
     private String classDay;
@@ -15,6 +15,8 @@ public class Event implements Serializable{
     private String difficulty;
     private boolean requiresGeolocation;
     private String eventID;
+
+
 
     // Constructor with all parameters
     public Event(String name, int imageResId, String classDay, String time, String period,
@@ -34,6 +36,14 @@ public class Event implements Serializable{
         this.requiresGeolocation = requiresGeolocation;
     }
 
+    public Event(String name, String eventID) {
+
+        this.name = name;
+        this.eventID = eventID;
+
+    }
+
+
     // Getters for each field
     public String getName() { return name; }
     public int getImageResId() { return imageResId; }
@@ -46,14 +56,10 @@ public class Event implements Serializable{
     public String getLocation() { return location; }
     public int getMaxPeople() { return maxPeople; }
     public String getDifficulty() { return difficulty; }
+    public String getEventID(){ return eventID;}
     public boolean isRequiresGeolocation() { return requiresGeolocation; }
 
-    public String getEventID() {
-        return eventID;
-    }
 
 
-    public void setEventID(String eventID) {
-        this.eventID = eventID;
-    }
+
 }

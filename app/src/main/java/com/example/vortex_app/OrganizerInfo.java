@@ -1,58 +1,85 @@
 package com.example.vortex_app;
 
-import android.content.Intent;
+
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.util.Log;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 public class OrganizerInfo extends AppCompatActivity {
 
+    private TextView eventNameTextView;
+    private TextView classDayTextView;
+    private TextView timeTextView;
+    private TextView periodTextView;
+    private TextView registrationDueDateTextView;
+    private TextView registrationOpenDateTextView;
+    private TextView priceTextView;
+    private TextView locationTextView;
+    private TextView maxPeopleTextView;
+    private TextView difficultyTextView;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.org_events_info);
-        // Retrieve the event details from the intent
-        String eventName = getIntent().getStringExtra("EVENT_NAME");
-        String classDay = getIntent().getStringExtra("CLASS_DAY");
-        String time = getIntent().getStringExtra("TIME");
-        String period = getIntent().getStringExtra("PERIOD");
-        String registrationDueDate = getIntent().getStringExtra("REG_DUE_DATE");
-        String registrationOpenDate = getIntent().getStringExtra("REG_OPEN_DATE");
-        String price = getIntent().getStringExtra("PRICE");
-        String location = getIntent().getStringExtra("LOCATION");
-        int maxPeople = getIntent().getIntExtra("MAX_PEOPLE", 0);
-        String difficulty = getIntent().getStringExtra("DIFFICULTY");
 
 
-        // Set the data to TextViews or other UI components in the activity
-        TextView eventNameTextView = findViewById(R.id.text_event_name);
-        TextView classDayTextView = findViewById(R.id.text_class_day);
-        TextView timeTextView = findViewById(R.id.text_time);
-        TextView periodTextView = findViewById(R.id.text_period);
-        TextView registrationDueDateTextView = findViewById(R.id.text_registration_due_date);
-        TextView registrationOpenDateTextView = findViewById(R.id.text_registration_open_date);
-        TextView priceTextView = findViewById(R.id.text_price);
-        TextView locationTextView = findViewById(R.id.text_location);
-        TextView maxPeopleTextView = findViewById(R.id.text_max_people);
-        TextView difficultyTextView = findViewById(R.id.text_difficulty);
-
-        // Set values to the TextViews
-        eventNameTextView.setText(eventName);
-        classDayTextView.setText(classDay);
-        timeTextView.setText(time);
-        periodTextView.setText(period);
-        registrationDueDateTextView.setText(registrationDueDate);
-        registrationOpenDateTextView.setText(registrationOpenDate);
-        priceTextView.setText(price);
-        locationTextView.setText(location);
-        maxPeopleTextView.setText(String.valueOf(maxPeople));
-        difficultyTextView.setText(difficulty);
-
-
-
+        String eventID = getIntent().getStringExtra("EVENT_ID");
+        eventNameTextView = findViewById(R.id.text_event_name);
+        classDayTextView = findViewById(R.id.text_class_day);
+        timeTextView = findViewById(R.id.text_time);
+        periodTextView = findViewById(R.id.text_period);
+        registrationDueDateTextView = findViewById(R.id.text_registration_due_date);
+        registrationOpenDateTextView = findViewById(R.id.text_registration_open_date);
+        priceTextView = findViewById(R.id.text_price);
+        locationTextView = findViewById(R.id.text_location);
+        maxPeopleTextView = findViewById(R.id.text_max_people);
+        difficultyTextView = findViewById(R.id.text_difficulty);
+        loadEventDetails(eventID);
     }
 
+    private void loadEventDetails(String eventID) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference eventRef = db.collection("events").document(eventID);
 
+        // Fetch the document
+        eventRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document != null && document.exists()) {
+                    // Get the event details from the document
+                    String eventName = document.getString("eventName");
+                    String classDay = document.getString("classDay");
+                    String time = document.getString("time");
+                    String period = document.getString("period");
+                    String registrationDueDate = document.getString("regDueDate");
+                    String registrationOpenDate = document.getString("regOpenDate");
+                    String price = document.getString("price");
+                    String location = document.getString("eventLocation");
+                    int maxPeople = document.getLong("maxPeople") != null ? document.getLong("maxPeople").intValue() : 0;
+                    String difficulty = document.getString("difficulty");
+
+
+                    eventNameTextView.setText(eventName);
+                    classDayTextView.setText(classDay);
+                    timeTextView.setText(time);
+                    periodTextView.setText(period);
+                    registrationDueDateTextView.setText(registrationDueDate);
+                    registrationOpenDateTextView.setText(registrationOpenDate);
+                    priceTextView.setText(String.valueOf(price));
+                    locationTextView.setText(location);
+                    maxPeopleTextView.setText(String.valueOf(maxPeople));
+                    difficultyTextView.setText(difficulty);
+
+                }
+
+            }
+
+
+        });
+    }
 }
