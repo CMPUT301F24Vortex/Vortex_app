@@ -1,21 +1,30 @@
 package com.example.vortex_app;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
-import com.example.vortex_app.User;
-import com.example.vortex_app.User;
 
+/**
+ * {@code WaitingListActivity} is an {@link AppCompatActivity} that displays a list of users currently on the waiting list for an event.
+ * The activity retrieves a list of {@link User} objects from the {@link WaitingListManager} and displays their full names in a {@link ListView}.
+ */
 public class WaitingListActivity extends AppCompatActivity {
 
     private ListView listView;
     private ArrayAdapter<String> adapter;
     private List<String> waitingListNames;
 
+    /**
+     * Called when the activity is created. Sets up the layout, retrieves the list of users from the waiting list,
+     * extracts their full names, and populates the {@link ListView} with these names.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           then this Bundle contains the most recent data supplied by
+     *                           {@link #onSaveInstanceState(Bundle)}.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +42,4 @@ public class WaitingListActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, waitingListNames);
         listView.setAdapter(adapter);
     }
-
-
 }

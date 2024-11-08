@@ -46,7 +46,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/notification"
-            android:contentDescription="@string/notification_icon"
+            android:contentDescription="@string/notification"
             android:layout_alignParentEnd="true"
             android:layout_alignBaseline="@id/dateTextView"
             app:tint="?attr/colorPrimary" />

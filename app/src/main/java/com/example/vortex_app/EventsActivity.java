@@ -9,8 +9,21 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+/**
+ * {@code EventsActivity} is an {@link AppCompatActivity} that displays a list of events and includes
+ * a Bottom Navigation bar for navigating between different sections of the app. This activity is
+ * also configured with edge-to-edge display.
+ */
 public class EventsActivity extends AppCompatActivity {
 
+    /**
+     * Called when the activity is created. Sets up the layout with edge-to-edge display, configures
+     * padding for system bars, and sets up a Bottom Navigation View for navigation to other activities.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           then this Bundle contains the most recent data supplied by
+     *                           {@link #onSaveInstanceState(Bundle)}.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

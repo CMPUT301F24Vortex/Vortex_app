@@ -1,6 +1,5 @@
 package com.example.vortex_app;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * {@code EntrantActivity} is an {@link AppCompatActivity} that displays a list of community centers
+ * and enables users to view events at each center by clicking on a center item. It also includes
+ * functionality for adding invitations to Firestore and setting up a bottom navigation bar for navigation.
+ */
 public class EntrantActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -28,6 +32,14 @@ public class EntrantActivity extends AppCompatActivity {
     private List<Center> centerList;
     private FirebaseFirestore db;
 
+    /**
+     * Called when the activity is first created. Initializes Firestore, sets up the layout, and configures
+     * the RecyclerView and bottom navigation. Loads a list of centers to display in the RecyclerView.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           then this Bundle contains the most recent data supplied by
+     *                           {@link #onSaveInstanceState(Bundle)}.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,14 +61,11 @@ public class EntrantActivity extends AppCompatActivity {
         loadCenterData();
 
         // Set up the RecyclerView adapter and handle click events
-        centerAdapter = new CenterAdapter(centerList, new CenterAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Center center) {
-                // When an item is clicked, start EventActivity and pass the center's name
-                Intent intent = new Intent(EntrantActivity.this, EventActivity.class);
-                intent.putExtra("CENTER_NAME", center.getName());
-                startActivity(intent);
-            }
+        centerAdapter = new CenterAdapter(centerList, center -> {
+            // Start EventActivity and pass the center's name when an item is clicked
+            Intent intent = new Intent(EntrantActivity.this, EventActivity.class);
+            intent.putExtra("CENTER_NAME", center.getName());
+            startActivity(intent);
         });
         recyclerView.setAdapter(centerAdapter);
 
@@ -67,16 +76,13 @@ public class EntrantActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_profile) {
-                Intent intent = new Intent(this, ProfileActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, ProfileActivity.class));
                 return true;
             } else if (itemId == R.id.nav_events) {
-                Intent intent = new Intent(this, EventsActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, EventsActivity.class));
                 return true;
             } else if (itemId == R.id.nav_notifications) {
-                Intent intent = new Intent(this, NotificationsActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, NotificationsActivity.class));
                 return true;
             } else if (itemId == R.id.nav_home) {
                 return true;
@@ -85,7 +91,13 @@ public class EntrantActivity extends AppCompatActivity {
         });
     }
 
-    // Method to add an invitation to Firestore
+    /**
+     * Adds an invitation document to Firestore with details about the user and event.
+     *
+     * @param userId   The ID of the user being invited.
+     * @param eventId  The ID of the event to which the user is invited.
+     * @param accepted Indicates whether the invitation is accepted or not.
+     */
     public void addInvitation(String userId, String eventId, boolean accepted) {
         DocumentReference newInvitationRef = db.collection("invitations").document(); // Auto-generate an ID
         String invitationId = newInvitationRef.getId(); // Get the generated ID
@@ -96,17 +108,16 @@ public class EntrantActivity extends AppCompatActivity {
         invitationData.put("accepted", accepted);
 
         newInvitationRef.set(invitationData)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("Firestore", "Invitation added with ID: " + invitationId);
-                })
-                .addOnFailureListener(e -> {
-                    Log.w("Firestore", "Error adding invitation", e);
-                });
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Invitation added with ID: " + invitationId))
+                .addOnFailureListener(e -> Log.w("Firestore", "Error adding invitation", e));
     }
 
-    // Method to populate the list with data (this can be dynamic or static for now)
+    /**
+     * Populates the {@code centerList} with static data representing community centers.
+     * This can be replaced with dynamic data from Firestore or another source in the future.
+     */
     private void loadCenterData() {
-        centerList.add(new Center("Center 1333", "123 Main St"));
+        centerList.add(new Center("Center 1", "123 Main St"));
         centerList.add(new Center("Center 2", "456 Oak St"));
         centerList.add(new Center("Center 3", "789 Pine St"));
         centerList.add(new Center("Center 4", "101 Maple Ave"));

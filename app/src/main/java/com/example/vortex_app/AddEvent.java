@@ -17,28 +17,31 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * {@code AddEvent} allows organizers to add new events to the app's Firestore database.
+ * This activity collects input from multiple fields, validates it, and stores the event data.
+ * It also provides functionality to clear input fields after submission and launch the organizer's main activity.
+ *
+ * <p>This class includes various fields to gather event details such as name, location, time, registration dates, and more.
+ */
 public class AddEvent extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
     private OrganizerEventAdapter eventAdapter;
     private ArrayList<Event> eventList;
-    private EditText eventNameInput;
-    private EditText eventLocationInput;
-    private EditText eventClassDayInput; // Add more fields for inputs
-    private EditText eventTimeInput;
-    private EditText eventPeriodInput;
-    private EditText eventRegDueDateInput;
-    private EditText eventRegOpenDateInput;
-    private EditText eventPriceInput;
-    private EditText eventMaxPeopleInput;
-    private EditText eventDifficultyInput;
+    private EditText eventNameInput, eventLocationInput, eventClassDayInput, eventTimeInput, eventPeriodInput,
+            eventRegDueDateInput, eventRegOpenDateInput, eventPriceInput, eventMaxPeopleInput, eventDifficultyInput;
     private Button addButton;
 
-
-
+    /**
+     * Initializes the activity, sets up Firestore, input fields, and button listeners.
+     * Configures the RecyclerView to display the list of events.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           then this Bundle contains the most recent data supplied by {@link #onSaveInstanceState(Bundle)}.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +52,7 @@ public class AddEvent extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         eventNameInput = findViewById(R.id.event_name_input);
         eventLocationInput = findViewById(R.id.event_location_input);
         eventClassDayInput = findViewById(R.id.event_class_day_input);
@@ -60,15 +64,15 @@ public class AddEvent extends AppCompatActivity {
         eventMaxPeopleInput = findViewById(R.id.event_max_people_input);
         eventDifficultyInput = findViewById(R.id.event_difficulty_input);
         addButton = findViewById(R.id.add_event_button);
-        //eventList = (ArrayList<Event>) getIntent().getSerializableExtra("EVENT_LIST");
 
-        if (eventList == null) {
-            eventList = new ArrayList<>();
-        }
-
+        eventList = new ArrayList<>();
         addButton.setOnClickListener(v -> addEvent());
     }
 
+    /**
+     * Collects input from fields, validates data, and adds the new event to Firestore.
+     * Displays a success message and refreshes the event list if successful, or an error message on failure.
+     */
     @SuppressLint("NotifyDataSetChanged")
     private void addEvent() {
         String eventName = eventNameInput.getText().toString();
@@ -81,7 +85,7 @@ public class AddEvent extends AppCompatActivity {
         String price;
         int maxPeople;
 
-        // Input validation
+        // Validate input fields
         if (eventName.isEmpty() || eventLocation.isEmpty() || classDay.isEmpty() || time.isEmpty() ||
                 period.isEmpty() || regDueDate.isEmpty() || regOpenDate.isEmpty() ||
                 eventPriceInput.getText().toString().isEmpty() || eventMaxPeopleInput.getText().toString().isEmpty()) {
@@ -89,7 +93,7 @@ public class AddEvent extends AppCompatActivity {
             return;
         }
 
-        // Parse price and max people
+        // Parse price and max people values
         try {
             price = String.valueOf(Double.parseDouble(eventPriceInput.getText().toString()));
             maxPeople = Integer.parseInt(eventMaxPeopleInput.getText().toString());
@@ -98,6 +102,7 @@ public class AddEvent extends AppCompatActivity {
             return;
         }
 
+        // Prepare event data for Firestore
         Map<String, Object> event = new HashMap<>();
         event.put("eventName", eventName);
         event.put("eventLocation", eventLocation);
@@ -114,21 +119,20 @@ public class AddEvent extends AppCompatActivity {
         db.collection("events")
                 .add(event)
                 .addOnSuccessListener(documentReference -> {
-                    Event newEvent = new Event(eventName, R.drawable.sample_event_image, classDay, time, period, regDueDate, regOpenDate, price, eventLocation, maxPeople, eventDifficultyInput.getText().toString(), true);
+                    Event newEvent = new Event(eventName, R.drawable.sample_event_image, classDay, time, period,
+                            regDueDate, regOpenDate, price, eventLocation, maxPeople, eventDifficultyInput.getText().toString(), true);
                     eventList.add(newEvent);
                     eventAdapter.notifyDataSetChanged();
                     Toast.makeText(this, "Event added", Toast.LENGTH_SHORT).show();
                     clearInputFields();
                     launchOrganizerActivity();
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error adding event", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> Toast.makeText(this, "Error adding event", Toast.LENGTH_SHORT).show());
     }
 
-
-
-
+    /**
+     * Clears all input fields after an event is added to avoid duplicate entries or errors.
+     */
     private void clearInputFields() {
         eventNameInput.setText("");
         eventLocationInput.setText("");
@@ -140,17 +144,13 @@ public class AddEvent extends AppCompatActivity {
         eventPriceInput.setText("");
         eventMaxPeopleInput.setText("");
         eventDifficultyInput.setText("");
-
     }
 
-
-
-
+    /**
+     * Launches the {@code OrganizerActivity} after a new event is successfully added.
+     */
     private void launchOrganizerActivity() {
         Intent intent = new Intent(AddEvent.this, OrganizerActivity.class);
-        //intent.putExtra("EVENT_LIST", eventList); // Pass the event list to EventListActivity
         startActivity(intent);
     }
-
-
 }

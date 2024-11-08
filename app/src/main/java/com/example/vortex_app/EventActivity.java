@@ -9,12 +9,25 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * {@code EventActivity} is an {@link AppCompatActivity} that displays a list of events associated with a specific center.
+ * It retrieves the center name from the intent, displays it, and loads a list of events associated with the center.
+ * The events are displayed in a {@link RecyclerView} using the {@link EventAdapter}.
+ */
 public class EventActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private EventAdapter eventAdapter;
     private List<Event> eventList;
 
+    /**
+     * Called when the activity is first created. Retrieves the center name passed from the previous activity,
+     * initializes the RecyclerView, loads event data for the specified center, and sets up the adapter.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           then this Bundle contains the most recent data supplied by
+     *                           {@link #onSaveInstanceState(Bundle)}.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,15 +44,20 @@ public class EventActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view_events);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Load event data based on the center (you can replace this with dynamic data)
+        // Load event data based on the center
         loadEventData(centerName);
 
         // Set up the RecyclerView adapter
-        eventAdapter = new EventAdapter(this, eventList);  // Pass 'this' (the context) and the event list
+        eventAdapter = new EventAdapter(this, eventList);
         recyclerView.setAdapter(eventAdapter);
     }
 
-    // Method to load event data based on the center
+    /**
+     * Loads event data for the specified center. This is currently static data but can be replaced with dynamic data.
+     * The method populates the {@code eventList} with events associated with the specified center.
+     *
+     * @param centerName The name of the center for which to load events.
+     */
     private void loadEventData(String centerName) {
         eventList = new ArrayList<>();
         if ("Center 1".equals(centerName)) {
@@ -53,7 +71,4 @@ public class EventActivity extends AppCompatActivity {
                     "8621 112st NW, Alberta", 20, "Intermediate", false));  // Geolocation not required
         }
     }
-
 }
-
-

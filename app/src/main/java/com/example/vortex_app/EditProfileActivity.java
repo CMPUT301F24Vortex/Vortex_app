@@ -22,7 +22,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.bumptech.glide.Glide;
 
-
+/**
+ * {@code EditProfileActivity} is an {@link AppCompatActivity} that allows users to edit their profile information,
+ * including their name, email, contact info, device, and profile avatar. The activity supports uploading a new
+ * avatar image to Firebase Storage and saving all changes to Firebase Firestore.
+ */
 public class EditProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseStorage storage;
@@ -34,6 +38,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private Uri imageUri;
     private String oldAvatarUrl;
 
+    // Launcher for file chooser to select an image
     private final ActivityResultLauncher<Intent> fileChooserLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -70,6 +75,14 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             });
 
+    /**
+     * Called when the activity is created. Initializes Firestore, Firebase Storage, and UI components,
+     * loads user data, and sets up click listeners for saving profile changes and updating the avatar.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           then this Bundle contains the most recent data supplied by
+     *                           {@link #onSaveInstanceState(Bundle)}.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +115,10 @@ public class EditProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Loads the user's current profile data from Firestore, including name, email, contact info,
+     * device info, and avatar image URL, and displays them in the UI.
+     */
     private void loadUserData() {
         DocumentReference docRef = db.collection("user_profile").document("XKcYtstm0zrzcdIgvLwb");
         docRef.get().addOnCompleteListener(task -> {
@@ -130,6 +147,9 @@ public class EditProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Saves the user's profile data to Firestore. Updates include name, email, contact info, and device info.
+     */
     private void saveUserData() {
         String firstName = firstNameEditText.getText().toString();
         String lastName = lastNameEditText.getText().toString();
@@ -147,6 +167,11 @@ public class EditProfileActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
+    /**
+     * Displays a popup menu with options to edit or remove the avatar image.
+     *
+     * @param view The view on which to anchor the popup menu.
+     */
     private void showPopupMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(this, view);
         MenuInflater inflater = popupMenu.getMenuInflater();
@@ -155,6 +180,12 @@ public class EditProfileActivity extends AppCompatActivity {
         popupMenu.show();
     }
 
+    /**
+     * Handles menu item clicks for the popup menu. Options include selecting a new avatar image or removing the current one.
+     *
+     * @param item The selected {@link MenuItem}.
+     * @return {@code true} if the item was successfully handled, {@code false} otherwise.
+     */
     private boolean onMenuItemClick(MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.option_edit) {
@@ -173,6 +204,9 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Opens a file chooser to allow the user to select a new image for their profile avatar.
+     */
     private void openFileChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
