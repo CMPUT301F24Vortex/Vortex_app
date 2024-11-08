@@ -9,13 +9,27 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+/**
+ * EventsActivity displays a list of events and handles navigation via a bottom navigation bar.
+ * This activity supports edge-to-edge display and navigation between different sections of the app.
+ */
 public class EventsActivity extends AppCompatActivity {
 
+    /**
+     * Called when the activity is created. Sets up the layout, initializes the BottomNavigationView,
+     * and configures navigation between different sections of the app.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     *                           Note: Otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_events);
+
+        // Apply window insets for edge-to-edge display
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

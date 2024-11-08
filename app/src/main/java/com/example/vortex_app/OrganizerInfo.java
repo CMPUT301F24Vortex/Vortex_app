@@ -9,6 +9,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+/**
+ * OrganizerInfo displays detailed information about a specific event for the organizer.
+ * This activity retrieves event details from the intent and sets the data to corresponding TextViews.
+ */
 public class OrganizerInfo extends AppCompatActivity {
 
     private TextView eventNameTextView;
@@ -22,6 +26,15 @@ public class OrganizerInfo extends AppCompatActivity {
     private TextView maxPeopleTextView;
     private TextView difficultyTextView;
 
+
+    /**
+     * Called when the activity is created. Sets up the layout and retrieves event details from the intent,
+     * displaying the information in various TextViews.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     *                           Note: Otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

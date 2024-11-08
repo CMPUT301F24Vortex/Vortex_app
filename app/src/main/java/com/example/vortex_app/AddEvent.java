@@ -17,6 +17,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The AddEvent class represents an activity for adding new events.
+ * This activity allows users to input details for an event and add it to a list of events.
+ * It uses a RecyclerView to display the list of events.
+ */
 public class AddEvent extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -39,6 +44,15 @@ public class AddEvent extends AppCompatActivity {
 
 
 
+
+    /**
+     * Called when the activity is first created. Sets up the layout, initializes
+     * views, and sets up event handling for adding events.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down, this Bundle contains the data it most
+     *                           recently supplied in onSaveInstanceState(Bundle). Note: Otherwise it is null.
+     **/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +83,10 @@ public class AddEvent extends AppCompatActivity {
         addButton.setOnClickListener(v -> addEvent());
     }
 
+    /**
+     * Adds a new event based on user input. Validates input fields, creates a new Event object,
+     * adds it to the list, and updates the RecyclerView.
+     */
     @SuppressLint("NotifyDataSetChanged")
     private void addEvent() {
         String eventName = eventNameInput.getText().toString();
@@ -146,6 +164,9 @@ public class AddEvent extends AppCompatActivity {
 
 
 
+    /**
+     * Launches the OrganizerActivity and passes the list of events to it.
+     */
     private void launchOrganizerActivity() {
         Intent intent = new Intent(AddEvent.this, OrganizerActivity.class);
         //intent.putExtra("EVENT_LIST", eventList); // Pass the event list to EventListActivity

@@ -13,10 +13,23 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+/**
+ * OrganizerMenu provides options for an organizer to manage a specific event.
+ * It offers navigation to different activities such as viewing event details, handling waiting lists,
+ * generating QR codes, viewing selected entrants, and more.
+ */
 public class OrganizerMenu extends AppCompatActivity {
 
     private TextView eventNameTextView;
 
+    /**
+     * Called when the activity is created. Sets up the layout, retrieves event details from the intent,
+     * initializes buttons for different actions, and handles navigation to various activities related to the event.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     *                           Note: Otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

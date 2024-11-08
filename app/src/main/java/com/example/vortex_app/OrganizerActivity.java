@@ -1,7 +1,5 @@
 package com.example.vortex_app;
 
-
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -21,13 +19,25 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * OrganizerActivity provides an interface for event organizers to view, add, and manage events.
+ * It uses a RecyclerView to display a list of events and includes functionality to add new events.
+ */
 public class OrganizerActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private OrganizerEventAdapter eventAdapter;
     private List<Event> eventList = new ArrayList<>();
     private Button buttonNavigate;
-    
 
+
+    /**
+     * Called when the activity is created. Sets up the layout, initializes the RecyclerView and adapter,
+     * and handles interactions such as adding events and item clicks.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     *                           Note: Otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
