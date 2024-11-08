@@ -52,4 +52,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_mainscreen_organizer" />
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="VORTEX"
+        android:textStyle="bold"
+        android:textColor="@color/red"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_mainscreen_entrant"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.719" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
