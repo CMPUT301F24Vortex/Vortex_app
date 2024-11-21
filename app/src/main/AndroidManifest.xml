@@ -2,10 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
-
+    <!-- Declare camera hardware feature as optional -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -18,13 +20,9 @@
         android:theme="@style/Theme.Vortex_App"
         tools:targetApi="31">
 
+        <!-- Notifications -->
         <activity
             android:name=".NotificationsActivity"
-            android:exported="false"
-            android:launchMode="singleTop"/>
-        <activity
-            android:name=".EventsActivity"
-
             android:exported="false"
             android:launchMode="singleTop"/>
         <activity
@@ -32,43 +30,16 @@
             android:exported="false"
             android:launchMode="singleTop"/>
 
-
-            android:exported="false" />
-
-        <activity android:name=".EventActivity" />
-        <activity android:name=".EventInfoActivity" />
-        <activity android:name=".OrganizerInfo"/>
-        <activity android:name=".WaitingListActivity" />
+        <!-- Events -->
         <activity
-            android:name=".ProfileActivity"
+            android:name=".EventsActivity"
             android:exported="false"
             android:launchMode="singleTop"/>
-        <activity
-            android:name=".EntrantActivity"
-            android:exported="false" />
+        <activity android:name=".EventActivity" />
+        <activity android:name=".EventInfoActivity" />
 
-
-        <service
-            android:name=".MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
-
-
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:launchMode="singleTop">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".SignupActivity" />
+        <!-- Organizer Activities -->
+        <activity android:name=".OrganizerInfo"/>
         <activity android:name=".OrganizerMenu"/>
         <activity android:name=".AddEvent"/>
         <activity android:name=".OrganizerActivity"
@@ -81,9 +52,49 @@
         <activity android:name=".OrgWaitingListActivity" />
         <activity android:name=".LocationActivity" />
 
-        <!-- Add EditProfileActivity here -->
-        <activity android:name=".EditProfileActivity" android:exported="false" />
+        <!-- Waiting List -->
+        <activity android:name=".WaitingListActivity" />
 
+        <!-- Profile -->
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name=".EditProfileActivity"
+            android:exported="false" />
+
+        <!-- Entrant -->
+        <activity
+            android:name=".EntrantActivity"
+            android:exported="false" />
+
+        <!-- Signup -->
+        <activity android:name=".SignupActivity" />
+
+        <!-- QR Scanner -->
+        <activity
+            android:name=".QrScannerActivity"
+            android:exported="false" />
+
+        <!-- Firebase Messaging Service -->
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- Main Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
-
 </manifest>
