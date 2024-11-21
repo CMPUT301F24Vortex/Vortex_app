@@ -2,6 +2,7 @@ package com.example.vortex_app;
 
 import android.os.Bundle;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,7 +13,7 @@ import java.util.List;
 public class EventActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private EventAdapter eventAdapter;
+    private EntrantEventAdapter eventAdapter;
     private List<Event> eventList;
 
     @Override
@@ -20,40 +21,100 @@ public class EventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
-        // Get the center name passed from the previous activity
+        // Retrieve the center name from the intent
         String centerName = getIntent().getStringExtra("CENTER_NAME");
 
         // Set the center name in the TextView
         TextView centerNameTextView = findViewById(R.id.center_name);
-        centerNameTextView.setText(centerName);
+        if (centerName != null && !centerName.isEmpty()) {
+            centerNameTextView.setText(centerName);
+        } else {
+            centerNameTextView.setText("Unknown Center");
+        }
 
-        // Initialize RecyclerView
+        // Initialize the RecyclerView
         recyclerView = findViewById(R.id.recycler_view_events);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Load event data based on the center (you can replace this with dynamic data)
-        loadEventData(centerName);
+        // Load event data based on the center
+        eventList = loadEventData(centerName);
 
         // Set up the RecyclerView adapter
-        eventAdapter = new EventAdapter(this, eventList);  // Pass 'this' (the context) and the event list
+        eventAdapter = new EntrantEventAdapter(this, eventList);
         recyclerView.setAdapter(eventAdapter);
     }
 
-    // Method to load event data based on the center
-    private void loadEventData(String centerName) {
-        eventList = new ArrayList<>();
+    /**
+     * Method to load event data based on the center name.
+     *
+     * @param centerName The name of the center to filter events for.
+     * @return A list of events associated with the specified center.
+     */
+    private List<Event> loadEventData(String centerName) {
+        List<Event> events = new ArrayList<>();
+
         if ("Center 1".equals(centerName)) {
-            eventList.add(new Event("Event 1 at Center 1", R.drawable.sample_event_image,
-                    "Monday", "3:00pm - 5:00pm", "2025-03-01 ~ 2025-06-05",
-                    "2025-01-28", "2025-01-01", "60",
-                    "8621 112st NW, Alberta", 20, "Beginner", true));  // Geolocation required
-            eventList.add(new Event("Event 2 at Center 1", R.drawable.sample_event_image,
-                    "Tuesday", "1:00pm - 3:00pm", "2025-03-01 ~ 2025-06-05",
-                    "2025-01-28", "2025-01-01", "50",
-                    "8621 112st NW, Alberta", 20, "Intermediate", false));  // Geolocation not required
+            events.add(new Event(
+                    "Event 1 at Center 1",
+                    R.drawable.sample_event_image,
+                    "Monday",
+                    "3:00pm - 5:00pm",
+                    "2025-03-01 ~ 2025-06-05",
+                    "2025-01-28",
+                    "2025-01-01",
+                    "60",
+                    "8621 112st NW, Alberta",
+                    20,
+                    "Beginner",
+                    true
+            ));
+            events.add(new Event(
+                    "Event 2 at Center 1",
+                    R.drawable.sample_event_image,
+                    "Tuesday",
+                    "1:00pm - 3:00pm",
+                    "2025-03-01 ~ 2025-06-05",
+                    "2025-01-28",
+                    "2025-01-01",
+                    "50",
+                    "8621 112st NW, Alberta",
+                    15,
+                    "Intermediate",
+                    false
+            ));
+        } else if ("Center 2".equals(centerName)) {
+            events.add(new Event(
+                    "Event 1 at Center 2",
+                    R.drawable.sample_event_image,
+                    "Wednesday",
+                    "10:00am - 12:00pm",
+                    "2025-03-01 ~ 2025-06-05",
+                    "2025-01-28",
+                    "2025-01-01",
+                    "70",
+                    "8711 120st NW, Alberta",
+                    25,
+                    "Advanced",
+                    true
+            ));
+        } else {
+            // Fallback for unknown centers
+            events.add(new Event(
+                    "General Event",
+                    R.drawable.sample_event_image,
+                    "Friday",
+                    "2:00pm - 4:00pm",
+                    "2025-03-01 ~ 2025-06-05",
+                    "2025-01-28",
+                    "2025-01-01",
+                    "40",
+                    "8621 112st NW, Alberta",
+                    10,
+                    "All Levels",
+                    false
+            ));
         }
+
+        return events;
     }
-
 }
-
-

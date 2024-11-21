@@ -2,23 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <!-- Heading TextView -->
+    <TextView
+        android:id="@+id/organizer_heading"
         android:layout_width="match_parent"
-        android:layout_height="729dp" />
+        android:layout_height="wrap_content"
+        android:text="Organizer Events"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
 
+    <!-- RecyclerView for displaying event list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_events"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical" />
+
+    <!-- Button for Adding New Events (Optional) -->
     <Button
         android:id="@+id/button_add_event"
-        android:layout_width="200dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="#FF0000"
         android:text="Add Event"
-        android:textAllCaps="false"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/red"
         android:textColor="@android:color/white" />
-
-
 </LinearLayout>

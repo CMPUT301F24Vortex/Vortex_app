@@ -49,8 +49,9 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.recyclerview:recyclerview:1.3.1")
 
-    // ZXing for QR code functionality
+    // ZXing for QR code scanning
     implementation("com.google.zxing:core:3.5.1")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0") // ZXing Android
 
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.12.0")

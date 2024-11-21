@@ -12,12 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.EventViewHolder> {
+public class EntrantEventAdapter extends RecyclerView.Adapter<EntrantEventAdapter.EventViewHolder> {
 
     private final List<Event> eventList;
     private final Context context;
 
-    public OrganizerEventAdapter(Context context, List<Event> eventList) {
+    public EntrantEventAdapter(Context context, List<Event> eventList) {
         this.context = context;
         this.eventList = eventList;
     }
@@ -37,9 +37,9 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         // Bind event data
         holder.eventName.setText(event.getName());
 
-        // Click listener for Organizer role
+        // Click listener for Entrant role
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, OrganizerMenu.class);
+            Intent intent = new Intent(context, EventInfoActivity.class);
             intent.putExtra("EVENT_ID", event.getEventID());
             intent.putExtra("EVENT_NAME", event.getName());
             context.startActivity(intent);
