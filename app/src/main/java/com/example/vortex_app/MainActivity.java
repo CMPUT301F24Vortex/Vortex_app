@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void navigateToOrganizer() {
         Toast.makeText(this, "Organizer role selected", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, OrganizerActivity.class);
+        startActivity(intent);
     }
 
     private void navigateToAdmin() {
