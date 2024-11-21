@@ -1,102 +1,118 @@
 package com.example.vortex_app;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.DocumentSnapshot;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EventInfoActivity extends AppCompatActivity {
 
-    private DatabaseReference databaseRef;
-    private FirebaseFirestore firestore;
-    private User currentUser; // Object to hold the user's profile data
+    private static final String TAG = "EventInfoActivity";
+
+    private TextView eventNameTextView, classDayTextView, timeTextView, periodTextView, locationTextView, priceTextView;
+    private Button joinWaitingListButton;
+
+    private String eventID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_info);
 
-        // Retrieve event details passed via Intent
-        String eventID = getIntent().getStringExtra("EVENT_ID");
-        String eventName = getIntent().getStringExtra("EVENT_NAME");
+        // Initialize views
+        eventNameTextView = findViewById(R.id.text_event_name);
+        classDayTextView = findViewById(R.id.text_class_day);
+        timeTextView = findViewById(R.id.text_time);
+        periodTextView = findViewById(R.id.text_period);
+        locationTextView = findViewById(R.id.text_location);
+        priceTextView = findViewById(R.id.text_price);
+        joinWaitingListButton = findViewById(R.id.button_join_waiting_list);
 
-        // Set up views
-        TextView eventNameTextView = findViewById(R.id.text_event_name);
-        Button joinWaitingListButton = findViewById(R.id.button_join_waiting_list);
-
-        eventNameTextView.setText(eventName != null ? eventName : "No Event Name");
-
-        // Initialize Firebase database reference for the event's waiting list
-        if (eventID != null) {
-            databaseRef = FirebaseDatabase.getInstance().getReference("events").child(eventID).child("waiting_list");
-        } else {
-            Toast.makeText(this, "Event ID is missing. Cannot join waiting list.", Toast.LENGTH_SHORT).show();
+        // Get eventID from intent
+        eventID = getIntent().getStringExtra("EVENT_ID");
+        if (eventID == null || eventID.isEmpty()) {
+            Toast.makeText(this, "Event ID not found.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Initialize Firestore instance
-        firestore = FirebaseFirestore.getInstance();
+        // Load event details
+        loadEventDetails(eventID);
 
-        // Fetch and store user profile data
-        fetchUserProfile();
-
-        // Set up the Join Waiting List button
-        joinWaitingListButton.setOnClickListener(v -> {
-            if (currentUser != null) {
-                addUserToWaitingList(currentUser, eventID);
-            } else {
-                Toast.makeText(EventInfoActivity.this, "User profile not loaded. Cannot join waiting list.", Toast.LENGTH_SHORT).show();
-            }
-        });
+        // Set up Join Waiting List button
+        joinWaitingListButton.setOnClickListener(view -> joinWaitingList());
     }
 
-    /**
-     * Fetches the user's profile data from Firestore.
-     */
-    private void fetchUserProfile() {
-        DocumentReference docRef = firestore.collection("user_profile").document("XKcYtstm0zrzcdIgvLwb");
-        docRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                DocumentSnapshot document = task.getResult();
-                if (document.exists()) {
-                    currentUser = new User(
-                            document.getString("firstName"),
-                            document.getString("lastName"),
-                            document.getString("email"),
-                            document.getString("contactInfo"),
-                            document.getId() // Use Firestore document ID as the unique user ID
-                    );
-                }
-            } else {
-                Toast.makeText(this, "Failed to load user profile.", Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void loadEventDetails(String eventID) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("events")
+                .document(eventID)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Populate the UI with event details
+                        String eventName = documentSnapshot.getString("eventName");
+                        String classDay = documentSnapshot.getString("classDay");
+                        String time = documentSnapshot.getString("time");
+                        String period = documentSnapshot.getString("period");
+                        String location = documentSnapshot.getString("eventLocation");
+                        String price = documentSnapshot.getString("price");
+
+                        eventNameTextView.setText(eventName != null ? eventName : "Details unavailable");
+                        classDayTextView.setText(classDay != null ? classDay : "Details unavailable");
+                        timeTextView.setText(time != null ? time : "Details unavailable");
+                        periodTextView.setText(period != null ? period : "Details unavailable");
+                        locationTextView.setText(location != null ? location : "Details unavailable");
+                        priceTextView.setText(price != null ? "$" + price : "Details unavailable");
+                    } else {
+                        Toast.makeText(this, "Event details not found.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error fetching event details", e);
+                    Toast.makeText(this, "Failed to load event details.", Toast.LENGTH_SHORT).show();
+                });
     }
 
-    /**
-     * Adds a user to the event's waiting list in Firebase.
-     *
-     * @param user    The user to add.
-     * @param eventID The event ID.
-     */
-    private void addUserToWaitingList(User user, String eventID) {
-        if (user == null || user.getUserID() == null) {
-            Toast.makeText(this, "Invalid user data. Cannot join waiting list.", Toast.LENGTH_SHORT).show();
+    private void joinWaitingList() {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+
+        if (currentUser == null) {
+            Toast.makeText(this, "You must be signed in to join the waiting list.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        databaseRef.child(user.getUserID()).setValue(user).addOnSuccessListener(aVoid -> {
-            Toast.makeText(EventInfoActivity.this, "You have joined the waiting list for event: " + eventID, Toast.LENGTH_SHORT).show();
-        }).addOnFailureListener(e -> {
-            Toast.makeText(EventInfoActivity.this, "Failed to join the waiting list. Please try again.", Toast.LENGTH_SHORT).show();
-        });
+        String userID = currentUser.getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> waitingListEntry = new HashMap<>();
+        waitingListEntry.put("userID", userID);
+        waitingListEntry.put("timestamp", FieldValue.serverTimestamp());
+
+        db.collection("events")
+                .document(eventID)
+                .collection("waitingLists")
+                .document(userID)
+                .set(waitingListEntry)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Successfully joined the waiting list.", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to join waiting list", e);
+                    Toast.makeText(this, "Failed to join the waiting list: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }
