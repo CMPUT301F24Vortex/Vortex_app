@@ -34,6 +34,7 @@ android {
 dependencies {
     // Firebase BOM for version management
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-auth:21.3.0") // Latest version as of now
 
     // Firebase core services
     implementation("com.google.firebase:firebase-database")       // Realtime Database
