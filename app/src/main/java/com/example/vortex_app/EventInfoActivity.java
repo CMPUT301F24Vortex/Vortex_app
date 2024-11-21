@@ -6,7 +6,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,12 +23,18 @@ public class EventInfoActivity extends AppCompatActivity {
     private TextView eventNameTextView, classDayTextView, timeTextView, periodTextView, locationTextView, priceTextView;
     private Button joinWaitingListButton;
 
-    private String eventID;
+    private String eventID; // ID of the event
+    private FirebaseFirestore db; // Firestore instance
+    private FirebaseAuth auth; // FirebaseAuth instance
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_info);
+
+        // Initialize Firebase instances
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
 
         // Initialize views
         eventNameTextView = findViewById(R.id.text_event_name);
@@ -48,21 +53,19 @@ public class EventInfoActivity extends AppCompatActivity {
         }
 
         // Load event details
-        loadEventDetails(eventID);
+        loadEventDetails();
 
-        // Set up Join Waiting List button
+        // Set up "Join Waiting List" button
         joinWaitingListButton.setOnClickListener(view -> joinWaitingList());
     }
 
-    private void loadEventDetails(String eventID) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+    private void loadEventDetails() {
         db.collection("events")
                 .document(eventID)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        // Populate the UI with event details
+                        // Populate UI with event details
                         String eventName = documentSnapshot.getString("eventName");
                         String classDay = documentSnapshot.getString("classDay");
                         String time = documentSnapshot.getString("time");
@@ -87,7 +90,6 @@ public class EventInfoActivity extends AppCompatActivity {
     }
 
     private void joinWaitingList() {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
 
         if (currentUser == null) {
@@ -96,7 +98,6 @@ public class EventInfoActivity extends AppCompatActivity {
         }
 
         String userID = currentUser.getUid();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> waitingListEntry = new HashMap<>();
         waitingListEntry.put("userID", userID);
