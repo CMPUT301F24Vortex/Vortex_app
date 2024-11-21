@@ -37,7 +37,7 @@
         android:id="@+id/button_scan_qr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Scan QR code"
+        android:text="Scan QR Code"
         android:textColor="@android:color/white"
         android:backgroundTint="@android:color/holo_red_dark"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"

@@ -49,6 +49,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.zxing.integration.android.IntentIntegrator;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -164,4 +165,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
+
+
 }

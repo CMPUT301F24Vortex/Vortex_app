@@ -16,19 +16,20 @@ public class QrScannerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Start the QR scanner
-        new IntentIntegrator(this)
-                .setOrientationLocked(false) // Allows orientation changes
-                .setBeepEnabled(true)       // Enable beep sound on scan success
-                .setPrompt("Scan a QR Code") // Display a prompt text
-                .initiateScan();            // Start the scanning process
+        // Start the QR code scanning process
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setOrientationLocked(false); // Allow orientation changes
+        integrator.setBeepEnabled(true);       // Enable beep sound
+        integrator.setPrompt("Scan a QR code"); // Add a prompt message
+        integrator.setCaptureActivity(CustomScannerActivity.class); // Use CustomScannerActivity
+        integrator.initiateScan();             // Start scanning
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Process the scan result
+        // Handle the QR code scan result
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() != null) {
@@ -36,13 +37,13 @@ public class QrScannerActivity extends AppCompatActivity {
                 String scannedContent = result.getContents();
                 Toast.makeText(this, "Scanned: " + scannedContent, Toast.LENGTH_LONG).show();
 
-                // Optionally, navigate to another activity with the scanned content
-                Intent intent = new Intent(QrScannerActivity.this, EventInfoActivity.class);
+                // Navigate to another activity with the scanned content
+                Intent intent = new Intent(this, EventInfoActivity.class);
                 intent.putExtra("EVENT_ID", scannedContent);
                 startActivity(intent);
                 finish();
             } else {
-                // User cancelled the scan
+                // Scan canceled
                 Toast.makeText(this, "Scan canceled", Toast.LENGTH_SHORT).show();
             }
         }
