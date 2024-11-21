@@ -1,14 +1,11 @@
 package com.example.vortex_app;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
-import com.example.vortex_app.User;
-import com.example.vortex_app.User;
 
 public class WaitingListActivity extends AppCompatActivity {
 
@@ -23,16 +20,33 @@ public class WaitingListActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.list_view_waiting_list);
 
-        // Convert User objects to a list of names for display
+        // Initialize list and adapter
         waitingListNames = new ArrayList<>();
-        for (User user : WaitingListManager.getWaitingList()) {
-            waitingListNames.add(user.getFullName());
-        }
-
-        // Set up the adapter to display user names
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, waitingListNames);
         listView.setAdapter(adapter);
+
+
+        // Add a new user to the waiting list
+        User newUser = new User("John", "Doe", "john.doe@example.com", "1234567890", "user123");
+        WaitingListManager.addUserToWaitingList(newUser);
+
+
+
+        // Fetch data from Firebase
+        WaitingListManager.fetchWaitingList(new WaitingListManager.WaitingListCallback() {
+            @Override
+            public void onWaitingListUpdated(List<User> updatedWaitingList) {
+                waitingListNames.clear();
+                for (User user : updatedWaitingList) {
+                    waitingListNames.add(user.getFullName()); // Update UI with user names
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace(); // Log errors
+            }
+        });
     }
-
-
 }
