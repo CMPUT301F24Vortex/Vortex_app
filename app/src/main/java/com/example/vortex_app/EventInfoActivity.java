@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -90,30 +92,54 @@ public class EventInfoActivity extends AppCompatActivity {
     }
 
     private void joinWaitingList() {
-        FirebaseUser currentUser = auth.getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        if (currentUser == null) {
-            Toast.makeText(this, "You must be signed in to join the waiting list.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // Use the predefined userID 020422
+        String userID = "020422";
 
-        String userID = currentUser.getUid();
+        // Reference to the user profile document
+        DocumentReference userDocRef = db.collection("user_profile").document(userID);
 
-        Map<String, Object> waitingListEntry = new HashMap<>();
-        waitingListEntry.put("userID", userID);
-        waitingListEntry.put("timestamp", FieldValue.serverTimestamp());
+        userDocRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot userDoc = task.getResult();
+                if (userDoc != null && userDoc.exists()) {
+                    // Fetch user data
+                    String firstName = userDoc.getString("firstName");
+                    String lastName = userDoc.getString("lastName");
+                    String email = userDoc.getString("email");
 
-        db.collection("events")
-                .document(eventID)
-                .collection("waitingLists")
-                .document(userID)
-                .set(waitingListEntry)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Successfully joined the waiting list.", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to join waiting list", e);
-                    Toast.makeText(this, "Failed to join the waiting list: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                    // Prepare waiting list entry
+                    Map<String, Object> waitingListEntry = new HashMap<>();
+                    waitingListEntry.put("userID", userID);
+                    waitingListEntry.put("firstName", firstName);
+                    waitingListEntry.put("lastName", lastName);
+                    waitingListEntry.put("email", email);
+                    waitingListEntry.put("timestamp", FieldValue.serverTimestamp());
+
+                    // Add entry to Firestore under the event's waiting list
+                    db.collection("events")
+                            .document(eventID)
+                            .collection("waitingLists")
+                            .document(userID)
+                            .set(waitingListEntry)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(this, "Successfully joined the waiting list.", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, "Failed to join waiting list", e);
+                                Toast.makeText(this, "Failed to join the waiting list: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+
+                } else {
+                    Toast.makeText(this, "Failed to fetch user profile. User ID not found.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Log.e(TAG, "Error fetching user profile", task.getException());
+                Toast.makeText(this, "Error: Could not fetch user profile.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+
 }

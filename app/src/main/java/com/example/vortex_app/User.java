@@ -4,65 +4,41 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private String phoneNumber;
-    private String profilePicUrl;
+    private String contactInfo;
     private String userID;
 
-    // Constructor
-    public User(String firstName, String lastName, String email, String phoneNumber, String userID) {
+    // Required empty constructor for Firestore
+    public User() {}
+
+    public User(String firstName, String lastName, String email, String contactInfo, String userID) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.userID = userID; // Initialize userID during object creation
+        this.contactInfo = contactInfo;
+        this.userID = userID;
     }
 
-    // Additional Constructor for backward compatibility (without userID)
-    public User(String firstName, String lastName, String email, String phoneNumber) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.userID = null; // Set to null if not provided
+    public String getFirstName() {
+        return firstName;
     }
 
-    // Getter for full name
-    public String getFullName() {
-        return firstName + " " + lastName;
+    public String getLastName() {
+        return lastName;
     }
 
-    // Getter for email
     public String getEmail() {
         return email;
     }
 
-    // Getter for phone number
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getContactInfo() {
+        return contactInfo;
     }
 
-    // Getter for name (alternative)
-    public String getName() {
-        return firstName + " " + lastName;
-    }
-
-    // Getter for profile picture URL
-    public String getProfilePicUrl() {
-        return profilePicUrl;
-    }
-
-    // Getter for userID
     public String getUserID() {
         return userID;
     }
 
-    // Setter for profile picture URL
-    public void setProfilePicUrl(String profilePicUrl) {
-        this.profilePicUrl = profilePicUrl;
-    }
-
-    // Setter for userID
-    public void setUserID(String userID) {
-        this.userID = userID;
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 }

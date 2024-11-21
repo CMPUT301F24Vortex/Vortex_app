@@ -26,7 +26,7 @@ public class OrgWaitingListAdapter extends RecyclerView.Adapter<OrgWaitingListAd
     @Override
     public void onBindViewHolder(@NonNull WaitingListViewHolder holder, int position) {
         User entrant = waitingListEntrants.get(position);
-        holder.textViewEntrantName.setText(entrant.getName());
+        holder.textViewEntrantName.setText(entrant.getFullName());
     }
 
     @Override

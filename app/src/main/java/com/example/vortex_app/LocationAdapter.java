@@ -30,7 +30,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
     @Override
     public void onBindViewHolder(@NonNull LocationViewHolder holder, int position) {
         User entrant = locationEntrants.get(position);
-        holder.textViewName.setText(entrant.getName());
+        holder.textViewName.setText(entrant.getFullName());
 
         // fix with database functionality
         //holder.textViewAddress.setText(entrant.getAddress());
