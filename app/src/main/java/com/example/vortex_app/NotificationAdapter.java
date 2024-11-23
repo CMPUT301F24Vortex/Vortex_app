@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.vortex_app.NotificationModel;
+
 
 import java.text.SimpleDateFormat;
 import java.util.List;

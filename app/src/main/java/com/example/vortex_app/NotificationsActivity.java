@@ -76,69 +76,42 @@ public class NotificationsActivity extends AppCompatActivity {
         // Initialize Firestore
         db = FirebaseFirestore.getInstance();
         fetchNotifications();
+
+
     }
 
-    /**
-     * Fetches notifications from Firestore and updates the {@link RecyclerView} with the retrieved data.
-     * This method orders notifications by timestamp in descending order and refreshes the UI upon data retrieval.
-     */
-    private void fetchNotifications() {
-        db.collection("notifications")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        notificationList.clear();
-                        for (DocumentSnapshot document : task.getResult()) {
-                            String title = document.getString("title");
-                            String message = document.getString("message");
-                            String status = document.getString("status");
-                            Date Date = document.getDate("timestamp");
-                            String id = document.getId();
 
-                            NotificationModel notification = new NotificationModel(title, message, status, id, Date);
-                            notificationList.add(notification);
+    /**
+         * Fetches notifications from Firestore and updates the {@link RecyclerView} with the retrieved data.
+         * This method orders notifications by timestamp in descending order and refreshes the UI upon data retrieval.
+         */
+        private void fetchNotifications () {
+            db.collection("notifications")
+                    .orderBy("timestamp", Query.Direction.DESCENDING)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            notificationList.clear();
+                            for (DocumentSnapshot document : task.getResult()) {
+                                String title = document.getString("title");
+                                String message = document.getString("message");
+                                String status = document.getString("status");
+                                Date Date = document.getDate("timestamp");
+                                String eventID = document.getString("eventID");
+                                String id = document.getId();
+
+
+                                NotificationModel notification = new NotificationModel(title, message, status, id, Date);
+                                notificationList.add(notification);
+
+                            }
+
+
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            Log.w("Firestore", "Error getting notifications.", task.getException());
                         }
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        Log.w("Firestore", "Error getting notifications.", task.getException());
-                    }
-                });
+                    });
+        }
     }
 
-    /**
-     * Handles marking a notification as read in Firestore.
-     * Updates the status of a specific notification to "read" and refreshes the notification list.
-     *
-     * @param notification The {@link NotificationModel} object representing the notification to be marked as read.
-     */
-    private void handleNotificationClick(NotificationModel notification) {
-        db.collection("notifications").document(notification.getId())
-                .update("status", "read")
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("Firestore", "Notification marked as read.");
-                    fetchNotifications();
-                })
-                .addOnFailureListener(e -> Log.e("Firestore", "Error updating status", e));
-    }
-
-    /**
-     * Opens the detailed view of a selected notification in {@link NotificationDetailActivity}.
-     * Marks the notification as read in Firestore before transitioning to the detailed view.
-     *
-     * @param notification The {@link NotificationModel} object representing the notification to be opened in detail view.
-     */
-    private void openNotificationDetail(NotificationModel notification) {
-        db.collection("notifications").document(notification.getId())
-                .update("status", "read")
-                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Notification marked as read."))
-                .addOnFailureListener(e -> Log.e("Firestore", "Error updating status", e));
-
-        Intent intent = new Intent(this, NotificationDetailActivity.class);
-        intent.putExtra("title", notification.getTitle());
-        intent.putExtra("message", notification.getMessage());
-        intent.putExtra("status", notification.getStatus());
-        startActivity(intent);
-    }
-
-}
