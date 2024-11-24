@@ -36,6 +36,7 @@ public class NotificationDetailActivity extends AppCompatActivity {
         // Retrieve data from the intent
         String title = getIntent().getStringExtra("title");
         String message = getIntent().getStringExtra("message");
+        String eventID = getIntent().getStringExtra("eventID");
 
         // Set data to TextViews
         TextView titleTextView = findViewById(R.id.titleTextView);

@@ -7,6 +7,11 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -16,6 +21,7 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * {@code NotificationsActivity} displays a list of notifications for the user.
@@ -45,6 +51,8 @@ public class NotificationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
+
+
 
         // Set up bottom navigation
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -78,7 +86,34 @@ public class NotificationsActivity extends AppCompatActivity {
         fetchNotifications();
 
 
+        // Schedule the background worker
+        scheduleStatusCheckWorker();
+
+
     }
+
+
+    private void scheduleStatusCheckWorker() {
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        PeriodicWorkRequest statusCheckWork = new PeriodicWorkRequest.Builder(
+                StatusCheckWorker.class,
+                15, // Repeat interval (minimum is 15 minutes)
+                TimeUnit.MINUTES
+        )
+                .setConstraints(constraints)
+                .build();
+
+        WorkManager.getInstance(getApplicationContext())
+                .enqueueUniquePeriodicWork(
+                        "StatusCheckWork",
+                        ExistingPeriodicWorkPolicy.KEEP,
+                        statusCheckWork
+                );
+    }
+
 
 
     /**
@@ -99,9 +134,10 @@ public class NotificationsActivity extends AppCompatActivity {
                                 Date Date = document.getDate("timestamp");
                                 String eventID = document.getString("eventID");
                                 String id = document.getId();
+                                String type = document.getString("type");
 
 
-                                NotificationModel notification = new NotificationModel(title, message, status, id, Date);
+                                NotificationModel notification = new NotificationModel(title, message, status, id, Date,type);
                                 notificationList.add(notification);
 
                             }

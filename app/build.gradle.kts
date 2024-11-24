@@ -64,6 +64,9 @@ dependencies {
     testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.0.1")
 
 
+    implementation ("androidx.work:work-runtime:2.8.1")
+
+
 
 
     testImplementation(libs.junit)
