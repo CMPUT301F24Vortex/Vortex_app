@@ -33,7 +33,7 @@
             android:launchMode="singleTop"/>
 
 
-            android:exported="false" />
+
 
         <activity android:name=".EventActivity" />
         <activity android:name=".EventInfoActivity" />
@@ -83,6 +83,13 @@
 
         <!-- Add EditProfileActivity here -->
         <activity android:name=".EditProfileActivity" android:exported="false" />
+
+
+
+        <!-- Admin activities here -->
+        <activity android:name=".AdminMainscreen" android:exported="false" />
+        <activity android:name=".AdminProfileScreen" android:exported="false"/>
+
 
     </application>
 

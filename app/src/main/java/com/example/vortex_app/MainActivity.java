@@ -143,7 +143,8 @@ public class MainActivity extends AppCompatActivity {
         buttonMainscreenAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Code to navigate to AdminActivity can be added here
+                Intent intent = new Intent(MainActivity.this, AdminMainscreen.class);
+                startActivity(intent);
 
             }
         });
