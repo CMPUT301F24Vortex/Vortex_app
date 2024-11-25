@@ -26,7 +26,7 @@ public class SelectedEntrantAdapter extends RecyclerView.Adapter<SelectedEntrant
     @Override
     public void onBindViewHolder(@NonNull SelectedEntrantViewHolder holder, int position) {
         User entrant = selectedEntrantList.get(position);
-        holder.textViewEntrantName.setText(entrant.getName());
+        holder.textViewEntrantName.setText(entrant.getFullName());
         //holder.textViewSignUpStatus.setText("Sign Up: " + (entrant.isConfirmed() ? "Confirmed" : "Not Confirmed"));
     }
 

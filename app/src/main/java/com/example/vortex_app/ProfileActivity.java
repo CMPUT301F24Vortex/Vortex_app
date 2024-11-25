@@ -2,6 +2,7 @@ package com.example.vortex_app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,10 +18,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 public class ProfileActivity extends AppCompatActivity {
-    // Firestore and Storage instances
+    // Firebase Firestore and Storage instances
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private static final String TAG = "ProfileActivity";
@@ -36,18 +36,18 @@ public class ProfileActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
 
-        // Setting up UI components and padding for system bars
+        // Configure UI components with padding for system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Initializing Firestore and Storage
+        // Initialize Firebase Firestore and Storage
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
 
-        // Initializing UI components
+        // Initialize UI components
         profileImageView = findViewById(R.id.profileImage);
         fullNameTextView = findViewById(R.id.fullNameTextView);
         firstNameTextView = findViewById(R.id.firstNameTextView);
@@ -57,60 +57,64 @@ public class ProfileActivity extends AppCompatActivity {
         deviceTextView = findViewById(R.id.deviceTextView);
         editButton = findViewById(R.id.editButton);
 
-        // Set up click listener for the Edit button to navigate to EditProfileActivity
+        // Set up a click listener for the Edit button to navigate to EditProfileActivity
         editButton.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
             startActivity(intent);
         });
 
-        // Load user data from Firestore
-        loadUserData();
+        // Retrieve the device's unique Android ID
+        String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.d(TAG, "ANDROID_ID: " + androidId); // Debug log for verification
 
-        // Get a reference to the Bottom Navigation View
+        // Load user data from Firestore using androidId
+        loadUserData(androidId);
+
+        // Configure the Bottom Navigation View
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.nav_profile);
 
-        // Set a new navigation item selected listener
+        // Set up navigation item selection listener
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
-                // Navigate to Home (EntrantActivity)
-                startActivity(new Intent(this, EntrantActivity.class));
+                startActivity(new Intent(this, EntrantActivity.class)); // Navigate to Home
                 return true;
             } else if (itemId == R.id.nav_events) {
-                // Navigate to EventsActivity
-                startActivity(new Intent(this, EventsActivity.class));
+                startActivity(new Intent(this, EventsActivity.class)); // Navigate to Events
                 return true;
             } else if (itemId == R.id.nav_notifications) {
-                // Navigate to NotificationsActivity
-                startActivity(new Intent(this, NotificationsActivity.class));
+                startActivity(new Intent(this, NotificationsActivity.class)); // Navigate to Notifications
                 return true;
             } else if (itemId == R.id.nav_profile) {
-                // Already in Profile, do nothing
-                return true;
+                return true; // Already in Profile
             }
             return false;
         });
     }
 
-    // Method to load user data from Firestore
-    private void loadUserData() {
-        DocumentReference docRef = db.collection("user_profile").document("XKcYtstm0zrzcdIgvLwb");
+    /**
+     * Loads user data from Firestore using the device's androidId.
+     * If the document doesn't exist, it initializes user data.
+     */
+    private void loadUserData(String androidId) {
+        DocumentReference docRef = db.collection("user_profile").document(androidId);
+
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document != null && document.exists()) {
+                    // Populate UI components with Firestore data
                     String firstName = document.getString("firstName");
                     String lastName = document.getString("lastName");
 
-                    // Set data to TextView fields
                     firstNameTextView.setText(firstName);
                     lastNameTextView.setText(lastName);
                     emailTextView.setText(document.getString("email"));
                     contactInfoTextView.setText(document.getString("contactInfo"));
                     deviceTextView.setText(document.getString("device"));
 
-                    // Update full name TextView
+                    // Update the full name TextView
                     fullNameTextView.setText(firstName + " " + lastName);
 
                     // Load avatar from Firebase Storage
@@ -122,11 +126,44 @@ public class ProfileActivity extends AppCompatActivity {
                                 .into(profileImageView);
                     }
                 } else {
-                    Log.d(TAG, "No such document");
+                    // Document does not exist, create default user data
+                    Log.d(TAG, "No such document. Initializing user data...");
+                    initializeUserData(androidId);
                 }
             } else {
-                Log.d(TAG, "get failed with ", task.getException());
+                // Log Firestore query error
+                Log.e(TAG, "Failed to load user data", task.getException());
             }
         });
+    }
+
+    /**
+     * Initializes default user data in Firestore if the document doesn't exist.
+     */
+    private void initializeUserData(String androidId) {
+        DocumentReference docRef = db.collection("user_profile").document(androidId);
+
+        // Retrieve device information (brand and model)
+        String brand = android.os.Build.BRAND; // e.g., "Samsung"
+        String model = android.os.Build.MODEL; // e.g., "Galaxy S21"
+        String deviceInfo = brand + " " + model; // Combine brand and model
+
+        // Create default user data
+        User defaultUser = new User(
+                "Default First Name",  // Default first name
+                "Default Last Name",   // Default last name
+                "default@example.com", // Default email
+                "123-456-7890",        // Default contact information
+                deviceInfo             // Device information
+        );
+
+        // Save the default user data to Firestore
+        docRef.set(defaultUser)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Default user created successfully");
+                    // Reload user data after creating the document
+                    loadUserData(androidId);
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Error creating default user", e));
     }
 }
