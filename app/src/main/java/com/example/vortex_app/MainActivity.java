@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         // Create Notification Channel
+        //StatusCheckTask..createNotificationChannel(this);
         NotificationHelper.createNotificationChannel(this);
 
         // Request notification permission

@@ -1,10 +1,22 @@
 package com.example.vortex_app;
 
+import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Constraints;
@@ -37,6 +49,41 @@ public class NotificationsActivity extends AppCompatActivity {
     private NotificationAdapter adapter;
     private List<NotificationModel> notificationList = new ArrayList<>();
     private FirebaseFirestore db;
+    private static final int REQUEST_CODE_POST_NOTIFICATIONS = 1001;
+
+
+    public static void scheduleStatusCheckAlarm(Context context) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(context, StatusCheckReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        long intervalMillis = TimeUnit.MINUTES.toMillis(15); // 15 minutes
+
+        // Schedule the repeating alarm
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setInexactRepeating(
+                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    SystemClock.elapsedRealtime() + intervalMillis,
+                    intervalMillis,
+                    pendingIntent
+            );
+        } else {
+            alarmManager.setRepeating(
+                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    SystemClock.elapsedRealtime() + intervalMillis,
+                    intervalMillis,
+                    pendingIntent
+            );
+        }
+    }
+
+
 
     /**
      * Called when the activity is first created.
@@ -52,11 +99,9 @@ public class NotificationsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
 
-
-
         // Set up bottom navigation
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.nav_events);
+        bottomNavigationView.setSelectedItemId(R.id.nav_notifications);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
@@ -71,6 +116,7 @@ public class NotificationsActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.nav_events) {
                 startActivity(new Intent(this, NotificationsActivity.class));
+                return true;
             }
             return false;
         });
@@ -85,69 +131,96 @@ public class NotificationsActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         fetchNotifications();
 
+        // Check and request notification permission
+        checkAndRequestNotificationPermission();
 
-        // Schedule the background worker
-        scheduleStatusCheckWorker();
+        // Do not schedule the worker here; it will be called after permission is granted
+    }
 
+    private void scheduleStatusCheckAlarm() {
+        scheduleStatusCheckAlarm(this);
 
     }
 
 
-    private void scheduleStatusCheckWorker() {
-        Constraints constraints = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        PeriodicWorkRequest statusCheckWork = new PeriodicWorkRequest.Builder(
-                StatusCheckWorker.class,
-                15, // Repeat interval (minimum is 15 minutes)
-                TimeUnit.MINUTES
-        )
-                .setConstraints(constraints)
-                .build();
-
-        WorkManager.getInstance(getApplicationContext())
-                .enqueueUniquePeriodicWork(
-                        "StatusCheckWork",
-                        ExistingPeriodicWorkPolicy.KEEP,
-                        statusCheckWork
-                );
-    }
-
-
-
-    /**
-         * Fetches notifications from Firestore and updates the {@link RecyclerView} with the retrieved data.
-         * This method orders notifications by timestamp in descending order and refreshes the UI upon data retrieval.
-         */
-        private void fetchNotifications () {
-            db.collection("notifications")
-                    .orderBy("timestamp", Query.Direction.DESCENDING)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            notificationList.clear();
-                            for (DocumentSnapshot document : task.getResult()) {
-                                String title = document.getString("title");
-                                String message = document.getString("message");
-                                String status = document.getString("status");
-                                Date Date = document.getDate("timestamp");
-                                String eventID = document.getString("eventID");
-                                String id = document.getId();
-                                String type = document.getString("type");
-
-
-                                NotificationModel notification = new NotificationModel(title, message, status, id, Date,type);
-                                notificationList.add(notification);
-
-                            }
-
-
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            Log.w("Firestore", "Error getting notifications.", task.getException());
-                        }
-                    });
+        if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                scheduleStatusCheckAlarm();
+            } else {
+                // Permission denied
+                Toast.makeText(this, "Notification permission denied. Notifications will not be displayed.", Toast.LENGTH_SHORT).show();
+                // You may still schedule the worker if other functionalities depend on it
+            }
         }
     }
 
+    private void checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13 or higher
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)) {
+                    // Show an explanation to the user
+                    new AlertDialog.Builder(this)
+                            .setTitle("Notification Permission Needed")
+                            .setMessage("This app requires notification permission to inform you about important updates.")
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                ActivityCompat.requestPermissions(this,
+                                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                                        REQUEST_CODE_POST_NOTIFICATIONS);
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .create()
+                            .show();
+                } else {
+                    // No explanation needed; request the permission
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                            REQUEST_CODE_POST_NOTIFICATIONS);
+                }
+            } else {
+                // Permission already granted
+                scheduleStatusCheckAlarm();
+            }
+        } else {
+            // Permission is automatically granted on SDK versions below 33
+            scheduleStatusCheckAlarm();
+        }
+    }
+
+    /**
+     * Fetches notifications from Firestore and updates the {@link RecyclerView} with the retrieved data.
+     * This method orders notifications by timestamp in descending order and refreshes the UI upon data retrieval.
+     */
+    private void fetchNotifications() {
+        db.collection("notifications")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        notificationList.clear();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String title = document.getString("title");
+                            String message = document.getString("message");
+                            String status = document.getString("status");
+                            Date date = document.getDate("timestamp");
+                            String eventID = document.getString("eventID");
+                            String id = document.getId();
+                            String type = document.getString("type");
+
+                            NotificationModel notification = new NotificationModel(title, message, status, id, date, type, eventID);
+                            notificationList.add(notification);
+                        }
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Log.w("Firestore", "Error getting notifications.", task.getException());
+                    }
+                });
+    }
+}

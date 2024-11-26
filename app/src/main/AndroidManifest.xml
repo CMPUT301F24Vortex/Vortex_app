@@ -2,10 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -18,23 +17,20 @@
         android:theme="@style/Theme.Vortex_App"
         tools:targetApi="31">
 
+        <!-- Activities -->
         <activity
             android:name=".NotificationsActivity"
             android:exported="false"
             android:launchMode="singleTop"/>
         <activity
             android:name=".EventsActivity"
-
             android:exported="false"
             android:launchMode="singleTop"/>
         <activity
             android:name=".NotificationDetailActivity"
             android:exported="false"
             android:launchMode="singleTop"/>
-
-
-            android:exported="false" />
-
+        <!-- Other activities -->
         <activity android:name=".EventActivity" />
         <activity android:name=".EventInfoActivity" />
         <activity android:name=".OrganizerInfo"/>
@@ -46,23 +42,10 @@
         <activity
             android:name=".EntrantActivity"
             android:exported="false" />
-
-
-        <service
-            android:name=".MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
-
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -80,9 +63,30 @@
         <activity android:name=".FinalEntrantsActivity" />
         <activity android:name=".OrgWaitingListActivity" />
         <activity android:name=".LocationActivity" />
-
-        <!-- Add EditProfileActivity here -->
         <activity android:name=".EditProfileActivity" android:exported="false" />
+
+        <!-- Service -->
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- Receivers -->
+        <receiver android:name=".BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".StatusCheckReceiver"
+            android:enabled="true"
+            android:exported="false">
+        </receiver>
 
     </application>
 
