@@ -113,20 +113,7 @@
         android:text="$60"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/label_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Location"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-    <TextView
-        android:id="@+id/text_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="83139 291st"
-        android:textSize="16sp" />
+
 
     <TextView
         android:id="@+id/label_max_people"
@@ -143,19 +130,6 @@
         android:text="10"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/label_difficulty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:text="Difficulty"
-        android:textSize="18sp" />
-    <TextView
-        android:id="@+id/text_difficulty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="10"
-        android:textSize="16sp" />
 
     <ImageView
         android:id="@+id/image_event"
@@ -165,6 +139,7 @@
         android:src="@drawable/sample_event_image" />
 
     <Button
+        android:id="@+id/edit_button_org"
         android:layout_width="110dp"
         android:layout_height="58dp"
         android:layout_gravity="end"
