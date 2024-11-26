@@ -24,7 +24,7 @@ public class OrganizerInfo extends AppCompatActivity {
     private TextView priceTextView;
     private TextView maxPeopleTextView;
     private ImageView posterImageView;
-    private Button editButton;
+    private Button editButton, doneButton;
 
 
     @Override
@@ -34,7 +34,9 @@ public class OrganizerInfo extends AppCompatActivity {
 
 
         String eventID = getIntent().getStringExtra("EVENT_ID");
+        String eventName = getIntent().getStringExtra("EVENT_NAME");
         editButton = findViewById(R.id.edit_button_org);
+        doneButton = findViewById(R.id.done_button);
         eventNameTextView = findViewById(R.id.text_event_name);
         classDayTextView = findViewById(R.id.text_class_day);
         timeTextView = findViewById(R.id.text_time);
@@ -48,12 +50,22 @@ public class OrganizerInfo extends AppCompatActivity {
 
 
         editButton.setOnClickListener(v -> {
-            // Pass event details to AddEvent Activity for editing
+
             Intent intent = new Intent(OrganizerInfo.this, AddEvent.class);
             intent.putExtra("EVENT_ID", eventID);
             startActivity(intent);
         });
+
+        doneButton.setOnClickListener(v -> {
+            Intent intent = new Intent(OrganizerInfo.this, OrganizerMenu.class);
+            intent.putExtra("EVENT_ID", eventID);
+            intent.putExtra("EVENT_NAME", eventName);
+            startActivity(intent);
+
+        });
     }
+
+
 
     private void loadEventDetails(String eventID) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -66,30 +78,30 @@ public class OrganizerInfo extends AppCompatActivity {
                 if (document != null && document.exists()) {
 
                     String eventName = document.getString("eventName");
-                    String classDay = document.getString("classDay");
-                    String time = document.getString("time");
+                    eventNameTextView.setText(eventName);
+                    String eventDay = document.getString("classDay");
+                    classDayTextView.setText(eventDay);
+                    String eventTime = document.getString("time");
+                    timeTextView.setText(eventTime);
                     String startPeriod = document.getString("startPeriod");
-                    String endPeriod = document.getString("endPeriod");
-                    String registrationDueDate = document.getString("regDueDate");
-                    String registrationOpenDate = document.getString("regOpenDate");
-                    String price = document.getString("price");
+                    String endPeriod  =  document.getString("endPeriod");
+                    periodTextView.setText(startPeriod + " ~ " + endPeriod);
+                    String regDueDate = document.getString("regDueDate");
+                    registrationDueDateTextView.setText(regDueDate);
+                    String regOpenDate =  document.getString("regOpenDate");
+                    registrationOpenDateTextView.setText(regOpenDate);
+                    String price  = document.getString("price");
+                    priceTextView.setText("$"+price);
+                    String maxPeople =  document.getString("maxPeople");
+                    maxPeopleTextView.setText(maxPeople);
                     String poster = document.getString("imageUrl");
                     if (poster != null && !poster.isEmpty()) {
                         Glide.with(this)
-                                .load(poster)  // the URL of the image
-                                .into(posterImageView);  // The ImageView to load the image into
+                                .load(poster)
+                                .into(posterImageView);
                     }
-                    int maxPeople = document.getLong("maxPeople") != null ? document.getLong("maxPeople").intValue() : 0;
 
 
-                    eventNameTextView.setText(eventName);
-                    classDayTextView.setText(classDay);
-                    timeTextView.setText(time);
-                    periodTextView.setText(startPeriod+"~"+ endPeriod);
-                    registrationDueDateTextView.setText(registrationDueDate);
-                    registrationOpenDateTextView.setText(registrationOpenDate);
-                    priceTextView.setText(String.valueOf(price));
-                    maxPeopleTextView.setText(String.valueOf(maxPeople));
 
 
 

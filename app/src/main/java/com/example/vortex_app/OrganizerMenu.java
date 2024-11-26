@@ -54,7 +54,7 @@ public class OrganizerMenu extends AppCompatActivity {
 
                 Intent intent = new Intent(OrganizerMenu.this, OrganizerInfo.class);
                 intent.putExtra("EVENT_ID", eventID);
-
+                intent.putExtra("EVENT_NAME", eventName);
                 startActivity(intent);
 
             }

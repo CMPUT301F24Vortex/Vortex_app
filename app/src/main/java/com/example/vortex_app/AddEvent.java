@@ -69,6 +69,8 @@ public class AddEvent extends AppCompatActivity {
         geoLocationSpinner = findViewById(R.id.spinnerGeoLocation);
         addButton = findViewById(R.id.add_event_button);
         uploadButton = findViewById(R.id.upload_button);
+
+
         imageUploadBox = findViewById(R.id.image_upload_box);
 
         // Get the eventID passed from OrganizerInfo (for editing an existing event)
@@ -116,8 +118,10 @@ public class AddEvent extends AppCompatActivity {
                     String regOpenDate = document.getString("regOpenDate");
                     String price = document.getString("price");
                     String poster = document.getString("imageUrl");
+                    String maxPeople = document.getString("maxPeople");
 
-                    int maxPeople = document.getLong("maxPeople") != null ? document.getLong("maxPeople").intValue() : 0;
+
+
 
                     eventNameInput.setText(eventName);
                     eventLocationInput.setText(eventLocation);
@@ -256,13 +260,34 @@ public class AddEvent extends AppCompatActivity {
         if (eventID != null) {
             // Update existing event
             db.collection("events").document(eventID).set(event)
-                    .addOnSuccessListener(aVoid -> Toast.makeText(AddEvent.this, "Event updated successfully", Toast.LENGTH_SHORT).show())
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(AddEvent.this, "Event updated successfully", Toast.LENGTH_SHORT).show();
+                        navigateToOrganizerMenu(eventID,eventName);
+                    })
                     .addOnFailureListener(e -> Toast.makeText(AddEvent.this, "Failed to update event", Toast.LENGTH_SHORT).show());
         } else {
             // Add new event
             db.collection("events").add(event)
-                    .addOnSuccessListener(documentReference -> Toast.makeText(AddEvent.this, "Event added successfully", Toast.LENGTH_SHORT).show())
+                    .addOnSuccessListener(documentReference -> {
+                        Toast.makeText(AddEvent.this, "Event added successfully", Toast.LENGTH_SHORT).show();
+                        navigateToOrganizerActivity();
+                    })
                     .addOnFailureListener(e -> Toast.makeText(AddEvent.this, "Failed to add event", Toast.LENGTH_SHORT).show());
         }
+    }
+
+
+    private void navigateToOrganizerActivity() {
+        Intent intent = new Intent(AddEvent.this, OrganizerActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void navigateToOrganizerMenu(String eventID, String eventName){
+        Intent intent = new Intent(AddEvent.this, OrganizerMenu.class);
+        intent.putExtra("EVENT_ID", eventID);
+        intent.putExtra("EVENT_NAME", eventName);
+        startActivity(intent);
+        finish();
     }
 }
