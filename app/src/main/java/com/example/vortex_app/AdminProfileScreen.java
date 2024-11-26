@@ -29,7 +29,7 @@ public class AdminProfileScreen extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference usersRef;
 
-    ImageButton backButton;
+    ImageButton buttonBack;
     ListView userList;
     ArrayList<User> userDataList;
     AdminUserArrayAdapter userArrayAdapter;
@@ -50,7 +50,7 @@ public class AdminProfileScreen extends AppCompatActivity {
         userDataList = new ArrayList<>();
 
         //Set List and Button
-        backButton = findViewById(R.id.button_back);
+        buttonBack = findViewById(R.id.button_back);
         userList = findViewById(R.id.listview_users);
 
         //Set user list array adapter
@@ -87,6 +87,14 @@ public class AdminProfileScreen extends AppCompatActivity {
                 Intent intent = new Intent(AdminProfileScreen.this, AdminProfileViewer.class);
                 intent.putExtra("USERID", userID);
                 startActivity(intent);
+            }
+        });
+
+        //Set back button click listener
+        buttonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }

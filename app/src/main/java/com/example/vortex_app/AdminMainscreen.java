@@ -36,7 +36,8 @@ public class AdminMainscreen extends AppCompatActivity {
         facilityEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(AdminMainscreen.this, AdminFacilityScreen.class);
+                startActivity(intent);
             }
         });
 

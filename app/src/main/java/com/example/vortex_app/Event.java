@@ -15,6 +15,8 @@ public class Event {
     private String difficulty;
     private boolean requiresGeolocation;
     private String eventID;
+    private String posterURL;
+    private String facilityID;
 
 
 
@@ -43,6 +45,7 @@ public class Event {
 
     }
 
+    public Event () {}
 
     // Getters for each field
     public String getName() { return name; }
@@ -58,6 +61,7 @@ public class Event {
     public String getDifficulty() { return difficulty; }
     public String getEventID(){ return eventID;}
     public boolean isRequiresGeolocation() { return requiresGeolocation; }
+    public String getPosterURL() {return posterURL;}
 
 
 
