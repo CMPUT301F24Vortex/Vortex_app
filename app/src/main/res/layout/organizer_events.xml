@@ -1,35 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    >
 
-    <!-- Heading TextView -->
-    <TextView
-        android:id="@+id/organizer_heading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Organizer Events"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="16dp" />
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="350dp"
+        android:layout_marginTop="30dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="30dp"
+        android:layout_weight="1"
+        android:divider="@color/white"
+        android:dividerHeight="40dp" />
 
-    <!-- RecyclerView for displaying event list -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_events"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical" />
-
-    <!-- Button for Adding New Events (Optional) -->
     <Button
         android:id="@+id/button_add_event"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add Event"
-        android:layout_marginTop="16dp"
+        android:layout_width="150dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center_horizontal"
         android:backgroundTint="@color/red"
-        android:textColor="@android:color/white" />
+        android:layout_marginBottom="16dp"
+        android:text="Create" />
+
 </LinearLayout>
