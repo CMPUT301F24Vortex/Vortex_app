@@ -19,6 +19,7 @@ public class NotificationModel {
     private Date TimeStamp;
     private String type;
     private String eventID;
+    private String userID;
 
     /**
      * Constructs a {@code NotificationModel} instance with the specified parameters.
@@ -29,7 +30,7 @@ public class NotificationModel {
      * @param id        The Firestore document ID associated with the notification.
      * @param Timestamp The timestamp indicating when the notification was created or last updated.
      */
-    public NotificationModel(String title, String message, String status, String id, Date Timestamp, String type, String eventID) {
+    public NotificationModel(String title, String message, String status, String id, Date Timestamp, String type, String eventID, String userID) {
         this.title = title;
         this.message = message;
         this.status = status;
@@ -37,6 +38,7 @@ public class NotificationModel {
         this.eventID = eventID;
         this.TimeStamp = Timestamp;
         this.type = type;
+        this.userID = userID;
     }
 
     /**
@@ -88,6 +90,8 @@ public class NotificationModel {
 
 
     public String getType(){return type;}
+
+    public String getUserID(){return userID;}
 }
 
 

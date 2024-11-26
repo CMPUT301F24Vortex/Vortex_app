@@ -213,8 +213,9 @@ public class NotificationsActivity extends AppCompatActivity {
                             String eventID = document.getString("eventID");
                             String id = document.getId();
                             String type = document.getString("type");
+                            String userID = document.getString("userID");
 
-                            NotificationModel notification = new NotificationModel(title, message, status, id, date, type, eventID);
+                            NotificationModel notification = new NotificationModel(title, message, status, id, date, type, eventID, userID);
                             notificationList.add(notification);
                         }
                         adapter.notifyDataSetChanged();
