@@ -6,13 +6,10 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -120,7 +117,7 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(new Intent(this, EntrantActivity.class));
                 return true;
             } else if (id == R.id.nav_events) {
-                startActivity(new Intent(this, EventsActivity.class));
+                startActivity(new Intent(this, ManageEventsActivity.class));
                 return true;
             } else if (id == R.id.nav_notifications) {
                 startActivity(new Intent(this, NotificationsActivity.class));

@@ -29,7 +29,7 @@
 
         <!-- Events -->
         <activity
-            android:name=".EventsActivity"
+            android:name=".ManageEventsActivity"
             android:exported="false"
             android:launchMode="singleTop"/>
         <activity android:name=".EventActivity" />

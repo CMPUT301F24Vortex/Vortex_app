@@ -56,7 +56,7 @@ public class EntrantActivity extends AppCompatActivity {
                 startActivity(new Intent(this, ProfileActivity.class));
                 return true;
             } else if (itemId == R.id.nav_events) {
-                startActivity(new Intent(this, EventsActivity.class));
+                startActivity(new Intent(this, ManageEventsActivity.class));
                 return true;
             } else if (itemId == R.id.nav_notifications) {
                 startActivity(new Intent(this, NotificationsActivity.class));
