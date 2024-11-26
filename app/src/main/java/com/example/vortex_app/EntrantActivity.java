@@ -1,82 +1,59 @@
 package com.example.vortex_app;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
-import androidx.activity.EdgeToEdge;
+import android.view.View;
+import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class EntrantActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private CenterAdapter centerAdapter;
-    private List<Center> centerList;
-    private FirebaseFirestore db;
+    private EventAdapter eventAdapter; // New adapter for events
+    private List<Event> eventList; // List of events
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = FirebaseFirestore.getInstance();
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_entrant);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        setContentView(R.layout.activity_entrant_new); // Use the new layout
 
         // Initialize RecyclerView
-        recyclerView = findViewById(R.id.recycler_view_centers);
+        recyclerView = findViewById(R.id.recycler_view_events);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialize the data list and populate the data
-        centerList = new ArrayList<>();
-        loadCenterData();
+        // Initialize the data list and populate it
+        eventList = new ArrayList<>();
+        loadEventData();
 
-        // Set up the RecyclerView adapter and handle click events
-        centerAdapter = new CenterAdapter(centerList, new CenterAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Center center) {
-                // When an item is clicked, start EventActivity and pass the center's name
-                Intent intent = new Intent(EntrantActivity.this, EventActivity.class);
-                intent.putExtra("CENTER_NAME", center.getName());
-                startActivity(intent);
-            }
+        // Set up the RecyclerView adapter
+        eventAdapter = new EventAdapter(this, eventList);
+        recyclerView.setAdapter(eventAdapter);
+
+        // Set up the "Scan QR Code" button
+        Button scanQrButton = findViewById(R.id.button_scan_qr);
+        scanQrButton.setOnClickListener(v -> {
+            // TODO: Add functionality for scanning QR codes
+            Log.d("EntrantActivity", "Scan QR Code button clicked");
         });
-        recyclerView.setAdapter(centerAdapter);
 
         // Bottom Navigation View Setup
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-
-        // Set a new navigation item selected listener
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_profile) {
-                Intent intent = new Intent(this, ProfileActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, ProfileActivity.class));
                 return true;
             } else if (itemId == R.id.nav_events) {
-                Intent intent = new Intent(this, EventsActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, EventsActivity.class));
                 return true;
             } else if (itemId == R.id.nav_notifications) {
-                Intent intent = new Intent(this, NotificationsActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, NotificationsActivity.class));
                 return true;
             } else if (itemId == R.id.nav_home) {
                 return true;
@@ -85,31 +62,10 @@ public class EntrantActivity extends AppCompatActivity {
         });
     }
 
-    // Method to add an invitation to Firestore
-    public void addInvitation(String userId, String eventId, boolean accepted) {
-        DocumentReference newInvitationRef = db.collection("invitations").document(); // Auto-generate an ID
-        String invitationId = newInvitationRef.getId(); // Get the generated ID
-
-        Map<String, Object> invitationData = new HashMap<>();
-        invitationData.put("userId", userId);
-        invitationData.put("eventId", eventId);
-        invitationData.put("accepted", accepted);
-
-        newInvitationRef.set(invitationData)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("Firestore", "Invitation added with ID: " + invitationId);
-                })
-                .addOnFailureListener(e -> {
-                    Log.w("Firestore", "Error adding invitation", e);
-                });
-    }
-
-    // Method to populate the list with data (this can be dynamic or static for now)
-    private void loadCenterData() {
-        centerList.add(new Center("Center 1333", "123 Main St"));
-        centerList.add(new Center("Center 2", "456 Oak St"));
-        centerList.add(new Center("Center 3", "789 Pine St"));
-        centerList.add(new Center("Center 4", "101 Maple Ave"));
-        centerList.add(new Center("Center 5", "202 Elm St"));
+    // Method to populate the event list
+    private void loadEventData() {
+        eventList.add(new Event("Class Name", "Difficulty: Beginner"));
+        eventList.add(new Event("Class Name", "Difficulty: Beginner"));
+        // Add more events as needed
     }
 }

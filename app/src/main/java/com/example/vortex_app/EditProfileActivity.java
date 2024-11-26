@@ -3,6 +3,7 @@ package com.example.vortex_app;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,7 +23,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.bumptech.glide.Glide;
 
-
 public class EditProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseStorage storage;
@@ -33,6 +33,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private ImageView editIcon, avatarImageView;
     private Uri imageUri;
     private String oldAvatarUrl;
+    private String androidId; // Device-specific unique ID
 
     private final ActivityResultLauncher<Intent> fileChooserLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -51,12 +52,12 @@ public class EditProfileActivity extends AppCompatActivity {
                         }
 
                         StorageReference storageRef = storage.getReference()
-                                .child("user_avatars/XKcYtstm0zrzcdIgvLwb.jpg");
+                                .child("user_avatars/" + androidId + ".jpg");
 
                         storageRef.putFile(imageUri)
                                 .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                                     String downloadUrl = uri.toString();
-                                    DocumentReference docRef = db.collection("user_profile").document("XKcYtstm0zrzcdIgvLwb");
+                                    DocumentReference docRef = db.collection("user_profile").document(androidId);
                                     docRef.update("avatarUrl", downloadUrl)
                                             .addOnSuccessListener(aVoid -> Log.d(TAG, "Avatar URL successfully updated in Firestore!"))
                                             .addOnFailureListener(e -> Log.w(TAG, "Error updating avatar URL in Firestore", e));
@@ -75,9 +76,12 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
+        // Initialize Firestore, Storage, and device-specific ID
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
+        androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
+        // Initialize UI components
         firstNameEditText = findViewById(R.id.firstNameEditText);
         lastNameEditText = findViewById(R.id.lastNameEditText);
         emailEditText = findViewById(R.id.emailEditText);
@@ -87,8 +91,10 @@ public class EditProfileActivity extends AppCompatActivity {
         editIcon = findViewById(R.id.editAvatarIcon);
         avatarImageView = findViewById(R.id.avatarImageView);
 
+        // Load existing user data
         loadUserData();
 
+        // Set save button listener
         saveButton.setOnClickListener(view -> {
             saveUserData();
             Intent intent = new Intent(EditProfileActivity.this, ProfileActivity.class);
@@ -96,6 +102,7 @@ public class EditProfileActivity extends AppCompatActivity {
             finish();
         });
 
+        // Set edit icon listener
         editIcon.setOnClickListener(v -> {
             editIcon.setVisibility(View.GONE);
             showPopupMenu(v);
@@ -103,11 +110,12 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void loadUserData() {
-        DocumentReference docRef = db.collection("user_profile").document("XKcYtstm0zrzcdIgvLwb");
+        DocumentReference docRef = db.collection("user_profile").document(androidId);
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document != null && document.exists()) {
+                    // Populate UI with data from Firestore
                     firstNameEditText.setText(document.getString("firstName"));
                     lastNameEditText.setText(document.getString("lastName"));
                     emailEditText.setText(document.getString("email"));
@@ -137,7 +145,7 @@ public class EditProfileActivity extends AppCompatActivity {
         String contactInfo = contactInfoEditText.getText().toString();
         String device = deviceEditText.getText().toString();
 
-        DocumentReference docRef = db.collection("user_profile").document("XKcYtstm0zrzcdIgvLwb");
+        DocumentReference docRef = db.collection("user_profile").document(androidId);
         docRef.update("firstName", firstName,
                         "lastName", lastName,
                         "email", email,
@@ -162,7 +170,7 @@ public class EditProfileActivity extends AppCompatActivity {
             return true;
         } else if (itemId == R.id.option_remove) {
             avatarImageView.setImageResource(R.drawable.profile);
-            DocumentReference docRef = db.collection("user_profile").document("XKcYtstm0zrzcdIgvLwb");
+            DocumentReference docRef = db.collection("user_profile").document(androidId);
             docRef.update("avatarUrl", null)
                     .addOnSuccessListener(aVoid -> Log.d(TAG, "Avatar URL removed from Firestore"))
                     .addOnFailureListener(e -> Log.w(TAG, "Error removing avatar URL from Firestore", e));

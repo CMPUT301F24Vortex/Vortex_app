@@ -26,7 +26,7 @@ public class FinalEntrantAdapter extends RecyclerView.Adapter<FinalEntrantAdapte
     @Override
     public void onBindViewHolder(@NonNull FinalEntrantViewHolder holder, int position) {
         User entrant = finalEntrantList.get(position);
-        holder.textViewEntrantName.setText(entrant.getName());
+        holder.textViewEntrantName.setText(entrant.getFullName());
     }
 
     @Override
