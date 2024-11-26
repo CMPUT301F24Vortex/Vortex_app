@@ -3,24 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@drawable/event_item_background">
-
+    android:background="@drawable/rounded_corners">
 
     <ImageView
         android:id="@+id/image_event"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="142dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="30dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/sample_event_image" />
+        android:src="@drawable/sample_event_image"
+        />
 
     <TextView
         android:id="@+id/text_event_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="EventName"
-        android:textSize="18sp"
+        android:text="Event Name"
+        android:layout_gravity="center"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="20dp"/>
+
+
 
 </LinearLayout>

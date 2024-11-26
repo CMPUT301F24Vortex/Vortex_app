@@ -113,20 +113,7 @@
         android:text="$60"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/label_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Location"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-    <TextView
-        android:id="@+id/text_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="83139 291st"
-        android:textSize="16sp" />
+
 
     <TextView
         android:id="@+id/label_max_people"
@@ -143,36 +130,44 @@
         android:text="10"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/label_difficulty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:text="Difficulty"
-        android:textSize="18sp" />
-    <TextView
-        android:id="@+id/text_difficulty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="10"
-        android:textSize="16sp" />
 
     <ImageView
         android:id="@+id/image_event"
         android:layout_width="274dp"
         android:layout_height="175dp"
         android:layout_gravity="center"
+        android:paddingTop= "20dp"
         android:src="@drawable/sample_event_image" />
 
-    <Button
-        android:layout_width="110dp"
-        android:layout_height="58dp"
-        android:layout_gravity="end"
-        android:layout_marginTop="30dp"
-        android:text= "Edit"
-        android:textSize="20sp"
-        android:backgroundTint="@color/red"
-        />
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal">
+
+
+       <Button
+           android:id="@+id/done_button"
+           android:layout_width="100dp"
+           android:layout_height="58dp"
+           android:layout_marginTop="30dp"
+           android:backgroundTint="@color/red"
+           android:text="Done"
+           android:textSize="20sp" />
+
+       <Button
+           android:id="@+id/edit_button_org"
+           android:layout_width="100dp"
+           android:layout_height="58dp"
+           android:layout_marginTop="30dp"
+           android:layout_marginStart="180dp"
+           android:backgroundTint="@color/red"
+           android:text="Edit"
+           android:textSize="20sp" />
+
+
+   </LinearLayout>
+
 
 
 </LinearLayout>
