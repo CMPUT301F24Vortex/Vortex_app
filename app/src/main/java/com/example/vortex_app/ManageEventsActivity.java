@@ -1,7 +1,7 @@
 package com.example.vortex_app;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -25,7 +25,7 @@ public class ManageEventsActivity extends AppCompatActivity {
     private ArrayList<Map<String, String>> eventList; // List to hold event data
 
     private FirebaseFirestore db;
-    private static final String USER_ID = "020422"; // Fixed user ID
+    private String deviceID; // Use deviceID as the unique user identifier
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +33,18 @@ public class ManageEventsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_events);
 
         db = FirebaseFirestore.getInstance();
+
+        // Retrieve the unique device ID
+        deviceID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.d(TAG, "Device ID: " + deviceID);
+
         listView = findViewById(R.id.list_view_events);
         eventList = new ArrayList<>();
 
         adapter = new EventListAdapter(this, eventList);
         listView.setAdapter(adapter);
 
-        // Load the events the user is waitlisted for
+        // Load the events the user has joined in the waiting list
         loadWaitlistedEvents();
 
         // Handle item click for unjoining
@@ -63,29 +68,32 @@ public class ManageEventsActivity extends AppCompatActivity {
                     eventList.clear();
 
                     for (DocumentSnapshot eventDoc : querySnapshot.getDocuments()) {
+                        String eventId = eventDoc.getId();
                         db.collection("events")
-                                .document(eventDoc.getId())
+                                .document(eventId)
                                 .collection("waitingLists")
-                                .document(USER_ID)
+                                .document(deviceID) // Check for this device ID in the waiting list
                                 .get()
                                 .addOnSuccessListener(waitlistDoc -> {
                                     if (waitlistDoc.exists()) {
-                                        String eventID = eventDoc.getId();
                                         String eventName = eventDoc.getString("eventName");
 
                                         Map<String, String> eventData = new HashMap<>();
-                                        eventData.put("eventID", eventID);
+                                        eventData.put("eventID", eventId);
                                         eventData.put("eventName", eventName);
 
                                         eventList.add(eventData);
                                         adapter.notifyDataSetChanged();
                                     }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Error checking waiting list for event: " + eventId, e);
                                 });
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error fetching waitlisted events", e);
-                    Toast.makeText(this, "Failed to load waitlisted events.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error fetching events", e);
+                    Toast.makeText(this, "Failed to load events.", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -102,17 +110,26 @@ public class ManageEventsActivity extends AppCompatActivity {
         db.collection("events")
                 .document(eventId)
                 .collection("waitingLists")
-                .document(USER_ID)
+                .document(deviceID) // Remove the document using the device ID
                 .delete()
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Successfully unjoined from the waiting list.", Toast.LENGTH_SHORT).show();
-                    loadWaitlistedEvents();
+
+                    // Remove the unjoined event from the local list
+                    for (int i = 0; i < eventList.size(); i++) {
+                        if (eventList.get(i).get("eventID").equals(eventId)) {
+                            eventList.remove(i);
+                            adapter.notifyDataSetChanged(); // Update the adapter to refresh the UI
+                            break;
+                        }
+                    }
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error unjoining from waiting list", e);
                     Toast.makeText(this, "Failed to unjoin from the waiting list.", Toast.LENGTH_SHORT).show();
                 });
     }
+
 
     private void setupBottomNavigation() {
         com.google.android.material.bottomnavigation.BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);

@@ -1,6 +1,8 @@
 package com.example.vortex_app;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
@@ -8,8 +10,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -25,18 +25,21 @@ public class EventInfoActivity extends AppCompatActivity {
     private TextView eventNameTextView, classDayTextView, timeTextView, periodTextView, locationTextView, priceTextView;
     private Button joinWaitingListButton;
 
-    private String eventID; // ID of the event
-    private FirebaseFirestore db; // Firestore instance
-    private FirebaseAuth auth; // FirebaseAuth instance
+    private String eventID;
+    private String deviceID; // Use device ID as the user identifier
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_info);
 
-        // Initialize Firebase instances
+        // Initialize Firebase Firestore
         db = FirebaseFirestore.getInstance();
-        auth = FirebaseAuth.getInstance();
+
+        // Retrieve device ID
+        deviceID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.d(TAG, "Device ID: " + deviceID);
 
         // Initialize views
         eventNameTextView = findViewById(R.id.text_event_name);
@@ -47,8 +50,9 @@ public class EventInfoActivity extends AppCompatActivity {
         priceTextView = findViewById(R.id.text_price);
         joinWaitingListButton = findViewById(R.id.button_join_waiting_list);
 
-        // Get eventID from intent
+        // Get event ID from the intent
         eventID = getIntent().getStringExtra("EVENT_ID");
+
         if (eventID == null || eventID.isEmpty()) {
             Toast.makeText(this, "Event ID not found.", Toast.LENGTH_SHORT).show();
             return;
@@ -58,7 +62,7 @@ public class EventInfoActivity extends AppCompatActivity {
         loadEventDetails();
 
         // Set up "Join Waiting List" button
-        joinWaitingListButton.setOnClickListener(view -> joinWaitingList());
+        joinWaitingListButton.setOnClickListener(view -> checkIfAlreadyJoined());
     }
 
     private void loadEventDetails() {
@@ -67,7 +71,6 @@ public class EventInfoActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        // Populate UI with event details
                         String eventName = documentSnapshot.getString("eventName");
                         String classDay = documentSnapshot.getString("classDay");
                         String time = documentSnapshot.getString("time");
@@ -91,27 +94,43 @@ public class EventInfoActivity extends AppCompatActivity {
                 });
     }
 
+    private void checkIfAlreadyJoined() {
+        // Check if the user is already in the waiting list
+        DocumentReference waitingListRef = db.collection("events")
+                .document(eventID)
+                .collection("waitingLists")
+                .document(deviceID);
+
+        waitingListRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                // User has already joined the waiting list
+                Toast.makeText(this, "You have already joined this event's waiting list.", Toast.LENGTH_SHORT).show();
+            } else {
+                // User has not joined, proceed to join the waiting list
+                joinWaitingList();
+            }
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Error checking waiting list", e);
+            Toast.makeText(this, "Failed to check waiting list status.", Toast.LENGTH_SHORT).show();
+        });
+    }
+
     private void joinWaitingList() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        // Use the predefined userID 020422
-        String userID = "020422";
-
-        // Reference to the user profile document
-        DocumentReference userDocRef = db.collection("user_profile").document(userID);
+        // Reference the user profile document using the device ID
+        DocumentReference userDocRef = db.collection("user_profile").document(deviceID);
 
         userDocRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot userDoc = task.getResult();
                 if (userDoc != null && userDoc.exists()) {
-                    // Fetch user data
+                    Log.d(TAG, "User profile found for device ID: " + deviceID);
                     String firstName = userDoc.getString("firstName");
                     String lastName = userDoc.getString("lastName");
                     String email = userDoc.getString("email");
 
                     // Prepare waiting list entry
                     Map<String, Object> waitingListEntry = new HashMap<>();
-                    waitingListEntry.put("userID", userID);
+                    waitingListEntry.put("userID", deviceID); // Use device ID as userID
                     waitingListEntry.put("firstName", firstName);
                     waitingListEntry.put("lastName", lastName);
                     waitingListEntry.put("email", email);
@@ -121,25 +140,28 @@ public class EventInfoActivity extends AppCompatActivity {
                     db.collection("events")
                             .document(eventID)
                             .collection("waitingLists")
-                            .document(userID)
+                            .document(deviceID)
                             .set(waitingListEntry)
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(this, "Successfully joined the waiting list.", Toast.LENGTH_SHORT).show();
+
+                                // Navigate to EntrantActivity after success
+                                Intent intent = new Intent(EventInfoActivity.this, EntrantActivity.class);
+                                startActivity(intent);
+                                finish(); // Optional: Close the current activity
                             })
                             .addOnFailureListener(e -> {
                                 Log.e(TAG, "Failed to join waiting list", e);
-                                Toast.makeText(this, "Failed to join the waiting list: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "Failed to join waiting list: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             });
-
                 } else {
-                    Toast.makeText(this, "Failed to fetch user profile. User ID not found.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "User profile not found for device ID: " + deviceID);
+                    Toast.makeText(this, "User profile not found.", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Log.e(TAG, "Error fetching user profile", task.getException());
-                Toast.makeText(this, "Error: Could not fetch user profile.", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Error fetching user profile: ", task.getException());
+                Toast.makeText(this, "Failed to fetch user profile.", Toast.LENGTH_SHORT).show();
             }
         });
     }
-
-
 }
