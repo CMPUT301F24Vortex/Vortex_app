@@ -12,13 +12,13 @@ import java.util.Date;
  */
 public class NotificationModel {
 
-    private String title;
-    private String message;
-    private String status;
-    private String id; // Firestore document ID
+    private static String title;
+    private static String message;
+    private static String status;
+    private static String id; // Firestore document ID
     private Date TimeStamp;
     private String type;
-    private String eventID;
+    private static String eventID;
     private String userID;
 
     /**
@@ -46,7 +46,7 @@ public class NotificationModel {
      *
      * @return A {@code String} representing the notification's title.
      */
-    public String getTitle() {
+    public static String getTitle() {
         return title;
     }
 
@@ -55,18 +55,18 @@ public class NotificationModel {
      *
      * @return A {@code String} containing the message body of the notification.
      */
-    public String getMessage() {
+    public static String getMessage() {
         return message;
     }
 
-    public String getEventID() {return eventID;}
+    public static String getEventID() {return eventID;}
 
     /**
      * Returns the status of the notification.
      *
      * @return A {@code String} indicating the current status of the notification.
      */
-    public String getStatus() {
+    public static String getStatus() {
         return status;
     }
 
@@ -75,7 +75,7 @@ public class NotificationModel {
      *
      * @return A {@code String} containing the unique document ID.
      */
-    public String getId() {
+    public static String getId() {
         return id;
     }
 

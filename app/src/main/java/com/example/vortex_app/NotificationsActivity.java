@@ -2,6 +2,8 @@ package com.example.vortex_app;
 
 import android.Manifest;
 import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -16,23 +18,24 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.Constraints;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.NetworkType;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -50,38 +53,27 @@ public class NotificationsActivity extends AppCompatActivity {
     private List<NotificationModel> notificationList = new ArrayList<>();
     private FirebaseFirestore db;
     private static final int REQUEST_CODE_POST_NOTIFICATIONS = 1001;
+    private ListenerRegistration notificationListener;
 
 
-    public static void scheduleStatusCheckAlarm(Context context) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent intent = new Intent(context, StatusCheckReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
 
-        long intervalMillis = TimeUnit.MINUTES.toMillis(15); // 15 minutes
+    @Override
+    protected void onStart() {
+        super.onStart();
+        listenForNotifications();
+    }
 
-        // Schedule the repeating alarm
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setInexactRepeating(
-                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    SystemClock.elapsedRealtime() + intervalMillis,
-                    intervalMillis,
-                    pendingIntent
-            );
-        } else {
-            alarmManager.setRepeating(
-                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    SystemClock.elapsedRealtime() + intervalMillis,
-                    intervalMillis,
-                    pendingIntent
-            );
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (notificationListener != null) {
+            notificationListener.remove();
         }
     }
+
+
+
 
 
 
@@ -129,36 +121,21 @@ public class NotificationsActivity extends AppCompatActivity {
 
         // Initialize Firestore
         db = FirebaseFirestore.getInstance();
-        fetchNotifications();
+
 
         // Check and request notification permission
         checkAndRequestNotificationPermission();
+        fetchNotifications();
 
         // Do not schedule the worker here; it will be called after permission is granted
     }
 
-    private void scheduleStatusCheckAlarm() {
-        scheduleStatusCheckAlarm(this);
-
-    }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted
-                scheduleStatusCheckAlarm();
-            } else {
-                // Permission denied
-                Toast.makeText(this, "Notification permission denied. Notifications will not be displayed.", Toast.LENGTH_SHORT).show();
-                // You may still schedule the worker if other functionalities depend on it
-            }
-        }
-    }
+
+
+
 
     private void checkAndRequestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13 or higher
@@ -186,12 +163,109 @@ public class NotificationsActivity extends AppCompatActivity {
                 }
             } else {
                 // Permission already granted
-                scheduleStatusCheckAlarm();
+                // No action needed
             }
         } else {
             // Permission is automatically granted on SDK versions below 33
-            scheduleStatusCheckAlarm();
+            // No action needed
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                // We can proceed to listen for notifications
+            } else {
+                // Permission denied
+                Toast.makeText(this, "Notification permission denied. Notifications will not be displayed.", Toast.LENGTH_SHORT).show();
+                // You may still proceed, but notifications won't be displayed
+            }
+        }
+    }
+
+    private void listenForNotifications() {
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        notificationListener = db.collection("notifications")
+                .whereEqualTo("userID", currentUserId)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .addSnapshotListener((querySnapshot, e) -> {
+                    if (e != null) {
+                        // Handle error
+                        return;
+                    }
+
+                    if (querySnapshot != null) {
+                        for (DocumentChange dc : querySnapshot.getDocumentChanges()) {
+                            switch (dc.getType()) {
+                                case ADDED:
+                                    NotificationModel notification = dc.getDocument().toObject(NotificationModel.class);
+                                    notificationList.add(0, notification); // Add to the top
+                                    adapter.notifyItemInserted(0);
+                                    sendNotification(notification);
+                                    break;
+                                case MODIFIED:
+                                    // Handle modified notifications if necessary
+                                    break;
+                                case REMOVED:
+                                    // Handle removed notifications if necessary
+                                    break;
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void sendNotification(NotificationModel notification) {
+
+
+        createNotificationChannel();
+
+        Intent intent = new Intent(this, NotificationDetailActivity.class);
+        intent.putExtra("eventID", NotificationModel.getEventID());
+        intent.putExtra("title", NotificationModel.getTitle());
+        intent.putExtra("message", NotificationModel.getMessage());
+        intent.putExtra("status", NotificationModel.getStatus());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "status_channel_id")
+                .setSmallIcon(R.drawable.notification) // Use your app's notification icon
+                .setContentTitle(NotificationModel.getTitle())
+                .setContentText(NotificationModel.getMessage())
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        int notificationId = NotificationModel.getId().hashCode();
+
+        // Check if permission is granted (for Android 13 and above)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    == PackageManager.PERMISSION_GRANTED) {
+                notificationManager.notify(notificationId, builder.build());
+            } else {
+                Log.w("NotificationsActivity", "POST_NOTIFICATIONS permission not granted, cannot display notification.");
+            }
+        } else {
+            notificationManager.notify(notificationId, builder.build());
+        }
+
+
+
     }
 
     /**
@@ -199,23 +273,18 @@ public class NotificationsActivity extends AppCompatActivity {
      * This method orders notifications by timestamp in descending order and refreshes the UI upon data retrieval.
      */
     private void fetchNotifications() {
+
+        String currentUserID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         db.collection("notifications")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
+                .whereEqualTo("userID", currentUserID)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         notificationList.clear();
                         for (DocumentSnapshot document : task.getResult()) {
-                            String title = document.getString("title");
-                            String message = document.getString("message");
-                            String status = document.getString("status");
-                            Date date = document.getDate("timestamp");
-                            String eventID = document.getString("eventID");
-                            String id = document.getId();
-                            String type = document.getString("type");
-                            String userID = document.getString("userID");
-
-                            NotificationModel notification = new NotificationModel(title, message, status, id, date, type, eventID, userID);
+                            NotificationModel notification = document.toObject(NotificationModel.class);
+                            //notificationList.add(notification);
                             notificationList.add(notification);
                         }
                         adapter.notifyDataSetChanged();
@@ -224,4 +293,22 @@ public class NotificationsActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
+    private void createNotificationChannel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Status Updates";
+            String description = "Notifications for status changes in events";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("status_channel_id", name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+
+
+
 }

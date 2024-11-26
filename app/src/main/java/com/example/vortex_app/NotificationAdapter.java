@@ -26,7 +26,7 @@ import java.util.Locale;
  */
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
 
-    private List<NotificationModel> notificationList;
+    private final List<NotificationModel> notificationList;
     private OnNotificationClickListener listener;
     private final Context context;
 
@@ -78,9 +78,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         NotificationModel notification = notificationList.get(position);
-        holder.titleTextView.setText(notification.getTitle());
-        holder.messageTextView.setText(notification.getMessage());
-        holder.statusTextView.setText(notification.getStatus());
+        holder.titleTextView.setText(NotificationModel.getTitle());
+        holder.messageTextView.setText(NotificationModel.getMessage());
+        holder.statusTextView.setText(NotificationModel.getStatus());
 
         // Format the timestamp before displaying it
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
@@ -91,9 +91,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.itemView.setOnClickListener(v -> {
             if (context != null) {
                 Intent intent = new Intent(context, NotificationDetailActivity.class);
-                intent.putExtra("title", notification.getTitle());
-                intent.putExtra("message", notification.getMessage());
-                intent.putExtra("status", notification.getStatus());
+                intent.putExtra("title", NotificationModel.getTitle());
+                intent.putExtra("message", NotificationModel.getMessage());
+                intent.putExtra("timestamp", notification.getTimeStamp());
+                intent.putExtra("status", NotificationModel.getStatus());
                 context.startActivity(intent);
             } else {
                 Log.e("NotificationAdapter", "Context is null, cannot start NotificationDetailActivity");
