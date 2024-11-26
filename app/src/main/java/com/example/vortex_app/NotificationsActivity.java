@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -90,6 +91,16 @@ public class NotificationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
+        // Check if user is authenticated
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            // User not authenticated; redirect to login
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
 
         // Set up bottom navigation
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -105,9 +116,10 @@ public class NotificationsActivity extends AppCompatActivity {
                 finish();
                 return true;
             } else if (itemId == R.id.nav_notifications) {
+                startActivity(new Intent(this, NotificationsActivity.class));
                 return true;
             } else if (itemId == R.id.nav_events) {
-                startActivity(new Intent(this, NotificationsActivity.class));
+                startActivity(new Intent(this, EventActivity.class));
                 return true;
             }
             return false;
@@ -189,7 +201,12 @@ public class NotificationsActivity extends AppCompatActivity {
     }
 
     private void listenForNotifications() {
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Log.e("NotificationsActivity", "User not authenticated.");
+            return;
+        }
+        String currentUserId = currentUser.getUid();
 
         notificationListener = db.collection("notifications")
                 .whereEqualTo("userID", currentUserId)
@@ -274,7 +291,23 @@ public class NotificationsActivity extends AppCompatActivity {
      */
     private void fetchNotifications() {
 
-        String currentUserID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            // User is not logged in; handle appropriately
+            Log.e("NotificationsActivity", "User not authenticated.");
+            // Option 1: Redirect to login screen
+            Intent intent = new Intent(this, MainActivity.class); // Replace with your login activity
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            // Option 2: Show a message and finish activity
+            // Toast.makeText(this, "Please log in to view notifications.", Toast.LENGTH_SHORT).show();
+            // finish();
+            return;
+        }
+
+        String currentUserID = currentUser.getUid();
+
         db.collection("notifications")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .whereEqualTo("userID", currentUserID)
