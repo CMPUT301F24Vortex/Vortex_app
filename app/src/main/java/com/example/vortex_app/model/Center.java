@@ -4,6 +4,7 @@ public class Center {
     private String name;
     private String address;
     private String facilityID;
+    private String organizerID;
 
     public Center(String name, String address) {
         this.name = name;
@@ -15,9 +16,9 @@ public class Center {
     public String getName() {
         return name;
     }
-
     public String getAddress() {
         return address;
     }
     public String getFacilityID() {return facilityID;}
+    public String getOrganizerID() {return organizerID;}
 }

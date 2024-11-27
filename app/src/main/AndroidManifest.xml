@@ -87,6 +87,16 @@
             </intent-filter>
         </service>
 
+
+        <!-- Admin activities -->
+        <activity android:name=".view.admin.AdminMainscreen" android:exported="false"/>
+        <activity android:name=".view.admin.AdminFacilityScreen" android:exported="false"/>
+        <activity android:name=".view.admin.AdminEventScreen" android:exported="false"/>
+        <activity android:name=".view.admin.AdminProfileScreen" android:exported="false"/>
+        <activity android:name=".view.admin.AdminProfileViewer" android:exported="false"/>
+        <activity android:name=".view.admin.AdminEventInfoScreen" android:exported="false"/>
+
+
         <!-- Main Activity -->
         <activity
             android:name=".view.MainActivity"

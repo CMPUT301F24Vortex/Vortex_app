@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.example.vortex_app.R;
+import com.example.vortex_app.model.User;
 
 import java.util.ArrayList;
 
@@ -48,7 +49,7 @@ public class AdminUserArrayAdapter extends ArrayAdapter<User> {
         userID.setText(user.getUserID());
 
         // load user pfp
-        String profilePicUrl = user.getProfilePicUrl();
+        String profilePicUrl = user.getAvatarUrl();
         if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
             Glide.with(this.getContext())
                     .load(profilePicUrl)

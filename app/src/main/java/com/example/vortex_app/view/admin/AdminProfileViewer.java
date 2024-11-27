@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.vortex_app.R;
+import com.example.vortex_app.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -95,9 +96,9 @@ public class AdminProfileViewer extends AppCompatActivity implements AdminConfir
                     textviewFirstname.setText(user.getFirstName());
                     textviewLastname.setText(user.getLastName());
                     textviewEmail.setText(user.getEmail());
-                    textviewPhonenumber.setText(user.getPhoneNumber());
+                    textviewPhonenumber.setText(user.getContactInfo());
                     // load user pfp
-                    String profilePicUrl = user.getProfilePicUrl();
+                    String profilePicUrl = user.getAvatarUrl();
                     if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
                         Glide.with(context)
                                 .load(profilePicUrl)
