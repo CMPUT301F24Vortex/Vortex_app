@@ -22,6 +22,14 @@
             android:textColor="#FF0000"
             android:textSize="24sp"
             android:textStyle="bold" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Event Name"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
 
         <EditText
             android:id="@+id/event_name_input"
@@ -29,53 +37,121 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/white_box_background"
-            android:hint="Event name"
             android:inputType="textPersonName"
+            android:hint= "Name"
             android:minHeight="48dp"
             android:padding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Location"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
 
         <EditText
             android:id="@+id/event_location_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:hint= "@string/address"
             android:background="@drawable/white_box_background"
-            android:hint="Location"
             android:inputType="textPersonName"
             android:minHeight="48dp"
             android:padding="10dp" />
 
-        <EditText
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Class Day"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
+
+        <Spinner
             android:id="@+id/event_class_day_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:entries="@array/Week"
             android:layout_marginTop="10dp"
             android:background="@drawable/white_box_background"
-            android:hint="Date"
-            android:inputType="textPersonName"
             android:minHeight="48dp"
-            android:padding="10dp" />
+            android:padding="10dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Time"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
 
         <EditText
             android:id="@+id/event_time_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:inputType="none"
+            android:hint="00:00 AM/PM"
             android:background="@drawable/white_box_background"
-            android:hint="Time"
             android:minHeight="48dp"
-            android:padding="10dp" />
+            android:padding="10dp"
+            android:focusable="false"
+            android:clickable="true"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start Period"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
 
         <EditText
-            android:id="@+id/event_period_input"
+            android:id="@+id/event_start_period_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:hint="MM/DD/YY"
             android:background="@drawable/white_box_background"
-            android:hint="Period"
-            android:inputType="textPersonName"
             android:minHeight="48dp"
-            android:padding="10dp" />
+            android:padding="10dp"
+            android:focusable="false"
+            android:clickable="true"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="End Period"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
+
+        <EditText
+            android:id="@+id/event_end_period_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="MM/DD/YY"
+            android:background="@drawable/white_box_background"
+            android:minHeight="48dp"
+            android:padding="10dp"
+            android:focusable="false"
+            android:clickable="true"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Registration due date"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
 
         <EditText
             android:id="@+id/event_reg_due_date_input"
@@ -83,29 +159,59 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/white_box_background"
-            android:hint="Registration due date"
             android:minHeight="48dp"
-            android:padding="10dp" />
+            android:hint="MM/DD/YY"
+            android:padding="10dp"
+            android:inputType="none"
+            android:focusable="false"
+            android:clickable="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Price"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
 
         <EditText
             android:id="@+id/event_price_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:hint= "$10.00"
             android:background="@drawable/white_box_background"
-            android:hint="Price"
             android:minHeight="48dp"
             android:padding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Maximum People"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
 
         <EditText
             android:id="@+id/event_max_people_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:hint= "15"
             android:background="@drawable/white_box_background"
-            android:hint="Maximum People"
             android:minHeight="48dp"
             android:padding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Registration Open"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
 
         <EditText
             android:id="@+id/event_reg_open_date_input"
@@ -113,19 +219,84 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/white_box_background"
-            android:hint="Registration Open"
             android:minHeight="48dp"
-            android:padding="10dp" />
+            android:padding="10dp"
+            android:hint="MM/DD/YY"
+            android:inputType="none"
+            android:focusable="false"
+            android:clickable="true" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Geolocation Requirement"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
+
+        <Spinner
+            android:id="@+id/spinnerGeoLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/yes_no_options"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/white_box_background"
+            android:minHeight="48dp"
+            android:padding="10dp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Waitlist Limit"
+            android:paddingTop="10dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
 
         <EditText
-            android:id="@+id/event_difficulty_input"
+            android:id="@+id/event_waitlist_limit_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:hint = "Optional"
             android:background="@drawable/white_box_background"
-            android:hint="Difficulty"
             android:minHeight="48dp"
             android:padding="10dp" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Poster"
+            android:paddingTop="10dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
+        <ImageView
+            android:id="@+id/image_upload_box"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:src="@drawable/upload_placeholder"
+            android:scaleType="centerCrop"
+            android:background="@drawable/upload_box_border"
+            android:contentDescription="Image Upload Box"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="16dp" />
+        <Button
+            android:id="@+id/upload_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="#ABA7A7"
+            android:text="Upload Image"
+            android:layout_marginTop="16dp"/>
+
 
         <Button
             android:id="@+id/add_event_button"

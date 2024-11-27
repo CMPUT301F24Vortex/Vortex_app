@@ -1,14 +1,17 @@
-package com.example.vortex_app.view.organizer;
+package com.example.vortex_app;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.vortex_app.R;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.bumptech.glide.Glide;
 
 public class OrganizerInfo extends AppCompatActivity {
 
@@ -19,9 +22,10 @@ public class OrganizerInfo extends AppCompatActivity {
     private TextView registrationDueDateTextView;
     private TextView registrationOpenDateTextView;
     private TextView priceTextView;
-    private TextView locationTextView;
     private TextView maxPeopleTextView;
-    private TextView difficultyTextView;
+    private ImageView posterImageView;
+    private Button editButton, doneButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,18 +34,38 @@ public class OrganizerInfo extends AppCompatActivity {
 
 
         String eventID = getIntent().getStringExtra("EVENT_ID");
+        String eventName = getIntent().getStringExtra("EVENT_NAME");
+        editButton = findViewById(R.id.edit_button_org);
+        doneButton = findViewById(R.id.done_button);
         eventNameTextView = findViewById(R.id.text_event_name);
         classDayTextView = findViewById(R.id.text_class_day);
         timeTextView = findViewById(R.id.text_time);
-        periodTextView = findViewById(R.id.text_period);
+        periodTextView= findViewById(R.id.text_period);
         registrationDueDateTextView = findViewById(R.id.text_registration_due_date);
         registrationOpenDateTextView = findViewById(R.id.text_registration_open_date);
         priceTextView = findViewById(R.id.text_price);
-        locationTextView = findViewById(R.id.text_location);
         maxPeopleTextView = findViewById(R.id.text_max_people);
-        difficultyTextView = findViewById(R.id.text_difficulty);
+        posterImageView = findViewById(R.id.image_event);
         loadEventDetails(eventID);
+
+
+        editButton.setOnClickListener(v -> {
+
+            Intent intent = new Intent(OrganizerInfo.this, AddEvent.class);
+            intent.putExtra("EVENT_ID", eventID);
+            startActivity(intent);
+        });
+
+        doneButton.setOnClickListener(v -> {
+            Intent intent = new Intent(OrganizerInfo.this, OrganizerMenu.class);
+            intent.putExtra("EVENT_ID", eventID);
+            intent.putExtra("EVENT_NAME", eventName);
+            startActivity(intent);
+
+        });
     }
+
+
 
     private void loadEventDetails(String eventID) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -52,35 +76,43 @@ public class OrganizerInfo extends AppCompatActivity {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document != null && document.exists()) {
-                    // Get the event details from the document
+
                     String eventName = document.getString("eventName");
-                    String classDay = document.getString("classDay");
-                    String time = document.getString("time");
-                    String period = document.getString("period");
-                    String registrationDueDate = document.getString("regDueDate");
-                    String registrationOpenDate = document.getString("regOpenDate");
-                    String price = document.getString("price");
-                    String location = document.getString("eventLocation");
-                    int maxPeople = document.getLong("maxPeople") != null ? document.getLong("maxPeople").intValue() : 0;
-                    String difficulty = document.getString("difficulty");
-
-
                     eventNameTextView.setText(eventName);
-                    classDayTextView.setText(classDay);
-                    timeTextView.setText(time);
-                    periodTextView.setText(period);
-                    registrationDueDateTextView.setText(registrationDueDate);
-                    registrationOpenDateTextView.setText(registrationOpenDate);
-                    priceTextView.setText(String.valueOf(price));
-                    locationTextView.setText(location);
-                    maxPeopleTextView.setText(String.valueOf(maxPeople));
-                    difficultyTextView.setText(difficulty);
+                    String eventDay = document.getString("classDay");
+                    classDayTextView.setText(eventDay);
+                    String eventTime = document.getString("time");
+                    timeTextView.setText(eventTime);
+                    String startPeriod = document.getString("startPeriod");
+                    String endPeriod  =  document.getString("endPeriod");
+                    periodTextView.setText(startPeriod + " ~ " + endPeriod);
+                    String regDueDate = document.getString("regDueDate");
+                    registrationDueDateTextView.setText(regDueDate);
+                    String regOpenDate =  document.getString("regOpenDate");
+                    registrationOpenDateTextView.setText(regOpenDate);
+                    String price  = document.getString("price");
+                    priceTextView.setText("$"+price);
+                    String maxPeople =  document.getString("maxPeople");
+                    maxPeopleTextView.setText(maxPeople);
+                    String poster = document.getString("imageUrl");
+                    if (poster != null && !poster.isEmpty()) {
+                        Glide.with(this)
+                                .load(poster)
+                                .into(posterImageView);
+                    }
+
+
+
+
 
                 }
 
             }
 
 
+
         });
     }
+
+
 }
