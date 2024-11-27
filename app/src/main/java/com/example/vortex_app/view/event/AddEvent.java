@@ -1,4 +1,4 @@
-package com.example.vortex_app;
+package com.example.vortex_app.view.event;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.vortex_app.R;
 import com.example.vortex_app.view.organizer.OrganizerActivity;
 import com.example.vortex_app.view.organizer.OrganizerMenu;
 import com.google.firebase.firestore.DocumentReference;
@@ -44,7 +45,8 @@ public class AddEvent extends AppCompatActivity {
     private Button addButton, uploadButton;
     private Uri imageUri = null;
     private ImageView imageUploadBox;
-    private String eventID = null; // Store the eventID for editing
+    private String eventID = null;
+    private String existingImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +91,7 @@ public class AddEvent extends AppCompatActivity {
             if (imageUri != null) {
                 uploadImageToFirebase();
             } else {
-                addEvent(null);
+                addEvent(existingImage);
             }
         });
 
@@ -144,7 +146,8 @@ public class AddEvent extends AppCompatActivity {
                     eventMaxPeopleInput.setText(String.valueOf(maxPeople));
 
                     if (poster != null) {
-                        Glide.with(AddEvent.this).load(poster).into(imageUploadBox); // Load image if available
+                        Glide.with(AddEvent.this).load(poster).into(imageUploadBox);
+                        existingImage = poster;
                     }
                 }
             }
