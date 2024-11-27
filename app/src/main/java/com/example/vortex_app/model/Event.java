@@ -19,6 +19,7 @@ public class Event implements Serializable {
     private String eventID;
     private String facilityID;
     private String organizerID;
+    private String imageUrl;
 
     // Full constructor with all parameters
     public Event(String name, int imageResId, String classDay, String time, String period,
@@ -162,6 +163,10 @@ public class Event implements Serializable {
 
     public String getOrganizerID() {
         return organizerID;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     // Utility Method: Parse Price

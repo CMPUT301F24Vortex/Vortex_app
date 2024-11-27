@@ -48,7 +48,7 @@ public class AdminEventArrayAdapter extends ArrayAdapter<Event> {
         eventID.setText(event.getEventID());
 
         // load event poster
-        String profilePicUrl = event.getImageResId();
+        String profilePicUrl = event.getImageUrl();
         if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
             Glide.with(this.getContext())
                     .load(profilePicUrl)
