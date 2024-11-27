@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.vortex_app.model.Event;
+
 public class EventTest {
 
     private Event event;
