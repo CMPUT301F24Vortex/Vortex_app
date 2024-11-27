@@ -10,7 +10,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.vortex_app.controller.adapter.OrganizerEventAdapter;
+import com.example.vortex_app.AddEvent;
+import com.example.vortex_app.controller.adapter.OrgEventAdapter;
 import com.example.vortex_app.R;
 import com.example.vortex_app.model.Event;
 import com.google.firebase.firestore.FirebaseFirestore;
