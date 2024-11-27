@@ -1,6 +1,9 @@
 package com.example.vortex_app;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import com.example.vortex_app.model.Center;
+
 import org.junit.Before;
 import org.junit.Test;
 

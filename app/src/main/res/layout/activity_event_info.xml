@@ -1,169 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/text_event_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Event Info"
-        android:textSize="24sp"
-        android:textColor="@android:color/holo_red_light"
-        android:layout_marginBottom="20dp"
-        android:gravity="center" />
-
-
-
-    <TextView
-        android:id="@+id/label_class_day"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Class Day"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-
-    <TextView
-        android:id="@+id/text_class_day"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Monday Tuesday Wednesday"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/label_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Time"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-
-    <TextView
-        android:id="@+id/text_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="3:00pm-5:00pm"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/label_period"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Period"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-
-    <TextView
-        android:id="@+id/text_period"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2025-03-01 ~ 2025-06-05"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/label_registration_due_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Registration Due Date"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-
-    <TextView
-        android:id="@+id/text_registration_due_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2025-01-28"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/label_registration_open_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Registration Opening Date"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-
-    <TextView
-        android:id="@+id/text_registration_open_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2025-01-01"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/label_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Price"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-
-    <TextView
-        android:id="@+id/text_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="$60"
-        android:textSize="16sp" />
-
-    <!-- New fields -->
-    <TextView
-        android:id="@+id/labe_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Location"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-    <TextView
-        android:id="@+id/text_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="83139 291st"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/label_max_people"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Maximum people in Class"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-    <TextView
-        android:id="@+id/text_max_people"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="10"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/label_difficulty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:text="Difficulty"
-        android:textSize="18sp" />
-    <TextView
-        android:id="@+id/text_difficulty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="10"
-        android:textSize="16sp" />
-
-    <Button
-        android:id="@+id/button_join_waiting_list"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/red"
-        android:text="@string/button_join_waiting_list"
-        android:textColor="@android:color/white"
-        android:enabled="true" />
-</LinearLayout>
+        android:orientation="vertical">
+
+        <!-- Event Name -->
+        <TextView
+            android:id="@+id/text_event_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Event Name"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_red_dark"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Class Day -->
+        <TextView
+            android:id="@+id/label_class_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Class Day:"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/text_class_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading..."
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Time -->
+        <TextView
+            android:id="@+id/label_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time:"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/text_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading..."
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Period -->
+        <TextView
+            android:id="@+id/label_period"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Period:"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/text_period"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading..."
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Location -->
+        <TextView
+            android:id="@+id/label_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location:"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/text_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading..."
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Price -->
+        <TextView
+            android:id="@+id/label_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Price:"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/text_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading..."
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Join Waiting List Button -->
+        <Button
+            android:id="@+id/button_join_waiting_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Join Waiting List"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+</ScrollView>

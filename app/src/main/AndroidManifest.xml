@@ -2,10 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -18,84 +17,85 @@
         android:theme="@style/Theme.Vortex_App"
         tools:targetApi="31">
 
+        <!-- Notifications -->
         <activity
-            android:name=".NotificationsActivity"
+            android:name=".view.notification.NotificationsActivity"
             android:exported="false"
             android:launchMode="singleTop"/>
         <activity
-            android:name=".EventsActivity"
-
+            android:name=".view.notification.NotificationDetailActivity"
             android:exported="false"
             android:launchMode="singleTop"/>
+
+        <!-- Events -->
         <activity
-            android:name=".NotificationDetailActivity"
+            android:name=".view.event.ManageEventsActivity"
             android:exported="false"
             android:launchMode="singleTop"/>
+        <activity android:name=".view.event.EventActivity" />
+        <activity android:name=".view.event.EventInfoActivity" />
 
+        <!-- Organizer Activities -->
+        <activity android:name=".view.organizer.OrganizerInfo"/>
+        <activity android:name=".view.organizer.OrganizerMenu"/>
+        <activity android:name=".view.event.AddEvent"/>
+        <activity android:name=".view.organizer.OrganizerActivity"
+            android:exported="false"/>
+        <activity android:name=".view.qrcode.OrgQRCodeActivity"
+            android:exported="false"/>
+        <activity android:name=".view.entrant.CancelledEntrantsActivity" />
+        <activity android:name=".view.entrant.SelectedEntrantsActivity" />
+        <activity android:name=".view.entrant.FinalEntrantsActivity" />
+        <activity android:name=".view.waitinglist.OrgWaitingListActivity" />
+        <activity android:name=".view.location.LocationActivity" />
 
-
-
-        <activity android:name=".EventActivity" />
-        <activity android:name=".EventInfoActivity" />
-        <activity android:name=".OrganizerInfo"/>
+        <!-- Waiting List -->
         <activity android:name=".WaitingListActivity" />
+
+        <!-- Profile -->
         <activity
-            android:name=".ProfileActivity"
+            android:name=".view.profile.ProfileActivity"
             android:exported="false"
             android:launchMode="singleTop"/>
         <activity
-            android:name=".EntrantActivity"
+            android:name=".view.profile.EditProfileActivity"
             android:exported="false" />
 
+        <!-- Entrant -->
+        <activity
+            android:name=".view.entrant.EntrantActivity"
+            android:exported="false" />
 
+        <!-- Signup -->
+        <activity android:name=".view.activity.SignupActivity" />
+
+        <!-- QR Scanner -->
+        <activity
+            android:name=".view.qrcode.QrScannerActivity"
+            android:exported="false" />
+        <!-- If using CustomScannerActivity -->
+        <activity
+            android:name=".view.qrcode.CustomScannerActivity"
+            android:exported="false" />
+
+        <!-- Firebase Messaging Service -->
         <service
-            android:name=".MyFirebaseMessagingService"
+            android:name=".services.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-
-
+        <!-- Main Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".view.MainActivity"
             android:exported="true"
             android:launchMode="singleTop">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignupActivity" />
-        <activity android:name=".OrganizerMenu"/>
-        <activity android:name=".AddEvent"/>
-        <activity android:name=".OrganizerActivity"
-            android:exported="false"/>
-        <activity android:name=".OrgQRCodeActivity"
-            android:exported="false"/>
-        <activity android:name=".CancelledEntrantsActivity" />
-        <activity android:name=".SelectedEntrantsActivity" />
-        <activity android:name=".FinalEntrantsActivity" />
-        <activity android:name=".OrgWaitingListActivity" />
-        <activity android:name=".LocationActivity" />
-
-        <!-- Add EditProfileActivity here -->
-        <activity android:name=".EditProfileActivity" android:exported="false" />
-
-
-
-        <!-- Admin activities here -->
-        <activity android:name=".AdminMainscreen" android:exported="false" />
-        <activity android:name=".AdminProfileScreen" android:exported="false"/>
-        <activity android:name=".AdminProfileViewer" android:exported="false"/>
-        <activity android:name=".AdminFacilityScreen" android:exported="false"/>
-        <activity android:name=".AdminEventScreen" android:exported="false"/>
-        <activity android:name=".AdminEventInfoScreen" android:exported="false"/>
-        
-
-
     </application>
-
 </manifest>

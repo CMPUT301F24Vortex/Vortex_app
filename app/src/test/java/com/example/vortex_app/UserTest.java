@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.vortex_app.model.User;
+
 public class UserTest {
 
     private User user;
