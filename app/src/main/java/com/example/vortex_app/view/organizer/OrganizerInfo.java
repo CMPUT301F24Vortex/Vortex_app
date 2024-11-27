@@ -1,4 +1,4 @@
-package com.example.vortex_app;
+package com.example.vortex_app.view.organizer;
 
 
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.vortex_app.R;
+import com.example.vortex_app.view.event.AddEvent;
 import com.example.vortex_app.view.organizer.OrganizerMenu;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -60,7 +62,7 @@ public class OrganizerInfo extends AppCompatActivity {
 
         editButton.setOnClickListener(v -> {
 
-            Intent intent = new Intent(OrganizerInfo.this, com.example.vortex_app.AddEvent.class);
+            Intent intent = new Intent(OrganizerInfo.this, AddEvent.class);
             intent.putExtra("EVENT_ID", eventID);
             startActivity(intent);
         });
