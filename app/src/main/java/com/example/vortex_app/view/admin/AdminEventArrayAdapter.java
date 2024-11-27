@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.example.vortex_app.R;
+import com.example.vortex_app.model.Event;
 
 import java.util.ArrayList;
 
@@ -47,7 +48,7 @@ public class AdminEventArrayAdapter extends ArrayAdapter<Event> {
         eventID.setText(event.getEventID());
 
         // load event poster
-        String profilePicUrl = event.getPosterURL();
+        String profilePicUrl = event.getImageResId();
         if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
             Glide.with(this.getContext())
                     .load(profilePicUrl)

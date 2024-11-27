@@ -17,6 +17,8 @@ public class Event implements Serializable {
     private String difficulty;
     private boolean requiresGeolocation;
     private String eventID;
+    private String facilityID;
+    private String organizerID;
 
     // Full constructor with all parameters
     public Event(String name, int imageResId, String classDay, String time, String period,
@@ -41,6 +43,9 @@ public class Event implements Serializable {
         this.name = name;
         this.eventID = eventID;
     }
+
+    //Empty constructor for serialization
+    public Event () {}
 
     // Getters and Setters
     public String getName() {
@@ -149,6 +154,14 @@ public class Event implements Serializable {
 
     public void setRequiresGeolocation(boolean requiresGeolocation) {
         this.requiresGeolocation = requiresGeolocation;
+    }
+
+    public String getFacilityID() {
+        return facilityID;
+    }
+
+    public String getOrganizerID() {
+        return organizerID;
     }
 
     // Utility Method: Parse Price
