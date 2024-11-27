@@ -2,25 +2,20 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/admin_mainscreen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-<<<<<<< HEAD
     android:background="@color/background"
-    tools:context=".MainActivity">
-=======
-    android:background="#BFBFBF"
-    tools:context=".view.MainActivity">
->>>>>>> origin/main
+    tools:context=".view.admin.AdminMainscreen">
 
 
     <Button
-        android:id="@+id/button_mainscreen_entrant"
+        android:id="@+id/button_profile"
         android:layout_width="250dp"
         android:layout_height="70dp"
         android:layout_marginTop="272dp"
         android:backgroundTint="#F8F8F8"
-        android:text="@string/mainscreen_button_entrant"
+        android:text="Profiles"
         android:textColor="#3A3A3A"
         android:textSize="24sp"
         app:cornerRadius="5dp"
@@ -29,46 +24,64 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button_mainscreen_organizer"
+        android:id="@+id/button_facility_event"
         android:layout_width="250dp"
         android:layout_height="70dp"
         android:layout_marginTop="4dp"
         android:backgroundTint="#F8F8F8"
-        android:text="@string/mainscreen_button_organizer"
+        android:text="Events &amp; Facilities"
         android:textColor="#3A3A3A"
         android:textSize="24sp"
         app:cornerRadius="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_mainscreen_entrant" />
+        app:layout_constraintTop_toBottomOf="@+id/button_profile" />
 
     <Button
-        android:id="@+id/button_mainscreen_admin"
+        android:id="@+id/button_image"
         android:layout_width="250dp"
         android:layout_height="70dp"
         android:layout_marginTop="4dp"
         android:backgroundTint="#F8F8F8"
-        android:text="@string/mainscreen_button_admin"
+        android:text="Images"
         android:textColor="#3A3A3A"
         android:textSize="24sp"
         app:cornerRadius="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_mainscreen_organizer" />
+        app:layout_constraintTop_toBottomOf="@+id/button_facility_event" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="VORTEX"
-        android:textStyle="bold"
-        android:textColor="@color/red"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_mainscreen_entrant"
+    <Button
+        android:id="@+id/button_logout"
+        android:layout_width="170dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="48dp"
+        android:backgroundTint="#F8F8F8"
+        android:text="Logout"
+
+        android:textColor="#3A3A3A"
+        android:textSize="20sp"
+        app:cornerRadius="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_notification" />
+
+    <Button
+        android:id="@+id/button_notification"
+        android:layout_width="170dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="48dp"
+        android:backgroundTint="#F8F8F8"
+        android:drawableTop="@drawable/notification"
+        android:drawablePadding="200dp"
+        android:textColor="#3A3A3A"
+        android:textSize="20sp"
+        app:cornerRadius="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.719" />
+        app:layout_constraintTop_toBottomOf="@+id/button_image" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
