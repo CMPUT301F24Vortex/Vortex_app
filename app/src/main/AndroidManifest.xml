@@ -41,6 +41,10 @@
         <activity android:name=".view.event.AddEvent"/>
         <activity android:name=".view.organizer.OrganizerActivity"
             android:exported="false"/>
+        <activity android:name=".view.organizer.OrgNotificationsActivity" />
+        <activity android:name=".view.organizer.OrgNotificationDetailsActivity" />
+        <activity android:name=".view.organizer.OrgCreateNotificationActivity" />
+
         <activity android:name=".view.qrcode.OrgQRCodeActivity"
             android:exported="false"/>
         <activity android:name=".view.entrant.CancelledEntrantsActivity" />
