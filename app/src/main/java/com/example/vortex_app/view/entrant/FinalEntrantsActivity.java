@@ -1,7 +1,9 @@
 package com.example.vortex_app.view.entrant;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,15 +25,25 @@ public class FinalEntrantsActivity extends AppCompatActivity {
     private FinalEntrantAdapter entrantAdapter;
     private List<User> entrantList;
     private FirebaseFirestore db;
+    private String eventId; // Store event ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_final_entrants); // Update with your layout file name
+        setContentView(R.layout.activity_final_entrants);
 
+        // Retrieve event ID from the intent
+        eventId = getIntent().getStringExtra("EVENT_ID");
+
+        // Ensure event ID is not null or empty
+        if (eventId == null || eventId.isEmpty()) {
+            Toast.makeText(this, "Event ID not found", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        // Initialize RecyclerView and adapter
         recyclerViewEntrants = findViewById(R.id.recyclerViewEntrants);
-
-        // Initialize Firestore and entrant list
         db = FirebaseFirestore.getInstance();
         entrantList = new ArrayList<>();
         entrantAdapter = new FinalEntrantAdapter(entrantList);
@@ -39,17 +51,21 @@ public class FinalEntrantsActivity extends AppCompatActivity {
         recyclerViewEntrants.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEntrants.setAdapter(entrantAdapter);
 
+        // Back Button Functionality
+        ImageView backButton = findViewById(R.id.imageViewBack);
+        backButton.setOnClickListener(view -> {
+            // Create an intent and add the event ID
+            Intent intent = new Intent();
+            intent.putExtra("EVENT_ID", eventId);
+            setResult(RESULT_OK, intent); // Pass result back to the calling activity
+            finish(); // Finish this activity and go back
+        });
+
         // Fetch data from Firestore
         fetchFinalEntrants();
     }
 
     private void fetchFinalEntrants() {
-        String eventId = getIntent().getStringExtra("EVENT_ID"); // Retrieve the event ID
-        if (eventId == null || eventId.isEmpty()) {
-            Toast.makeText(this, "Event ID not found", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         Toast.makeText(this, "Event ID: " + eventId, Toast.LENGTH_SHORT).show(); // Debugging
         db.collection("final") // Fetch from the "final" collection
                 .whereEqualTo("eventID", eventId)

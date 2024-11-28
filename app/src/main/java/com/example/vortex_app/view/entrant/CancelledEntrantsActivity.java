@@ -1,11 +1,11 @@
 package com.example.vortex_app.view.entrant;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,16 +25,25 @@ public class CancelledEntrantsActivity extends AppCompatActivity {
     private CancelledEntrantAdapter entrantAdapter;
     private List<User> entrantList;
     private FirebaseFirestore db;
+    private String eventId; // Store event ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cancelled_entrants);
+        setContentView(R.layout.activity_cancelled_entrants); // Your layout file for this activity
 
+        // Retrieve event ID from the intent
+        eventId = getIntent().getStringExtra("EVENT_ID");
+
+        // Ensure event ID is not null or empty
+        if (eventId == null || eventId.isEmpty()) {
+            Toast.makeText(this, "Event ID not found", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        // Initialize RecyclerView and adapter
         recyclerViewEntrants = findViewById(R.id.recyclerViewEntrants);
-//        ImageView backButton = findViewById(R.id.imageViewBack);
-
-        // Initialize Firestore and entrant list
         db = FirebaseFirestore.getInstance();
         entrantList = new ArrayList<>();
         entrantAdapter = new CancelledEntrantAdapter(entrantList);
@@ -42,22 +51,23 @@ public class CancelledEntrantsActivity extends AppCompatActivity {
         recyclerViewEntrants.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEntrants.setAdapter(entrantAdapter);
 
-        // Back button functionality
-//        backButton.setOnClickListener(view -> finish());
+        // Back Button Functionality
+        ImageView backButton = findViewById(R.id.imageViewBack);
+        backButton.setOnClickListener(view -> {
+            // Create an intent and add the event ID
+            Intent intent = new Intent();
+            intent.putExtra("EVENT_ID", eventId);
+            setResult(RESULT_OK, intent); // Pass result back to the calling activity
+            finish(); // Finish this activity and go back
+        });
 
         // Fetch data from Firestore
         fetchCancelledEntrants();
     }
 
     private void fetchCancelledEntrants() {
-        String eventId = getIntent().getStringExtra("EVENT_ID"); // Retrieve the event ID
-        if (eventId == null || eventId.isEmpty()) {
-            Toast.makeText(this, "Event ID not found", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         Toast.makeText(this, "Event ID: " + eventId, Toast.LENGTH_SHORT).show(); // Debugging
-        db.collection("cancelled")
+        db.collection("cancelled") // Fetch from the "cancelled" collection
                 .whereEqualTo("eventID", eventId)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -84,7 +94,4 @@ public class CancelledEntrantsActivity extends AppCompatActivity {
                     }
                 });
     }
-
-
-
 }

@@ -6,6 +6,17 @@
     android:background="#F8F8F8"
     android:padding="16dp">
 
+    <!-- Back Button -->
+    <ImageView
+        android:id="@+id/imageViewBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="start"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_back"
+        android:contentDescription="Go Back"
+        android:padding="8dp" />
+
     <!-- Title -->
     <TextView
         android:id="@+id/textViewTitle"

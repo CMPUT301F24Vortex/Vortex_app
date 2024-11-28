@@ -6,46 +6,35 @@
     android:background="#F8F8F8"
     android:padding="16dp">
 
-    <!-- Header -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#D3D3D3"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="Cancelled Entrants"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+    <!-- Back Button -->
+    <ImageView
+        android:id="@+id/imageViewBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="start"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_back"
+        android:contentDescription="Go Back"
+        android:padding="8dp" />
 
     <!-- Title -->
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:text="Entrants"
-        android:textColor="#FF0000"
-        android:textSize="20sp"
+        android:text="Cancelled Entrants"
+        android:textColor="#FF5722"
+        android:textSize="24sp"
         android:textStyle="bold" />
 
     <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewEntrants"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="8dp" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
+        android:scrollbars="vertical" />
 
-<!--    &lt;!&ndash; Back Button &ndash;&gt;-->
-<!--    <ImageView-->
-<!--        android:id="@+id/imageViewBack"-->
-<!--        android:layout_width="48dp"-->
-<!--        android:layout_height="48dp"-->
-<!--        android:layout_gravity="center"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:src="@drawable/ic_back"-->
-<!--        android:contentDescription="Back Button"-->
-<!--        android:padding="8dp" />-->
 </LinearLayout>
