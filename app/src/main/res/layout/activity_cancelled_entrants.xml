@@ -1,50 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="#F8F8F8"
     android:padding="16dp">
 
-    <!-- Cancelled entrants -->
+    <!-- Header -->
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#D3D3D3"
+        android:gravity="center"
+        android:padding="16dp"
         android:text="Cancelled Entrants"
+        android:textColor="#000000"
         android:textSize="18sp"
-        android:textColor="#808080"
-        android:paddingBottom="16dp" />
+        android:textStyle="bold" />
 
-    <!-- Entrants -->
+    <!-- Title -->
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/textViewTitle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
         android:text="Entrants"
-        android:textSize="16sp"
-        android:textColor="#FF3B30"
-        android:paddingBottom="8dp" />
+        android:textColor="#FF0000"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
-    <!-- Entrant list area -->
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewEntrants"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginTop="8dp" />
 
-    <!-- Bottom navigation bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingTop="16dp">
-
-        <!-- Menu icon -->
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/baseline_menu_24"
-            android:contentDescription="Menu" />
-    </LinearLayout>
-
+<!--    &lt;!&ndash; Back Button &ndash;&gt;-->
+<!--    <ImageView-->
+<!--        android:id="@+id/imageViewBack"-->
+<!--        android:layout_width="48dp"-->
+<!--        android:layout_height="48dp"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:src="@drawable/ic_back"-->
+<!--        android:contentDescription="Back Button"-->
+<!--        android:padding="8dp" />-->
 </LinearLayout>

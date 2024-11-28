@@ -4,7 +4,7 @@
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -53,8 +53,6 @@
         <activity android:name=".view.waitinglist.OrgWaitingListActivity" />
         <activity android:name=".view.location.LocationActivity" />
 
-        <!-- Waiting List -->
-        <activity android:name=".WaitingListActivity" />
 
         <!-- Profile -->
         <activity
@@ -70,8 +68,6 @@
             android:name=".view.entrant.EntrantActivity"
             android:exported="false" />
 
-        <!-- Signup -->
-        <activity android:name=".view.activity.SignupActivity" />
 
         <!-- QR Scanner -->
         <activity

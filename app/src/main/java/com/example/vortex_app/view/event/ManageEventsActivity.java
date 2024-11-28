@@ -46,8 +46,9 @@ public class ManageEventsActivity extends AppCompatActivity {
         adapter = new EventListAdapter(this, eventList);
         listView.setAdapter(adapter);
 
-        // Load the events the user has joined in the waiting list
+        // Load the events for both waitlisted and canceled categories
         loadWaitlistedEvents();
+        loadCancelledEvents();
 
         // Handle item click for unjoining
         listView.setOnItemClickListener((parent, view, position, id) -> {
@@ -67,8 +68,6 @@ public class ManageEventsActivity extends AppCompatActivity {
         db.collection("events")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    eventList.clear();
-
                     for (DocumentSnapshot eventDoc : querySnapshot.getDocuments()) {
                         String eventId = eventDoc.getId();
                         db.collection("events")
@@ -83,6 +82,7 @@ public class ManageEventsActivity extends AppCompatActivity {
                                         Map<String, String> eventData = new HashMap<>();
                                         eventData.put("eventID", eventId);
                                         eventData.put("eventName", eventName);
+                                        eventData.put("status", "Waitlisted");
 
                                         eventList.add(eventData);
                                         adapter.notifyDataSetChanged();
@@ -95,13 +95,38 @@ public class ManageEventsActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error fetching events", e);
-                    Toast.makeText(this, "Failed to load events.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Failed to load waitlisted events.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void loadCancelledEvents() {
+        db.collection("cancelled")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (DocumentSnapshot cancelledDoc : querySnapshot.getDocuments()) {
+                        String eventId = cancelledDoc.getString("eventID");
+                        String userId = cancelledDoc.getString("userID");
+
+                        if (userId != null && userId.equals(deviceID)) {
+                            Map<String, String> eventData = new HashMap<>();
+                            eventData.put("eventID", eventId);
+                            eventData.put("eventName", "Cancelled Event " + eventId); // Placeholder for event name
+                            eventData.put("status", "Cancelled");
+
+                            eventList.add(eventData);
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error fetching cancelled events", e);
+                    Toast.makeText(this, "Failed to load cancelled events.", Toast.LENGTH_SHORT).show();
                 });
     }
 
     private void showUnjoinDialog(String eventId, String eventName) {
         new AlertDialog.Builder(this)
-                .setTitle("Unjoin the Waiting List?")
+                .setTitle("Unjoin the Event?")
                 .setMessage("Do you want to unjoin from " + eventName + "?")
                 .setPositiveButton("Yes", (dialog, which) -> unjoinEvent(eventId))
                 .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
@@ -115,7 +140,7 @@ public class ManageEventsActivity extends AppCompatActivity {
                 .document(deviceID) // Remove the document using the device ID
                 .delete()
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Successfully unjoined from the waiting list.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Successfully unjoined from the event.", Toast.LENGTH_SHORT).show();
 
                     // Remove the unjoined event from the local list
                     for (int i = 0; i < eventList.size(); i++) {
@@ -127,11 +152,10 @@ public class ManageEventsActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error unjoining from waiting list", e);
-                    Toast.makeText(this, "Failed to unjoin from the waiting list.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error unjoining from the event", e);
+                    Toast.makeText(this, "Failed to unjoin from the event.", Toast.LENGTH_SHORT).show();
                 });
     }
-
 
     private void setupBottomNavigation() {
         com.google.android.material.bottomnavigation.BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
