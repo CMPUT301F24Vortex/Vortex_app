@@ -11,7 +11,10 @@ public class User {
     private String contactInfo;     // User's contact information (matches Firestore)
     private String avatarUrl;       // URL of the user's profile picture
     private String userID;          // Unique ID of the user
-    private String device;          // User's device information (e.g., Tablet, Phone)
+    private String device;
+    private String eventID;
+
+
 
     // No-argument constructor (required for Firestore serialization)
     public User() {}
@@ -25,16 +28,23 @@ public class User {
         this.device = device;
     }
 
-    public User(String firstName, String lastName) {
+    public User(String firstName, String lastName, String userID) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.userID = userID;
     }
+
+
+
+
 
 
 
     public String getFirstName() {
         return firstName;
     }
+
+
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
