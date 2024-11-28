@@ -21,6 +21,7 @@ import com.example.vortex_app.view.entrant.FinalEntrantsActivity;
 import com.example.vortex_app.view.entrant.SelectedEntrantsActivity;
 import com.example.vortex_app.view.qrcode.OrgQRCodeActivity;
 import com.example.vortex_app.view.waitinglist.OrgWaitingListActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class OrganizerMenu extends AppCompatActivity {
 
@@ -36,7 +37,7 @@ public class OrganizerMenu extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        FloatingActionButton fabNotification = findViewById(R.id.fab_notification);
 
         String eventName = getIntent().getStringExtra("EVENT_NAME");
         String eventID  = getIntent().getStringExtra("EVENT_ID");
@@ -137,5 +138,9 @@ public class OrganizerMenu extends AppCompatActivity {
             }
         });
 
+        fabNotification.setOnClickListener(v -> {
+            Intent intent = new Intent(OrganizerMenu.this, OrgNotificationsActivity.class);
+            startActivity(intent);
+        });
     }
 }
