@@ -25,7 +25,13 @@ public class User {
         this.device = device;
     }
 
-    // Getters and setters
+    public User(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+
+
     public String getFirstName() {
         return firstName;
     }
