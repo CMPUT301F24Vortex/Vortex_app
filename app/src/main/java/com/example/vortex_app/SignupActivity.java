@@ -2,7 +2,6 @@ package com.example.vortex_app;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,8 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,18 +17,16 @@ import java.util.Map;
 public class SignupActivity extends AppCompatActivity {
 
     private EditText firstNameInput, lastNameInput, emailInput, passwordInput, confirmPasswordInput, phoneInput;
-    private Button signUpButton, loginButton;
-    private FirebaseAuth mAuth;
+    private Button signUpButton;
     private FirebaseFirestore db;
-    private static final String TAG = "SignupActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        // Initialize Firebase Auth and Firestore
-        mAuth = FirebaseAuth.getInstance();
+        // Initialize Firestore
+        FirebaseApp.initializeApp(this);
         db = FirebaseFirestore.getInstance();
 
         // Initialize input fields
@@ -42,26 +37,26 @@ public class SignupActivity extends AppCompatActivity {
         confirmPasswordInput = findViewById(R.id.confirm_password_input);
         phoneInput = findViewById(R.id.phone_input);
         signUpButton = findViewById(R.id.button_signup);
-        loginButton = findViewById(R.id.button_login); // Make sure this button exists in your layout
 
         // Set up sign-up button's click listener
-        signUpButton.setOnClickListener(v -> {
-            if (validateInputs()) {  // Ensure inputs are valid before proceeding
-                createAccount();  // Create user account with FirebaseAuth
+        signUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validateInputs()) {  // Ensure inputs are valid before proceeding
+                    saveUserData();  // Save user data to Firestore
+
+                    // Show a confirmation message
+                    Toast.makeText(SignupActivity.this, "Sign-Up Successful!", Toast.LENGTH_SHORT).show();
+
+                    // Navigate to EntrantActivity
+                    Intent intent = new Intent(SignupActivity.this, EntrantActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();  // Close SignupActivity
+                }
             }
         });
-
-
-        // Set up login button's click listener
-        loginButton.setOnClickListener(v -> {
-            // Redirect to LoginActivity
-            Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        });
-
     }
-
 
     // Validate user inputs (simple example)
     private boolean validateInputs() {
@@ -81,48 +76,14 @@ public class SignupActivity extends AppCompatActivity {
         return true;
     }
 
-
-    // Create user account with FirebaseAuth
-    private void createAccount() {
-        String email = emailInput.getText().toString().trim();
-        String password = passwordInput.getText().toString();
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        // Sign-up successful, user is authenticated
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        Log.d(TAG, "createUserWithEmail:success, userID: " + user.getUid());
-
-                        // Save user data to Firestore
-                        saveUserData(user.getUid());
-
-                        // Show a confirmation message
-                        Toast.makeText(SignupActivity.this, "Sign-Up Successful!", Toast.LENGTH_SHORT).show();
-
-                        // Navigate to MainActivity
-                        Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();  // Close SignupActivity
-                    } else {
-                        // If sign-up fails, display a message to the user.
-                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                        Toast.makeText(SignupActivity.this, "Authentication failed: " + task.getException().getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
-
     // Save user data to Firestore
-    private void saveUserData(String userID) {
-        String firstName = firstNameInput.getText().toString().trim();
-        String lastName = lastNameInput.getText().toString().trim();
-        String email = emailInput.getText().toString().trim();
-        String contactInfo = phoneInput.getText().toString().trim();  // Assuming this maps to contactInfo
+    private void saveUserData() {
+        String firstName = firstNameInput.getText().toString();
+        String lastName = lastNameInput.getText().toString();
+        String email = emailInput.getText().toString();
+        String contactInfo = phoneInput.getText().toString();  // Assuming this maps to contactInfo
 
         // Create a map with your friend's collection structure
-        // Create a map with user data
         Map<String, Object> user = new HashMap<>();
         user.put("firstName", firstName);
         user.put("lastName", lastName);
@@ -131,15 +92,14 @@ public class SignupActivity extends AppCompatActivity {
         user.put("device", "");  // Leave as empty or add logic as needed
         user.put("avatarUrl", "");  // Leave empty if no avatar URL for now
 
-        // Save to Firestore using userID as document ID
         db.collection("user_profile")
-                .document(userID)
+                .document(email)
                 .set(user)
                 .addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "User profile saved to Firestore");
+                    Toast.makeText(SignupActivity.this, "User saved in shared database", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    Log.w(TAG, "Error saving user profile", e);
+                    Toast.makeText(SignupActivity.this, "Error saving user: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 

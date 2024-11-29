@@ -26,10 +26,6 @@
     <string name="final_list">Final List</string>
     <string name="event_id">EVENT_ID</string>
     <string name="notification_icon">notification\n</string>
-    <string name="login">Login</string>
-    <string name="sign_up">Sign Up</string>
-    <!-- Add other strings as needed -->
-
 
 
 </resources>

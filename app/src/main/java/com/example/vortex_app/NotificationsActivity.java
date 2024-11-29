@@ -1,13 +1,16 @@
 package com.example.vortex_app;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,7 +28,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -33,9 +35,9 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * {@code NotificationsActivity} displays a list of notifications for the user.
@@ -53,12 +55,6 @@ public class NotificationsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private static final int REQUEST_CODE_POST_NOTIFICATIONS = 1001;
     private ListenerRegistration notificationListener;
-    private ListenerRegistration waitlistListener;
-
-
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-
 
 
 
@@ -66,24 +62,20 @@ public class NotificationsActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-
-
+        listenForNotifications();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (waitlistListener != null) {
-            waitlistListener.remove();
-        }
         if (notificationListener != null) {
             notificationListener.remove();
         }
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
     }
+
+
+
+
 
 
     /**
@@ -97,35 +89,18 @@ public class NotificationsActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
+        // Check if user is authenticated
 
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-
-        mAuthListener = firebaseAuth -> {
-            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-            if (currentUser == null) {
-                // User not authenticated; redirect to login
-                Intent intent = new Intent(NotificationsActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                // User is authenticated
-                setupNotifications();
-            }
-        };}
-
-
-    private void setupNotifications(){
-
-        // Initialize RecyclerView
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new NotificationAdapter(notificationList, this);
-        recyclerView.setAdapter(adapter);
-
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            // User not authenticated; redirect to login
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
 
         // Set up bottom navigation
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -150,104 +125,22 @@ public class NotificationsActivity extends AppCompatActivity {
             return false;
         });
 
+        // Initialize RecyclerView
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new NotificationAdapter(notificationList, this);
+        recyclerView.setAdapter(adapter);
 
         // Initialize Firestore
-
+        db = FirebaseFirestore.getInstance();
 
 
         // Check and request notification permission
         checkAndRequestNotificationPermission();
         fetchNotifications();
-        listenForWaitlistChanges();
-        listenForNotifications();
 
         // Do not schedule the worker here; it will be called after permission is granted
     }
-
-    private void listenForWaitlistChanges() {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            Log.e("NotificationsActivity", "User not authenticated.");
-            return;
-        }
-        String currentUserId = currentUser.getUid();
-
-        DocumentReference waitlistedRef = db.collection("waitlisted").document(currentUserId);
-
-        waitlistListener = waitlistedRef.addSnapshotListener((snapshot, e) -> {
-            if (e != null) {
-                Log.w("NotificationsActivity", "Listen failed.", e);
-                return;
-            }
-
-            if (snapshot != null && !snapshot.exists()) {
-                // User is no longer waitlisted
-                checkUserStatus(currentUserId);
-            }
-        });}
-
-
-    private void checkUserStatus(String userId) {
-        db.collection("selected").document(userId).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        handleUserWin(userId, documentSnapshot);
-                    } else {
-                        db.collection("cancelled").document(userId).get()
-                                .addOnSuccessListener(cancelledSnapshot -> {
-                                    if (cancelledSnapshot.exists()) {
-                                        handleUserLoss(userId, cancelledSnapshot);
-                                    } else {
-                                        Log.w("NotificationsActivity", "User not found in selected or cancelled collections.");
-                                    }
-                                });
-                    }
-                })
-                .addOnFailureListener(e -> Log.e("NotificationsActivity", "Error checking user status", e));
-    }
-
-    private void handleUserWin(String userId, DocumentSnapshot documentSnapshot) {
-        String eventId = documentSnapshot.getString("eventID");
-        checkNotificationPreference(userId, () -> {
-            String title = "Congratulations!";
-            String message = "You've been selected for the event!";
-            sendNotification(title, message);
-            updateNotificationsCollection(userId, eventId, title, message);
-        });
-    }
-
-    private void handleUserLoss(String userId, DocumentSnapshot documentSnapshot) {
-        String eventId = documentSnapshot.getString("eventID");
-        checkNotificationPreference(userId, () -> {
-            String title = "Better Luck Next Time";
-            String message = "You have not been selected for the event.";
-            sendNotification(title, message);
-            updateNotificationsCollection(userId, eventId, title, message);
-        });
-    }
-
-    private void checkNotificationPreference(String userId, Runnable onPreferenceAllowed) {
-        db.collection("users").document(userId).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    Boolean notificationsEnabled = documentSnapshot.getBoolean("notificationsEnabled");
-                    if (notificationsEnabled == null || notificationsEnabled) {
-                        onPreferenceAllowed.run();
-                    } else {
-                        Log.d("NotificationsActivity", "User has opted out of notifications.");
-                    }
-                })
-                .addOnFailureListener(e -> Log.w("NotificationsActivity", "Failed to get user preferences.", e));
-    }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -308,45 +201,34 @@ public class NotificationsActivity extends AppCompatActivity {
     }
 
     private void listenForNotifications() {
-        // Get the current authenticated user
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             Log.e("NotificationsActivity", "User not authenticated.");
             return;
         }
         String currentUserId = currentUser.getUid();
 
-        // Set up a listener on the 'notifications' collection for the current user
         notificationListener = db.collection("notifications")
                 .whereEqualTo("userID", currentUserId)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
-                        // Handle any errors
-                        Log.w("NotificationsActivity", "Listen failed.", e);
+                        // Handle error
                         return;
                     }
 
                     if (querySnapshot != null) {
-                        // Loop through the document changes
                         for (DocumentChange dc : querySnapshot.getDocumentChanges()) {
                             switch (dc.getType()) {
                                 case ADDED:
-                                    // Deserialize the document into a NotificationModel object
                                     NotificationModel notification = dc.getDocument().toObject(NotificationModel.class);
-
-                                    // Add the notification to the list and update the adapter
-                                    notificationList.add(0, notification); // Add to the top of the list
+                                    notificationList.add(0, notification); // Add to the top
                                     adapter.notifyItemInserted(0);
-
-                                    // Send a local notification using the title and message from the notification
-                                    sendNotification(notification.getTitle(), notification.getMessage());
+                                    sendNotification(notification);
                                     break;
-
                                 case MODIFIED:
                                     // Handle modified notifications if necessary
                                     break;
-
                                 case REMOVED:
                                     // Handle removed notifications if necessary
                                     break;
@@ -356,16 +238,16 @@ public class NotificationsActivity extends AppCompatActivity {
                 });
     }
 
+    private void sendNotification(NotificationModel notification) {
 
 
-
-
-    private void sendNotification(String title, String message) {
         createNotificationChannel();
 
         Intent intent = new Intent(this, NotificationDetailActivity.class);
-        intent.putExtra("title", title);
-        intent.putExtra("message", message);
+        intent.putExtra("eventID", NotificationModel.getEventID());
+        intent.putExtra("title", NotificationModel.getTitle());
+        intent.putExtra("message", NotificationModel.getMessage());
+        intent.putExtra("status", NotificationModel.getStatus());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
@@ -377,16 +259,17 @@ public class NotificationsActivity extends AppCompatActivity {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "status_channel_id")
                 .setSmallIcon(R.drawable.notification) // Use your app's notification icon
-                .setContentTitle(title)
-                .setContentText(message)
+                .setContentTitle(NotificationModel.getTitle())
+                .setContentText(NotificationModel.getMessage())
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
-        int notificationId = (int) System.currentTimeMillis();
+        int notificationId = NotificationModel.getId().hashCode();
 
+        // Check if permission is granted (for Android 13 and above)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -397,21 +280,9 @@ public class NotificationsActivity extends AppCompatActivity {
         } else {
             notificationManager.notify(notificationId, builder.build());
         }
-    }
 
 
-    private void updateNotificationsCollection(String userId, String eventId, String title, String message) {
-        Map<String, Object> notificationData = new HashMap<>();
-        notificationData.put("eventID", eventId);
-        notificationData.put("timestamp", new Date());
-        notificationData.put("title", title);
-        notificationData.put("message", message);
-        notificationData.put("userID", userId);
-        notificationData.put("status", "unread");
 
-        db.collection("notifications").add(notificationData)
-                .addOnSuccessListener(documentReference -> Log.d("NotificationsActivity", "Notification logged"))
-                .addOnFailureListener(e -> Log.w("NotificationsActivity", "Error logging notification", e));
     }
 
     /**
@@ -420,15 +291,18 @@ public class NotificationsActivity extends AppCompatActivity {
      */
     private void fetchNotifications() {
 
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             // User is not logged in; handle appropriately
             Log.e("NotificationsActivity", "User not authenticated.");
-            // Redirect to login screen
+            // Option 1: Redirect to login screen
             Intent intent = new Intent(this, MainActivity.class); // Replace with your login activity
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
+            // Option 2: Show a message and finish activity
+            // Toast.makeText(this, "Please log in to view notifications.", Toast.LENGTH_SHORT).show();
+            // finish();
             return;
         }
 

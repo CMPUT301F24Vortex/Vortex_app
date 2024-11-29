@@ -4,11 +4,33 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+
+
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -19,24 +41,28 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.vortex_app.NotificationHelper;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+
 public class MainActivity extends AppCompatActivity {
 
+
     private static final int NOTIFICATION_PERMISSION_CODE = 1;
-    private static final String TAG = "MainActivity";
-    private FirebaseAuth mAuth;
+    private static final String TAG = "MainActivity"; // Define TAG here
+    //private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1 ;
 
 
     private static final String PREFS_NAME = "UserPrefs";
     private static final String KEY_SIGNED_UP = "hasSignedUp";
 
 
-
-    // Other constants...
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,24 +76,36 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        mAuth = FirebaseAuth.getInstance();
+        // Initialize and store FCM token and userID locally
+        UserTokenManager.initializeUserToken(this);
 
-        // Check if user is authenticated
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            // User is authenticated
-            UserTokenManager.initializeUserToken(this);
-            setupUI();
-        } else {
-            // User not authenticated; redirect to login
-            Intent intent = new Intent(MainActivity.this, SignupActivity.class);
-            startActivity(intent);
-            finish();
-        }
-    }
 
-    private void setupUI() {
+
+        // to get FCM token for client app
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        // Get the new FCM registration token
+                        String token = task.getResult();
+
+                        // Log and show token
+                        String msg = "FCM Token: " + token;
+                        Log.d(TAG, msg);
+                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+
+                        // (Optional) Send this token to your server if needed
+                        //sendTokenToServer(token);
+                    }
+                });
+
         // Create Notification Channel
+        //StatusCheckTask..createNotificationChannel(this);
         NotificationHelper.createNotificationChannel(this);
 
         // Request notification permission
@@ -83,40 +121,38 @@ public class MainActivity extends AppCompatActivity {
         Button buttonMainscreenAdmin = findViewById(R.id.button_mainscreen_admin);
 
         // Initialize onClickListeners for the 3 buttons
-        buttonMainscreenEntrant.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, EntrantActivity.class);
-            startActivity(intent);
+        buttonMainscreenEntrant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Check if the user has already signed up
+//                SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+//                boolean hasSignedUp = prefs.getBoolean(KEY_SIGNED_UP, false);
+                Intent intent = new Intent(MainActivity.this, EntrantActivity.class);
+                startActivity(intent);
+            }
         });
 
-        buttonMainscreenOrganizer.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, OrganizerActivity.class);
-            startActivity(intent);
+        buttonMainscreenOrganizer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Code to navigate to OrganizerActivity can be added here
+                Intent intent = new Intent(MainActivity.this, OrganizerActivity.class);
+                startActivity(intent);
+            }
         });
 
-        buttonMainscreenAdmin.setOnClickListener(view -> {
-            // Code to navigate to AdminActivity can be added here
+        buttonMainscreenAdmin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Code to navigate to AdminActivity can be added here
+
+            }
         });
 
-        // Get FCM token for client app
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                        return;
-                    }
 
-                    // Get the new FCM registration token
-                    String token = task.getResult();
 
-                    // Log and show token
-                    String msg = "FCM Token: " + token;
-                    Log.d(TAG, msg);
-                    Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-
-                    // (Optional) Send this token to your server if needed
-                    //sendTokenToServer(token);
-                });
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
