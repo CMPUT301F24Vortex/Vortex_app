@@ -160,6 +160,7 @@ public class ProfileActivity extends AppCompatActivity {
                 "default@example.com", // Default email
                 "123-456-7890",        // Default contact information
                 deviceInfo             // Device information
+                //true
         );
 
         // Save the default user data to Firestore

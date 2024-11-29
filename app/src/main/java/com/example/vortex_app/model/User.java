@@ -13,6 +13,7 @@ public class User {
     private String userID;          // Unique ID of the user
     private String device;
     private String eventID;
+    private Boolean notificationsEnabled;
 
 
 
@@ -26,12 +27,14 @@ public class User {
         this.email = email;
         this.contactInfo = contactInfo;
         this.device = device;
+        //this.notificationsEnabled = notificationsEnabled;
     }
 
     public User(String firstName, String lastName, String userID) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.userID = userID;
+        //this.notificationsEnabled = true;
     }
 
 
@@ -103,6 +106,15 @@ public class User {
         return firstName + " " + lastName;
     }
 
+
+    public Boolean getNotificationsEnabled() {
+        return notificationsEnabled;
+    }
+
+    public void setNotificationsEnabled(Boolean notificationsEnabled) {
+        this.notificationsEnabled = notificationsEnabled;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -113,6 +125,10 @@ public class User {
                 ", avatarUrl='" + avatarUrl + '\'' +
                 ", userID='" + userID + '\'' +
                 ", device='" + device + '\'' +
+                ", notificationsEnabled=" + notificationsEnabled +
                 '}';
     }
 }
+
+
+
