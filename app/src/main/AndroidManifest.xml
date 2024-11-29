@@ -52,6 +52,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SignupActivity" />
+        <activity android:name=".LoginActivity" />
         <activity android:name=".OrganizerMenu"/>
         <activity android:name=".AddEvent"/>
         <activity android:name=".OrganizerActivity"
