@@ -34,7 +34,7 @@ public class OrgWaitingListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_org_waiting_list);
 
-        // Initialize the RecyclerView and the adapter
+
         recyclerViewWaitingList = findViewById(R.id.recyclerViewWaitingList);
         waitingListEntrants = new ArrayList<>();
         recyclerViewWaitingList.setLayoutManager(new LinearLayoutManager(this));
@@ -45,10 +45,7 @@ public class OrgWaitingListActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         eventID = getIntent().getStringExtra("EVENT_ID");
 
-        // Fetch the waiting list
         fetchWaitingList(eventID);
-
-        // Set up the draw button
         waitlistDrawButton.setOnClickListener(v -> selectAndStoreUsers());
     }
 
@@ -64,8 +61,7 @@ public class OrgWaitingListActivity extends AppCompatActivity {
                             for (DocumentSnapshot document : querySnapshot) {
                                 String firstName = document.getString("firstName");
                                 String lastName = document.getString("lastName");
-                                String userID = document.getString("userID"); // Assuming userID is stored
-
+                                String userID = document.getString("userID");
                                 User user = new User(firstName, lastName, userID);
                                 waitingListEntrants.add(user);
                             }
@@ -87,7 +83,6 @@ public class OrgWaitingListActivity extends AppCompatActivity {
                         String maxPeopleStr = documentSnapshot.getString("maxPeople");
                         int maxPeople = maxPeopleStr != null ? Integer.parseInt(maxPeopleStr) : 0;
 
-
                         if (maxPeople > 0 && waitingListEntrants.size() >= maxPeople) {
                             List<User> shuffledList = new ArrayList<>(waitingListEntrants);
                             Collections.shuffle(shuffledList);
@@ -95,15 +90,20 @@ public class OrgWaitingListActivity extends AppCompatActivity {
 
 
                             for (User user : selectedUsers) {
-                                orgList selectedUser = new orgList(user.getUserID(), eventID);
+
+                                String userName = user.getFirstName() + " " + user.getLastName();
+
+                                orgList selectedUser = new orgList(user.getUserID(), eventID, userName);
                                 db.collection("selected")
                                         .add(selectedUser)
                                         .addOnSuccessListener(documentReference -> {
+                                            removeFromWaitlisted(user);
                                         })
                                         .addOnFailureListener(e -> {
                                             Toast.makeText(this, "Failed to store selected user", Toast.LENGTH_SHORT).show();
                                         });
                             }
+
                             Toast.makeText(this, "Selected users stored successfully", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(this, "Not enough users in the waiting list or invalid maxPeople", Toast.LENGTH_SHORT).show();
@@ -113,5 +113,29 @@ public class OrgWaitingListActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Failed to fetch event details", Toast.LENGTH_SHORT).show());
+    }
+
+    private void removeFromWaitlisted(User user) {
+        db.collection("waitlisted")
+                .whereEqualTo("userID", user.getUserID())
+                .whereEqualTo("eventID", eventID)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            // Delete the document after successful selection
+                            document.getReference().delete()
+                                    .addOnSuccessListener(aVoid -> {
+                                        waitingListEntrants.remove(user);
+                                        waitingListAdapter.notifyDataSetChanged();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(this, "Failed to remove user from waitlist", Toast.LENGTH_SHORT).show();
+                                    });
+                        }
+                    } else {
+                        Toast.makeText(this, "Failed to fetch waitlist user for removal", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

@@ -13,6 +13,10 @@ public class User {
     private String userID;          // Unique ID of the user
     private String device;
     private String eventID;
+    private String userName;
+
+
+
 
 
 
@@ -34,14 +38,22 @@ public class User {
         this.userID = userID;
     }
 
-
-
-
-
+    public User(String userName, String userID) {
+        this.userName = userName;
+        this.userID = userID;
+    }
 
 
     public String getFirstName() {
         return firstName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
 

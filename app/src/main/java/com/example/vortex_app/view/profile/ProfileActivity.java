@@ -131,12 +131,12 @@ public class ProfileActivity extends AppCompatActivity {
                                 .into(profileImageView);
                     }
                 } else {
-                    // Document does not exist, create default user data
+
                     Log.d(TAG, "No such document. Initializing user data...");
                     initializeUserData(androidId);
                 }
             } else {
-                // Log Firestore query error
+
                 Log.e(TAG, "Failed to load user data", task.getException());
             }
         });
@@ -170,5 +170,4 @@ public class ProfileActivity extends AppCompatActivity {
                     loadUserData(androidId);
                 })
                 .addOnFailureListener(e -> Log.e(TAG, "Error creating default user", e));
-    }
-}
+    }}

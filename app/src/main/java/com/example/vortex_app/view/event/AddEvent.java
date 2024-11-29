@@ -244,6 +244,7 @@ public class AddEvent extends AppCompatActivity {
         String price = eventPriceInput.getText().toString();
         String maxPeople = eventMaxPeopleInput.getText().toString();
         String eventLimit = eventLimitInput.getText().toString();
+        boolean Geolocation = geoLocationSpinner.getSelectedItem().toString().equals("Yes");
 
         Map<String, Object> event = new HashMap<>();
         event.put("eventName", eventName);
@@ -257,6 +258,7 @@ public class AddEvent extends AppCompatActivity {
         event.put("price", price);
         event.put("maxPeople", maxPeople);
         event.put("waitlistLimit", eventLimit);
+        event.put("Geolocation", Geolocation);
 
         if (imageUrl != null) {
             event.put("imageUrl", imageUrl);

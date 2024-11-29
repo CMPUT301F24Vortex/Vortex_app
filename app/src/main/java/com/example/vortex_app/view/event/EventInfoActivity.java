@@ -130,13 +130,9 @@ public class EventInfoActivity extends AppCompatActivity {
 
                     String firstName = userDoc.getString("firstName");
                     String lastName = userDoc.getString("lastName");
-                    String email = userDoc.getString("email");
-
                     Map<String, Object> waitingListEntry = new HashMap<>();
                     waitingListEntry.put("userID", deviceID);
-                    waitingListEntry.put("firstName", firstName);
-                    waitingListEntry.put("lastName", lastName);
-                    waitingListEntry.put("email", email);
+                    waitingListEntry.put("userName", firstName+" "+ lastName);
                     waitingListEntry.put("timestamp", FieldValue.serverTimestamp());
                     waitingListEntry.put("eventID", eventID);
                     String waitingListDocID = eventID + "_" + deviceID;

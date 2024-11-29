@@ -1,5 +1,8 @@
 package com.example.vortex_app.view.event;
 
+import static com.google.firebase.appcheck.internal.util.Logger.TAG;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -10,24 +13,27 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vortex_app.R;
-import com.example.vortex_app.controller.adapter.EventListAdapter;
+import com.example.vortex_app.controller.adapter.EventAdapter;
+import com.example.vortex_app.model.Event;
+import com.example.vortex_app.view.notification.NotificationsActivity;
+import com.example.vortex_app.view.profile.ProfileActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ManageEventsActivity extends AppCompatActivity {
 
-    private static final String TAG = "ManageEventsActivity";
-
-    private ListView listView;
-    private EventListAdapter adapter;
-    private ArrayList<Map<String, String>> eventList; // List to hold event data
-
+    private ListView selectedListView, waitlistedListView;
+    private EventAdapter selectedEventAdapter, waitlistedEventAdapter;
+    private List<String> selectedEventNames, selectedEventIDs, selectedEventImageUrls;
+    private List<String> waitlistedEventNames, waitlistedEventIDs, waitlistedEventImageUrls;
     private FirebaseFirestore db;
-    private String deviceID; // Use deviceID as the unique user identifier
+    private String currentUserID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,125 +41,186 @@ public class ManageEventsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_events);
 
         db = FirebaseFirestore.getInstance();
+        currentUserID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        // Retrieve the unique device ID
-        deviceID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        Log.d(TAG, "Device ID: " + deviceID);
+        selectedListView = findViewById(R.id.list_view_selected_events);
+        waitlistedListView = findViewById(R.id.list_view_waitlisted_events);
 
-        listView = findViewById(R.id.list_view_events);
-        eventList = new ArrayList<>();
+        selectedEventNames = new ArrayList<>();
+        selectedEventIDs = new ArrayList<>();
+        selectedEventImageUrls = new ArrayList<>();
 
-        adapter = new EventListAdapter(this, eventList);
-        listView.setAdapter(adapter);
+        waitlistedEventNames = new ArrayList<>();
+        waitlistedEventIDs = new ArrayList<>();
+        waitlistedEventImageUrls = new ArrayList<>();
 
-        // Load the events the user has joined in the waiting list
-        loadWaitlistedEvents();
+        selectedEventAdapter = new EventAdapter(this, selectedEventNames, selectedEventIDs, selectedEventImageUrls);
+        waitlistedEventAdapter = new EventAdapter(this, waitlistedEventNames, waitlistedEventIDs, waitlistedEventImageUrls);
 
-        // Handle item click for unjoining
-        listView.setOnItemClickListener((parent, view, position, id) -> {
-            Map<String, String> selectedEvent = eventList.get(position);
-            String eventId = selectedEvent.get("eventID");
-            String eventName = selectedEvent.get("eventName");
+        selectedListView.setAdapter(selectedEventAdapter);
+        waitlistedListView.setAdapter(waitlistedEventAdapter);
 
-            // Show confirmation dialog
-            showUnjoinDialog(eventId, eventName);
-        });
+        fetchUserEventIDs(currentUserID);
 
-        // Set up bottom navigation
-        setupBottomNavigation();
-    }
-
-    private void loadWaitlistedEvents() {
-        db.collection("events")
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    eventList.clear();
-
-                    for (DocumentSnapshot eventDoc : querySnapshot.getDocuments()) {
-                        String eventId = eventDoc.getId();
-                        db.collection("events")
-                                .document(eventId)
-                                .collection("waitingLists")
-                                .document(deviceID) // Check for this device ID in the waiting list
-                                .get()
-                                .addOnSuccessListener(waitlistDoc -> {
-                                    if (waitlistDoc.exists()) {
-                                        String eventName = eventDoc.getString("eventName");
-
-                                        Map<String, String> eventData = new HashMap<>();
-                                        eventData.put("eventID", eventId);
-                                        eventData.put("eventName", eventName);
-
-                                        eventList.add(eventData);
-                                        adapter.notifyDataSetChanged();
-                                    }
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.e(TAG, "Error checking waiting list for event: " + eventId, e);
-                                });
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error fetching events", e);
-                    Toast.makeText(this, "Failed to load events.", Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    private void showUnjoinDialog(String eventId, String eventName) {
-        new AlertDialog.Builder(this)
-                .setTitle("Unjoin the Waiting List?")
-                .setMessage("Do you want to unjoin from " + eventName + "?")
-                .setPositiveButton("Yes", (dialog, which) -> unjoinEvent(eventId))
-                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
-                .show();
-    }
-
-    private void unjoinEvent(String eventId) {
-        db.collection("events")
-                .document(eventId)
-                .collection("waitingLists")
-                .document(deviceID) // Remove the document using the device ID
-                .delete()
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Successfully unjoined from the waiting list.", Toast.LENGTH_SHORT).show();
-
-                    // Remove the unjoined event from the local list
-                    for (int i = 0; i < eventList.size(); i++) {
-                        if (eventList.get(i).get("eventID").equals(eventId)) {
-                            eventList.remove(i);
-                            adapter.notifyDataSetChanged(); // Update the adapter to refresh the UI
-                            break;
-                        }
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error unjoining from waiting list", e);
-                    Toast.makeText(this, "Failed to unjoin from the waiting list.", Toast.LENGTH_SHORT).show();
-                });
-    }
-
-
-    private void setupBottomNavigation() {
-        com.google.android.material.bottomnavigation.BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_home) {
-                // Redirect to Home Activity
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
                 return true;
-            } else if (id == R.id.nav_events) {
-                // Redirect to Events Activity
+            } else if (itemId == R.id.nav_events) {
+                startActivity(new Intent(this, ManageEventsActivity.class));
                 return true;
-            } else if (id == R.id.nav_notifications) {
-                // Redirect to Notifications Activity
+            } else if (itemId == R.id.nav_notifications) {
+                startActivity(new Intent(this, NotificationsActivity.class));
                 return true;
-            } else if (id == R.id.nav_profile) {
-                // Redirect to Profile Activity
+            } else if (itemId == R.id.nav_home) {
+                startActivity(new Intent(this, EventInfoActivity.class));
                 return true;
             }
             return false;
         });
 
-        // Highlight the current tab
-        bottomNavigationView.setSelectedItemId(R.id.nav_events);
+        selectedListView.setOnItemClickListener((parent, view, position, id) -> {
+            String eventID = selectedEventIDs.get(position);
+            String eventName = selectedEventNames.get(position);
+
+            Log.d("EventID_Log", "Selected Event ID: " + eventID);
+            Log.d("EventID_Log", "Selected User ID: " + currentUserID);
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Confirm Joining")
+                    .setMessage("Do you want to join the event: " + eventName + "?")
+                    .setPositiveButton("Confirm", (dialog, which) -> moveToFinalCollection(eventID, currentUserID))
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
+
+        waitlistedListView.setOnItemClickListener((parent, view, position, id) -> {
+            String eventID = waitlistedEventIDs.get(position);
+            String eventName = waitlistedEventNames.get(position);
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Remove from Waitlist")
+                    .setMessage("Do you want to remove yourself from the waitlist for: " + eventName + "?")
+                    .setPositiveButton("Remove", (dialog, which) -> removeFromList(eventID, currentUserID, "waitlisted"))
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
+    }
+
+    private void fetchUserEventIDs(String currentUserID) {
+        fetchEventIDsFromCollection("selected", currentUserID);
+        fetchEventIDsFromCollection("waitlisted", currentUserID);
+    }
+
+    private void fetchEventIDsFromCollection(String collectionName, String currentUserID) {
+        db.collection(collectionName)
+                .whereEqualTo("userID", currentUserID)
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
+                    }
+
+                    Set<String> eventIDs = new HashSet<>();
+                    if (snapshots != null) {
+                        for (DocumentSnapshot document : snapshots) {
+                            String eventID = document.getString("eventID");
+                            if (eventID != null) {
+                                eventIDs.add(eventID);
+                            }
+                        }
+                        loadEventDetails(eventIDs, collectionName);
+                    }
+                });
+    }
+
+    private void loadEventDetails(Set<String> allEventIDs, String collectionName) {
+        List<String> eventNames = collectionName.equals("selected") ? selectedEventNames : waitlistedEventNames;
+        List<String> eventIDs = collectionName.equals("selected") ? selectedEventIDs : waitlistedEventIDs;
+        List<String> eventImageUrls = collectionName.equals("selected") ? selectedEventImageUrls : waitlistedEventImageUrls;
+
+        eventNames.clear();
+        eventIDs.clear();
+        eventImageUrls.clear();
+
+        for (String eventID : allEventIDs) {
+            fetchEventDetails(eventID, collectionName);
+        }
+    }
+
+    private void fetchEventDetails(String eventID, String collectionName) {
+        db.collection("events").document(eventID)
+                .addSnapshotListener((documentSnapshot, e) -> {
+                    if (e != null) {
+                        return;
+                    }
+
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                        String eventName = documentSnapshot.getString("eventName");
+                        String eventImageUrl = documentSnapshot.getString("imageUrl");
+                        if (collectionName.equals("selected")) {
+                            selectedEventNames.add(eventName);
+                            selectedEventIDs.add(eventID);
+                            selectedEventImageUrls.add(eventImageUrl);
+                            selectedEventAdapter.notifyDataSetChanged();
+                        } else if (collectionName.equals("waitlisted")) {
+                            waitlistedEventNames.add(eventName);
+                            waitlistedEventIDs.add(eventID);
+                            waitlistedEventImageUrls.add(eventImageUrl);
+                            waitlistedEventAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+    }
+
+    private void moveToFinalCollection(String eventID, String userID) {
+        db.collection("selected")
+                .whereEqualTo("userID", userID)
+                .whereEqualTo("eventID", eventID)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                        db.collection("final")
+                                .add(document.getData())
+                                .addOnSuccessListener(documentReference -> {
+                                    removeFromList(eventID, userID, "selected");
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Failed to add to final collection: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                });
+    }
+
+    private void removeFromList(String eventID, String currentUserID, String collectionName) {
+        db.collection(collectionName)
+                .whereEqualTo("userID", currentUserID)
+                .whereEqualTo("eventID", eventID)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String documentID = task.getResult().getDocuments().get(0).getId();
+                        db.collection(collectionName).document(documentID)
+                                .delete()
+                                .addOnCompleteListener(deleteTask -> {
+                                    if (deleteTask.isSuccessful()) {
+                                        if (collectionName.equals("selected")) {
+                                            selectedEventNames.remove(eventID);
+                                            selectedEventIDs.remove(eventID);
+                                            selectedEventImageUrls.remove(eventID);
+                                            selectedEventAdapter.notifyDataSetChanged();
+                                        } else if (collectionName.equals("waitlisted")) {
+                                            waitlistedEventNames.remove(eventID);
+                                            waitlistedEventIDs.remove(eventID);
+                                            waitlistedEventImageUrls.remove(eventID);
+                                            waitlistedEventAdapter.notifyDataSetChanged();
+                                        }
+                                    }
+                                });
+                    }
+                });
     }
 }

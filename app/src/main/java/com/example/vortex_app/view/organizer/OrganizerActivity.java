@@ -3,7 +3,6 @@ package com.example.vortex_app.view.organizer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -11,9 +10,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vortex_app.view.event.AddEvent;
-import com.example.vortex_app.controller.adapter.OrgEventAdapter;
+import com.example.vortex_app.controller.adapter.EventAdapter;
 import com.example.vortex_app.R;
-import com.example.vortex_app.model.Event;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -22,7 +20,7 @@ import java.util.List;
 
 public class OrganizerActivity extends AppCompatActivity {
     private ListView listView;
-    private OrgEventAdapter customAdapter;
+    private EventAdapter customAdapter;
     private List<String> eventNames = new ArrayList<>();
     private List<String> eventIDs = new ArrayList<>();
     private List<String> eventImageUrls = new ArrayList<>();
@@ -39,7 +37,7 @@ public class OrganizerActivity extends AppCompatActivity {
         loadEvents();
 
 
-       customAdapter = new OrgEventAdapter(this, eventNames, eventIDs, eventImageUrls);
+       customAdapter = new EventAdapter(this, eventNames, eventIDs, eventImageUrls);
         listView.setAdapter(customAdapter);
 
 
@@ -80,7 +78,6 @@ public class OrganizerActivity extends AppCompatActivity {
                             String eventID = document.getId();
                             String eventImageUrl = document.getString("imageUrl");
 
-                            // Add event name and document ID to respective lists
                             eventNames.add(eventName);
                             eventIDs.add(eventID);
                             eventImageUrls.add(eventImageUrl);
