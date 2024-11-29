@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -109,22 +110,31 @@ public class AddEvent extends AppCompatActivity {
     }
 
     private void loadFacilitiesIntoSpinner(Spinner facilitySpinner) {
-        db.collection("facilities").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                List<String> facilityNames = new ArrayList<>();
-                for (DocumentSnapshot doc : task.getResult()) {
-                    String facilityName = doc.getString("facilityName");
-                    if (facilityName != null) {
-                        facilityNames.add(facilityName);
+        // Use organizer ID to fetch only the facilities created by this user
+        String organizerID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        db.collection("facility") // Updated collection name
+                .whereEqualTo("organizerId", organizerID) // Fetch facilities specific to this organizer
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        List<String> facilityNames = new ArrayList<>();
+                        for (DocumentSnapshot doc : task.getResult()) {
+                            String facilityName = doc.getString("facilityName");
+                            if (facilityName != null) {
+                                facilityNames.add(facilityName);
+                            }
+                        }
+                        if (facilityNames.isEmpty()) {
+                            facilityNames.add("No Facilities Found"); // Default message if no facilities
+                        }
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, facilityNames);
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        facilitySpinner.setAdapter(adapter);
+                    } else {
+                        Toast.makeText(this, "Failed to load facilities", Toast.LENGTH_SHORT).show();
                     }
-                }
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, facilityNames);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                facilitySpinner.setAdapter(adapter);
-            } else {
-                Toast.makeText(this, "Failed to load facilities", Toast.LENGTH_SHORT).show();
-            }
-        });
+                });
     }
 
     private void loadEventDetails(String eventID) {
@@ -299,4 +309,7 @@ public class AddEvent extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+
+
 }
