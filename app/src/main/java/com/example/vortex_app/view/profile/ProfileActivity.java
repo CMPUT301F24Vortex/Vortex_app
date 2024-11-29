@@ -117,7 +117,9 @@ public class ProfileActivity extends AppCompatActivity {
                     lastNameTextView.setText(lastName);
                     emailTextView.setText(document.getString("email"));
                     contactInfoTextView.setText(document.getString("contactInfo"));
-                    deviceTextView.setText(document.getString("device"));
+
+                    // Set deviceTextView to androidId
+                    deviceTextView.setText(androidId);
 
                     // Update the full name TextView
                     fullNameTextView.setText(firstName + " " + lastName);
@@ -148,18 +150,13 @@ public class ProfileActivity extends AppCompatActivity {
     private void initializeUserData(String androidId) {
         DocumentReference docRef = db.collection("user_profile").document(androidId);
 
-        // Retrieve device information (brand and model)
-        String brand = android.os.Build.BRAND; // e.g., "Samsung"
-        String model = android.os.Build.MODEL; // e.g., "Galaxy S21"
-        String deviceInfo = brand + " " + model; // Combine brand and model
-
         // Create default user data
         User defaultUser = new User(
                 "Default First Name",  // Default first name
                 "Default Last Name",   // Default last name
                 "default@example.com", // Default email
                 "123-456-7890",        // Default contact information
-                deviceInfo             // Device information
+                androidId              // Use androidId as device information
         );
 
         // Save the default user data to Firestore
