@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <!-- Facility Name Input -->
+    <EditText
+        android:id="@+id/editTextFacilityName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Facility Name"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:layout_marginTop="24dp" />
+
+    <!-- Facility Address Input -->
+    <EditText
+        android:id="@+id/editTextFacilityAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Facility Address"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:layout_below="@id/editTextFacilityName"
+        android:layout_marginTop="16dp" />
+
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/buttonSaveFacility"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Facility"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@id/editTextFacilityAddress"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/red"
+        android:textColor="@android:color/white" />
+</RelativeLayout>

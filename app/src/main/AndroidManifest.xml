@@ -55,6 +55,13 @@
         <activity android:name=".view.facility.MyFacilityActivity" />
 
 
+        <!--Facility-->
+        <!-- CreateFacilityActivity -->
+        <activity
+            android:name=".view.facility.CreateFacilityActivity"
+            android:exported="false" />
+<!--        EditFacility-->
+        <activity android:name=".view.facility.EditFacilityActivity" android:exported="false" />
 
         <!-- Profile -->
         <activity
