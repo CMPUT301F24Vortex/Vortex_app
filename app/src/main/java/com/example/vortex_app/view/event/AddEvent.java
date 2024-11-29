@@ -74,7 +74,7 @@ public class AddEvent extends AppCompatActivity {
         eventMaxPeopleInput = findViewById(R.id.event_max_people_input);
         eventLimitInput = findViewById(R.id.event_waitlist_limit_input);
         geoLocationSpinner = findViewById(R.id.spinnerGeoLocation);
-        facilitySpinner = findViewById(R.id.facility_spinner); // Facility spinner
+        facilitySpinner = findViewById(R.id.facility_spinner);
         addButton = findViewById(R.id.add_event_button);
         uploadButton = findViewById(R.id.upload_button);
 
@@ -87,7 +87,7 @@ public class AddEvent extends AppCompatActivity {
         eventID = intent.getStringExtra("EVENT_ID");
 
         if (eventID != null) {
-            loadEventDetails(eventID); // Load event data if editing
+            loadEventDetails(eventID);
         }
 
         uploadButton.setOnClickListener(v -> openImageChooser());
@@ -110,11 +110,10 @@ public class AddEvent extends AppCompatActivity {
     }
 
     private void loadFacilitiesIntoSpinner(Spinner facilitySpinner) {
-        // Use organizer ID to fetch only the facilities created by this user
         String organizerID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        db.collection("facility") // Updated collection name
-                .whereEqualTo("organizerId", organizerID) // Fetch facilities specific to this organizer
+        db.collection("facility")
+                .whereEqualTo("organizerId", organizerID)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
@@ -126,7 +125,7 @@ public class AddEvent extends AppCompatActivity {
                             }
                         }
                         if (facilityNames.isEmpty()) {
-                            facilityNames.add("No Facilities Found"); // Default message if no facilities
+                            facilityNames.add("No Facilities Found");
                         }
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, facilityNames);
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -260,6 +259,7 @@ public class AddEvent extends AppCompatActivity {
         String price = eventPriceInput.getText().toString();
         String maxPeople = eventMaxPeopleInput.getText().toString();
         String eventLimit = eventLimitInput.getText().toString();
+        String organizerID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         Map<String, Object> event = new HashMap<>();
         event.put("eventName", eventName);
@@ -274,6 +274,7 @@ public class AddEvent extends AppCompatActivity {
         event.put("maxPeople", maxPeople);
         event.put("waitlistLimit", eventLimit);
         event.put("facilityName", facilityName);
+        event.put("organizerId", organizerID);
 
         if (imageUrl != null) {
             event.put("imageUrl", imageUrl);
@@ -309,7 +310,4 @@ public class AddEvent extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
-
-
 }
