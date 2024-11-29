@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-
     <!-- Application Definition -->
     <application
         android:allowBackup="true"
@@ -31,6 +30,11 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <!-- Google Maps API Key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBkKnwju9dUU9hK4dWWFaSAogFlth0oDBw" />
 
         <!-- Main Activity -->
         <activity
@@ -82,6 +86,9 @@
         <!-- Profile Activities -->
         <activity android:name=".view.profile.ProfileActivity" android:exported="false" />
         <activity android:name=".view.profile.EditProfileActivity" android:exported="false" />
+
+        <!-- Location Activities -->
+        <activity android:name=".view.location.LocationActivity" android:exported="false" />
 
         <!-- Admin Activities -->
         <activity android:name=".view.admin.AdminMainscreen" android:exported="false" />

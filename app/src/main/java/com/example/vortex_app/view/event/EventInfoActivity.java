@@ -130,14 +130,18 @@ public class EventInfoActivity extends AppCompatActivity {
                         // Fetch and display location from facility collection
                         fetchLocationFromFacility(facilityName);
 
-                        // Load poster using Glide
+                        // Load poster using Glide safely
                         if (imageUrl != null && !imageUrl.isEmpty()) {
                             Log.d(TAG, "Image URL: " + imageUrl);
-                            Glide.with(this)
-                                    .load(imageUrl)
-                                    .placeholder(R.drawable.placeholder_image) // Image to display while loading
-                                    .error(R.drawable.placeholder_image)      // Image to display on error
-                                    .into(posterImageView);
+                            if (!isDestroyed() && !isFinishing()) {
+                                Glide.with(this)
+                                        .load(imageUrl)
+                                        .placeholder(R.drawable.placeholder_image) // Placeholder image
+                                        .error(R.drawable.placeholder_image)      // Error fallback
+                                        .into(posterImageView);
+                            } else {
+                                Log.w(TAG, "Activity is destroyed or finishing. Skipping Glide image loading.");
+                            }
                         } else {
                             Log.w(TAG, "Image URL is null or empty, loading placeholder image.");
                             posterImageView.setImageResource(R.drawable.placeholder_image);
@@ -183,20 +187,15 @@ public class EventInfoActivity extends AppCompatActivity {
                 .document(eventID)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String geolocationRequirement = documentSnapshot.getString("geolocationRequirement");
-                        if ("Yes".equalsIgnoreCase(geolocationRequirement)) {
-                            showGeolocationWarning();
-                        } else {
-                            checkWaitingListStatus();
-                        }
+                    String geolocationRequirement = documentSnapshot.getString("geolocationRequirement");
+                    if ("Yes".equalsIgnoreCase(geolocationRequirement)) {
+                        showGeolocationWarning();
                     } else {
-                        Toast.makeText(this, "Event not found.", Toast.LENGTH_SHORT).show();
+                        checkWaitingListStatus();
                     }
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error fetching geolocation requirement", e);
-                    Toast.makeText(this, "Failed to check geolocation requirement.", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -224,21 +223,26 @@ public class EventInfoActivity extends AppCompatActivity {
     private void getUserLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationProviderClient.getLastLocation()
-                    .addOnSuccessListener(location -> {
-                        if (location != null) {
-                            userLatitude = location.getLatitude();
-                            userLongitude = location.getLongitude();
-                            Log.d(TAG, "User Location: " + userLatitude + ", " + userLongitude);
-                            checkWaitingListStatus();
-                        } else {
-                            Toast.makeText(this, "Unable to get location.", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Error getting location", e);
-                        Toast.makeText(this, "Failed to get location.", Toast.LENGTH_SHORT).show();
-                    });
+            try {
+                fusedLocationProviderClient.getLastLocation()
+                        .addOnSuccessListener(location -> {
+                            if (location != null) {
+                                userLatitude = location.getLatitude();
+                                userLongitude = location.getLongitude();
+                                Log.d(TAG, "User Location: " + userLatitude + ", " + userLongitude);
+                                checkWaitingListStatus();
+                            } else {
+                                Toast.makeText(this, "Unable to get location.", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, "Error getting location", e);
+                            Toast.makeText(this, "Failed to get location.", Toast.LENGTH_SHORT).show();
+                        });
+            } catch (SecurityException e) {
+                Log.e(TAG, "SecurityException while accessing location", e);
+                Toast.makeText(this, "Permission issue while accessing location.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -305,7 +309,8 @@ public class EventInfoActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             getUserLocation();
         } else {
             Toast.makeText(this, "Location permission is required to join the event.", Toast.LENGTH_SHORT).show();
