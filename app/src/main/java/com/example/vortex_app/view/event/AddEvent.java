@@ -29,8 +29,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -39,7 +41,7 @@ public class AddEvent extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FirebaseFirestore db;
     private StorageReference storageReference;
-    private Spinner eventClassDayInput, geoLocationSpinner;
+    private Spinner eventClassDayInput, geoLocationSpinner, facilitySpinner;
     private EditText eventNameInput, eventLocationInput, eventTimeInput, eventStartPeriodInput, eventEndPeriodInput,
             eventRegDueDateInput, eventRegOpenDateInput, eventPriceInput, eventMaxPeopleInput, eventLimitInput;
     private Button addButton, uploadButton;
@@ -71,13 +73,15 @@ public class AddEvent extends AppCompatActivity {
         eventMaxPeopleInput = findViewById(R.id.event_max_people_input);
         eventLimitInput = findViewById(R.id.event_waitlist_limit_input);
         geoLocationSpinner = findViewById(R.id.spinnerGeoLocation);
+        facilitySpinner = findViewById(R.id.facility_spinner); // Facility spinner
         addButton = findViewById(R.id.add_event_button);
         uploadButton = findViewById(R.id.upload_button);
 
-
         imageUploadBox = findViewById(R.id.image_upload_box);
 
-        // Get the eventID passed from OrganizerInfo (for editing an existing event)
+        // Load facilities into spinner
+        loadFacilitiesIntoSpinner(facilitySpinner);
+
         Intent intent = getIntent();
         eventID = intent.getStringExtra("EVENT_ID");
 
@@ -91,10 +95,12 @@ public class AddEvent extends AppCompatActivity {
             if (imageUri != null) {
                 uploadImageToFirebase();
             } else {
-                addEvent(existingImage);
+                String selectedFacility = facilitySpinner.getSelectedItem().toString();
+                addEvent(existingImage, selectedFacility);
             }
         });
 
+        // Click listeners for date and time pickers
         eventRegDueDateInput.setOnClickListener(v -> showDatePickerDialog(eventRegDueDateInput));
         eventRegOpenDateInput.setOnClickListener(v -> showDatePickerDialog(eventRegOpenDateInput));
         eventStartPeriodInput.setOnClickListener(v -> showDatePickerDialog(eventStartPeriodInput));
@@ -102,16 +108,32 @@ public class AddEvent extends AppCompatActivity {
         eventTimeInput.setOnClickListener(v -> showTimePickerDialog());
     }
 
+    private void loadFacilitiesIntoSpinner(Spinner facilitySpinner) {
+        db.collection("facilities").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                List<String> facilityNames = new ArrayList<>();
+                for (DocumentSnapshot doc : task.getResult()) {
+                    String facilityName = doc.getString("facilityName");
+                    if (facilityName != null) {
+                        facilityNames.add(facilityName);
+                    }
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, facilityNames);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                facilitySpinner.setAdapter(adapter);
+            } else {
+                Toast.makeText(this, "Failed to load facilities", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void loadEventDetails(String eventID) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference eventRef = db.collection("events").document(eventID);
 
-        // Fetch the document
         eventRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document != null && document.exists()) {
-
                     String eventName = document.getString("eventName");
                     String classDay = document.getString("classDay");
                     String eventLocation = document.getString("eventLocation");
@@ -124,13 +146,9 @@ public class AddEvent extends AppCompatActivity {
                     String poster = document.getString("imageUrl");
                     String maxPeople = document.getString("maxPeople");
 
-
-
-
                     eventNameInput.setText(eventName);
                     eventLocationInput.setText(eventLocation);
 
-                    // Set the spinner selection based on classDay
                     if (classDay != null) {
                         ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) eventClassDayInput.getAdapter();
                         int spinnerPosition = adapter.getPosition(classDay);
@@ -143,17 +161,16 @@ public class AddEvent extends AppCompatActivity {
                     eventRegDueDateInput.setText(regDueDate);
                     eventRegOpenDateInput.setText(regOpenDate);
                     eventPriceInput.setText(price);
-                    eventMaxPeopleInput.setText(String.valueOf(maxPeople));
+                    eventMaxPeopleInput.setText(maxPeople);
 
                     if (poster != null) {
-                        Glide.with(AddEvent.this).load(poster).into(imageUploadBox);
+                        Glide.with(this).load(poster).into(imageUploadBox);
                         existingImage = poster;
                     }
                 }
             }
         });
     }
-
 
     private void showDatePickerDialog(EditText dateEditText) {
         Calendar calendar = Calendar.getInstance();
@@ -162,7 +179,7 @@ public class AddEvent extends AppCompatActivity {
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
-                AddEvent.this,
+                this,
                 (view, year1, monthOfYear, dayOfMonth1) -> {
                     Calendar selectedDate = Calendar.getInstance();
                     selectedDate.set(year1, monthOfYear, dayOfMonth1);
@@ -176,21 +193,15 @@ public class AddEvent extends AppCompatActivity {
 
     private void showTimePickerDialog() {
         Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY); // 24-hour format
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(
-                AddEvent.this,
+                this,
                 (view, hourOfDay, minuteOfHour) -> {
-                    String period = "AM";
-                    if (hourOfDay >= 12) {
-                        period = "PM";
-                        if (hourOfDay > 12) {
-                            hourOfDay -= 12;
-                        }
-                    } else if (hourOfDay == 0) {
-                        hourOfDay = 12;
-                    }
+                    String period = hourOfDay >= 12 ? "PM" : "AM";
+                    if (hourOfDay > 12) hourOfDay -= 12;
+                    else if (hourOfDay == 0) hourOfDay = 12;
 
                     String time = String.format(Locale.US, "%02d:%02d %s", hourOfDay, minuteOfHour, period);
                     eventTimeInput.setText(time);
@@ -219,20 +230,15 @@ public class AddEvent extends AppCompatActivity {
         if (imageUri != null) {
             StorageReference fileRef = storageReference.child("event_images/" + System.currentTimeMillis() + ".jpg");
             fileRef.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String imageUrl = uri.toString();
-                            addEvent(imageUrl);
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(AddEvent.this, "Image upload failed", Toast.LENGTH_SHORT).show();
-                    });
+                    .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String imageUrl = uri.toString();
+                        addEvent(imageUrl, facilitySpinner.getSelectedItem().toString());
+                    }))
+                    .addOnFailureListener(e -> Toast.makeText(this, "Image upload failed", Toast.LENGTH_SHORT).show());
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private void addEvent(String imageUrl) {
+    private void addEvent(String imageUrl, String facilityName) {
         String eventName = eventNameInput.getText().toString();
         String eventLocation = eventLocationInput.getText().toString();
         String classDay = eventClassDayInput.getSelectedItem().toString();
@@ -257,39 +263,37 @@ public class AddEvent extends AppCompatActivity {
         event.put("price", price);
         event.put("maxPeople", maxPeople);
         event.put("waitlistLimit", eventLimit);
+        event.put("facilityName", facilityName);
 
         if (imageUrl != null) {
             event.put("imageUrl", imageUrl);
         }
 
         if (eventID != null) {
-            // Update existing event
             db.collection("events").document(eventID).set(event)
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(AddEvent.this, "Event updated successfully", Toast.LENGTH_SHORT).show();
-                        navigateToOrganizerMenu(eventID,eventName);
+                        Toast.makeText(this, "Event updated successfully", Toast.LENGTH_SHORT).show();
+                        navigateToOrganizerMenu(eventID, eventName);
                     })
-                    .addOnFailureListener(e -> Toast.makeText(AddEvent.this, "Failed to update event", Toast.LENGTH_SHORT).show());
+                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to update event", Toast.LENGTH_SHORT).show());
         } else {
-            // Add new event
             db.collection("events").add(event)
                     .addOnSuccessListener(documentReference -> {
-                        Toast.makeText(AddEvent.this, "Event added successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Event added successfully", Toast.LENGTH_SHORT).show();
                         navigateToOrganizerActivity();
                     })
-                    .addOnFailureListener(e -> Toast.makeText(AddEvent.this, "Failed to add event", Toast.LENGTH_SHORT).show());
+                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to add event", Toast.LENGTH_SHORT).show());
         }
     }
 
-
     private void navigateToOrganizerActivity() {
-        Intent intent = new Intent(AddEvent.this, OrganizerActivity.class);
+        Intent intent = new Intent(this, OrganizerActivity.class);
         startActivity(intent);
         finish();
     }
 
-    private void navigateToOrganizerMenu(String eventID, String eventName){
-        Intent intent = new Intent(AddEvent.this, OrganizerMenu.class);
+    private void navigateToOrganizerMenu(String eventID, String eventName) {
+        Intent intent = new Intent(this, OrganizerMenu.class);
         intent.putExtra("EVENT_ID", eventID);
         intent.putExtra("EVENT_NAME", eventName);
         startActivity(intent);
