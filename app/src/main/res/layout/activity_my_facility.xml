@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <!-- RecyclerView for displaying facilities -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewFacilities"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/fabCreateFacility"
+        android:layout_marginBottom="16dp"
+        android:padding="8dp" />
+
+    <!-- Floating Action Button for creating new facilities -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabCreateFacility"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:contentDescription="Create Facility"
+        android:src="@drawable/ic_add"
+        android:backgroundTint="@color/red" />
+</RelativeLayout>

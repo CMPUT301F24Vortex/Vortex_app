@@ -1,43 +1,97 @@
 package com.example.vortex_app.view.entrant;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ImageView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.vortex_app.R;
-import com.example.vortex_app.model.User;
 import com.example.vortex_app.controller.adapter.FinalEntrantAdapter;
+import com.example.vortex_app.model.User;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FinalEntrantsActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerViewFinalEntrants;
-    private FinalEntrantAdapter finalEntrantAdapter;
-    private List<User> finalEntrantList;
+    private RecyclerView recyclerViewEntrants;
+    private FinalEntrantAdapter entrantAdapter;
+    private List<User> entrantList;
+    private FirebaseFirestore db;
+    private String eventId; // Store event ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_final_entrants);
 
-        recyclerViewFinalEntrants = findViewById(R.id.recyclerViewFinalEntrants);
+        // Retrieve event ID from the intent
+        eventId = getIntent().getStringExtra("EVENT_ID");
 
-        // initialize entrant data
-        finalEntrantList = new ArrayList<>();
+        // Ensure event ID is not null or empty
+        if (eventId == null || eventId.isEmpty()) {
+            Toast.makeText(this, "Event ID not found", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
-        // replace with database
-        /*finalEntrantList.add(new FinalEntrant("Gyurim Do"));
-        finalEntrantList.add(new FinalEntrant("Peter Kim"));
-        finalEntrantList.add(new FinalEntrant("Peyton"));
-        finalEntrantList.add(new FinalEntrant("Alex S"));
-        finalEntrantList.add(new FinalEntrant("Chr234"));*/
+        // Initialize RecyclerView and adapter
+        recyclerViewEntrants = findViewById(R.id.recyclerViewEntrants);
+        db = FirebaseFirestore.getInstance();
+        entrantList = new ArrayList<>();
+        entrantAdapter = new FinalEntrantAdapter(entrantList);
 
-        // set RecyclerView
-        recyclerViewFinalEntrants.setLayoutManager(new LinearLayoutManager(this));
-        finalEntrantAdapter = new FinalEntrantAdapter(finalEntrantList);
-        recyclerViewFinalEntrants.setAdapter(finalEntrantAdapter);
+        recyclerViewEntrants.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewEntrants.setAdapter(entrantAdapter);
+
+        // Back Button Functionality
+        ImageView backButton = findViewById(R.id.imageViewBack);
+        backButton.setOnClickListener(view -> {
+            // Create an intent and add the event ID
+            Intent intent = new Intent();
+            intent.putExtra("EVENT_ID", eventId);
+            setResult(RESULT_OK, intent); // Pass result back to the calling activity
+            finish(); // Finish this activity and go back
+        });
+
+        // Fetch data from Firestore
+        fetchFinalEntrants();
+    }
+
+    private void fetchFinalEntrants() {
+        Toast.makeText(this, "Event ID: " + eventId, Toast.LENGTH_SHORT).show(); // Debugging
+        db.collection("final") // Fetch from the "final" collection
+                .whereEqualTo("eventID", eventId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        entrantList.clear();
+                        if (task.getResult().isEmpty()) {
+                            Toast.makeText(this, "No final users found for this event", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String userName = document.getString("userName");
+                            String userID = document.getString("userID");
+
+                            if (userName != null && userID != null) {
+                                entrantList.add(new User(userName, userID)); // Updated constructor
+                            } else {
+                                Log.d("FirestoreError", "Document missing required fields: " + document.getId());
+                            }
+                        }
+                        entrantAdapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(this, "Failed to fetch data", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="#FFFFFF">
+
+    <!-- Facility Name -->
+    <TextView
+        android:id="@+id/textViewFacilityName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Facility Name"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:paddingBottom="4dp" />
+
+    <!-- Facility Address -->
+    <TextView
+        android:id="@+id/textViewFacilityAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Facility Address"
+        android:textSize="16sp"
+        android:textColor="#555555" />
+</LinearLayout>
