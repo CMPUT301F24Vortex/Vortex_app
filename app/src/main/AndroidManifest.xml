@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.vortex_app">
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="true" />
 
+    <!-- Application Definition -->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -17,76 +19,6 @@
         android:theme="@style/Theme.Vortex_App"
         tools:targetApi="31">
 
-        <!-- Notifications -->
-        <activity
-            android:name=".view.notification.NotificationsActivity"
-            android:exported="false"
-            android:launchMode="singleTop"/>
-        <activity
-            android:name=".view.notification.NotificationDetailActivity"
-            android:exported="false"
-            android:launchMode="singleTop"/>
-
-        <!-- Events -->
-        <activity
-            android:name=".view.event.ManageEventsActivity"
-            android:exported="false"
-            android:launchMode="singleTop"/>
-        <activity android:name=".view.event.EventActivity" />
-        <activity android:name=".view.event.EventInfoActivity" />
-
-        <!-- Organizer Activities -->
-        <activity android:name=".view.organizer.OrganizerInfo"/>
-        <activity android:name=".view.organizer.OrganizerMenu"/>
-        <activity android:name=".view.event.AddEvent"/>
-        <activity android:name=".view.organizer.OrganizerActivity"
-            android:exported="false"/>
-        <activity android:name=".view.organizer.OrgNotificationsActivity" />
-        <activity android:name=".view.organizer.OrgNotificationDetailsActivity" />
-        <activity android:name=".view.organizer.OrgCreateNotificationActivity" />
-
-        <activity android:name=".view.qrcode.OrgQRCodeActivity"
-            android:exported="false"/>
-        <activity android:name=".view.entrant.CancelledEntrantsActivity" />
-        <activity android:name=".view.entrant.SelectedEntrantsActivity" />
-        <activity android:name=".view.entrant.FinalEntrantsActivity" />
-        <activity android:name=".view.waitinglist.OrgWaitingListActivity" />
-        <activity android:name=".view.location.LocationActivity" />
-        <activity android:name=".view.facility.MyFacilityActivity" />
-
-
-        <!--Facility-->
-        <!-- CreateFacilityActivity -->
-        <activity
-            android:name=".view.facility.CreateFacilityActivity"
-            android:exported="false" />
-<!--        EditFacility-->
-        <activity android:name=".view.facility.EditFacilityActivity" android:exported="false" />
-
-        <!-- Profile -->
-        <activity
-            android:name=".view.profile.ProfileActivity"
-            android:exported="false"
-            android:launchMode="singleTop"/>
-        <activity
-            android:name=".view.profile.EditProfileActivity"
-            android:exported="false" />
-
-        <!-- Entrant -->
-        <activity
-            android:name=".view.entrant.EntrantActivity"
-            android:exported="false" />
-
-
-        <!-- QR Scanner -->
-        <activity
-            android:name=".view.qrcode.QrScannerActivity"
-            android:exported="false" />
-        <!-- If using CustomScannerActivity -->
-        <activity
-            android:name=".view.qrcode.CustomScannerActivity"
-            android:exported="false" />
-
         <!-- Firebase Messaging Service -->
         <service
             android:name=".services.MyFirebaseMessagingService"
@@ -95,16 +27,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-
-        <!-- Admin activities -->
-        <activity android:name=".view.admin.AdminMainscreen" android:exported="false"/>
-        <activity android:name=".view.admin.AdminFacilityScreen" android:exported="false"/>
-        <activity android:name=".view.admin.AdminEventScreen" android:exported="false"/>
-        <activity android:name=".view.admin.AdminProfileScreen" android:exported="false"/>
-        <activity android:name=".view.admin.AdminProfileViewer" android:exported="false"/>
-        <activity android:name=".view.admin.AdminEventInfoScreen" android:exported="false"/>
-
 
         <!-- Main Activity -->
         <activity
@@ -116,5 +38,54 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- QR Scanner Activities -->
+        <activity
+            android:name=".view.qrcode.QrScannerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.qrcode.CustomScannerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.qrcode.OrgQRCodeActivity"
+            android:exported="false" />
+
+        <!-- Organizer Activities -->
+        <activity android:name=".view.organizer.OrganizerInfo" />
+        <activity android:name=".view.organizer.OrganizerMenu" />
+        <activity android:name=".view.event.AddEvent" />
+        <activity android:name=".view.organizer.OrganizerActivity" android:exported="false" />
+
+        <!-- Facility Activities -->
+        <activity android:name=".view.facility.MyFacilityActivity" />
+        <activity android:name=".view.facility.CreateFacilityActivity" android:exported="false" />
+        <activity android:name=".view.facility.EditFacilityActivity" android:exported="false" />
+
+        <!-- Entrant Activities -->
+        <activity android:name=".view.entrant.EntrantActivity" android:exported="false" />
+        <activity android:name=".view.entrant.CancelledEntrantsActivity" />
+        <activity android:name=".view.entrant.SelectedEntrantsActivity" />
+        <activity android:name=".view.entrant.FinalEntrantsActivity" />
+
+        <!-- Event Activities -->
+        <activity android:name=".view.event.ManageEventsActivity" android:exported="false" />
+        <activity android:name=".view.event.EventInfoActivity" />
+
+        <!-- Notification Activities -->
+        <activity android:name=".view.notification.NotificationsActivity" android:exported="false" />
+        <activity android:name=".view.notification.NotificationDetailActivity" android:exported="false" />
+
+        <!-- Profile Activities -->
+        <activity android:name=".view.profile.ProfileActivity" android:exported="false" />
+        <activity android:name=".view.profile.EditProfileActivity" android:exported="false" />
+
+        <!-- Admin Activities -->
+        <activity android:name=".view.admin.AdminMainscreen" android:exported="false" />
+        <activity android:name=".view.admin.AdminFacilityScreen" android:exported="false" />
+        <activity android:name=".view.admin.AdminEventScreen" android:exported="false" />
+        <activity android:name=".view.admin.AdminProfileScreen" android:exported="false" />
+        <activity android:name=".view.admin.AdminProfileViewer" android:exported="false" />
+        <activity android:name=".view.admin.AdminEventInfoScreen" android:exported="false" />
+
     </application>
 </manifest>

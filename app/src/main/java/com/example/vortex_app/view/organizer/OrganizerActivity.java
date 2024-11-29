@@ -121,7 +121,7 @@ public class OrganizerActivity extends AppCompatActivity {
 
 
     private void ensureDefaultFacility() {
-        db.collection("facilities")
+        db.collection("facility")
                 .whereEqualTo("organizerId", organizerID)
                 .get()
                 .addOnCompleteListener(task -> {
