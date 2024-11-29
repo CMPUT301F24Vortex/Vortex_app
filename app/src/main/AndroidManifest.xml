@@ -52,6 +52,8 @@
         <activity android:name=".view.entrant.FinalEntrantsActivity" />
         <activity android:name=".view.waitinglist.OrgWaitingListActivity" />
         <activity android:name=".view.location.LocationActivity" />
+        <activity android:name=".view.facility.MyFacilityActivity" />
+
 
 
         <!-- Profile -->

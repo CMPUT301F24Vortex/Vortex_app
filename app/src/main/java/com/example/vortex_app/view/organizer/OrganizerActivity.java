@@ -2,18 +2,18 @@ package com.example.vortex_app.view.organizer;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.vortex_app.view.event.AddEvent;
-import com.example.vortex_app.controller.adapter.OrgEventAdapter;
 import com.example.vortex_app.R;
-import com.example.vortex_app.model.Event;
+import com.example.vortex_app.controller.adapter.OrgEventAdapter;
+import com.example.vortex_app.view.event.AddEvent;
+import com.example.vortex_app.view.facility.MyFacilityActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -27,6 +27,7 @@ public class OrganizerActivity extends AppCompatActivity {
     private List<String> eventIDs = new ArrayList<>();
     private List<String> eventImageUrls = new ArrayList<>();
     private Button buttonNavigate;
+    private Button buttonMyFacility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,19 +36,16 @@ public class OrganizerActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.listView);
         buttonNavigate = findViewById(R.id.button_add_event);
+        buttonMyFacility = findViewById(R.id.button_my_facility); // Initialize My Facility button
 
         loadEvents();
 
-
-       customAdapter = new OrgEventAdapter(this, eventNames, eventIDs, eventImageUrls);
+        customAdapter = new OrgEventAdapter(this, eventNames, eventIDs, eventImageUrls);
         listView.setAdapter(customAdapter);
 
-
         listView.setOnItemClickListener((AdapterView<?> parent, android.view.View view, int position, long id) -> {
-
             String eventID = eventIDs.get(position);
-            String eventName  = eventNames.get(position);
-
+            String eventName = eventNames.get(position);
 
             Intent intent = new Intent(OrganizerActivity.this, OrganizerMenu.class);
             intent.putExtra("EVENT_NAME", eventName);
@@ -60,12 +58,16 @@ public class OrganizerActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-
+        // Handle "My Facility" button click
+        buttonMyFacility.setOnClickListener(v -> {
+            Log.d("OrganizerActivity", "My Facility button clicked!");
+            Intent intent = new Intent(OrganizerActivity.this, MyFacilityActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void loadEvents() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
 
         db.collection("events")
                 .get()
@@ -80,15 +82,18 @@ public class OrganizerActivity extends AppCompatActivity {
                             String eventID = document.getId();
                             String eventImageUrl = document.getString("imageUrl");
 
-                            // Add event name and document ID to respective lists
-                            eventNames.add(eventName);
-                            eventIDs.add(eventID);
-                            eventImageUrls.add(eventImageUrl);
+                            if (eventName != null && eventID != null) {
+                                eventNames.add(eventName);
+                                eventIDs.add(eventID);
+                                eventImageUrls.add(eventImageUrl != null ? eventImageUrl : "");
+                            } else {
+                                Log.e("LoadEvents", "Invalid event data: " + document.getId());
+                            }
                         }
 
-                        // Notify adapter to update the ListView
                         customAdapter.notifyDataSetChanged();
                     } else {
+                        Log.e("LoadEvents", "Error loading events", task.getException());
                         Toast.makeText(this, "Failed to load events", Toast.LENGTH_SHORT).show();
                     }
                 });
