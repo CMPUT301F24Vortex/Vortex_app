@@ -1,5 +1,6 @@
 package com.example.vortex_app.view.event;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -11,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vortex_app.R;
 import com.example.vortex_app.controller.adapter.EventListAdapter;
+import com.example.vortex_app.view.entrant.EntrantActivity;
+import com.example.vortex_app.view.notification.NotificationsActivity;
+import com.example.vortex_app.view.profile.ProfileActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -160,19 +164,22 @@ public class ManageEventsActivity extends AppCompatActivity {
     private void setupBottomNavigation() {
         com.google.android.material.bottomnavigation.BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_home) {
-                // Redirect to Home Activity
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                startActivity(new Intent(this, EntrantActivity.class));
+                finish();
                 return true;
-            } else if (id == R.id.nav_events) {
-                // Redirect to Events Activity
+            } else if (itemId == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                finish();
                 return true;
-            } else if (id == R.id.nav_notifications) {
-                // Redirect to Notifications Activity
+            } else if (itemId == R.id.nav_notifications) {
+                startActivity(new Intent(this, NotificationsActivity.class));
+                finish();
                 return true;
-            } else if (id == R.id.nav_profile) {
-                // Redirect to Profile Activity
+            } else if (itemId == R.id.nav_events) {
                 return true;
+
             }
             return false;
         });
