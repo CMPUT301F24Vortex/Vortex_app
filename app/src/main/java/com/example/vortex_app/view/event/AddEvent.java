@@ -63,7 +63,7 @@ public class AddEvent extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         eventNameInput = findViewById(R.id.event_name_input);
-        eventLocationInput = findViewById(R.id.event_location_input);
+
         eventClassDayInput = findViewById(R.id.event_class_day_input);
         eventTimeInput = findViewById(R.id.event_time_input);
         eventStartPeriodInput = findViewById(R.id.event_start_period_input);
@@ -249,7 +249,6 @@ public class AddEvent extends AppCompatActivity {
 
     private void addEvent(String imageUrl, String facilityName) {
         String eventName = eventNameInput.getText().toString();
-        String eventLocation = eventLocationInput.getText().toString();
         String classDay = eventClassDayInput.getSelectedItem().toString();
         String time = eventTimeInput.getText().toString();
         String startPeriod = eventStartPeriodInput.getText().toString();
@@ -260,10 +259,10 @@ public class AddEvent extends AppCompatActivity {
         String maxPeople = eventMaxPeopleInput.getText().toString();
         String eventLimit = eventLimitInput.getText().toString();
         String organizerID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        String geolocationRequirement = geoLocationSpinner.getSelectedItem().toString();
 
         Map<String, Object> event = new HashMap<>();
         event.put("eventName", eventName);
-        event.put("eventLocation", eventLocation);
         event.put("classDay", classDay);
         event.put("time", time);
         event.put("startPeriod", startPeriod);
@@ -275,6 +274,7 @@ public class AddEvent extends AppCompatActivity {
         event.put("waitlistLimit", eventLimit);
         event.put("facilityName", facilityName);
         event.put("organizerId", organizerID);
+        event.put("geolocationRequirement", geolocationRequirement);
 
         if (imageUrl != null) {
             event.put("imageUrl", imageUrl);
