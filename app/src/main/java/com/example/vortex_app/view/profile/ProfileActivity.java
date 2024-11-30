@@ -84,14 +84,17 @@ public class ProfileActivity extends AppCompatActivity {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
                 startActivity(new Intent(this, EntrantActivity.class)); // Navigate to Home
+                finish();
                 return true;
             } else if (itemId == R.id.nav_events) {
                 startActivity(new Intent(this, ManageEventsActivity.class)); // Navigate to Events
+                finish();
                 return true;
             } else if (itemId == R.id.nav_notifications) {
                 startActivity(new Intent(this, NotificationsActivity.class)); // Navigate to Notifications
                 return true;
             } else if (itemId == R.id.nav_profile) {
+
                 return true; // Already in Profile
             }
             return false;

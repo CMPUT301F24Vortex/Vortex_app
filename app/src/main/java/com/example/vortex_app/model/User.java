@@ -5,13 +5,17 @@ package com.example.vortex_app.model;
  * This class is used for storing and retrieving user data from Firestore.
  */
 public class User {
+    private String userName;
     private String firstName;       // User's first name
     private String lastName;        // User's last name
     private String email;           // User's email address
     private String contactInfo;     // User's contact information (matches Firestore)
     private String avatarUrl;       // URL of the user's profile picture
     private String userID;          // Unique ID of the user
-    private String device;          // User's device information (e.g., Tablet, Phone)
+    private String device;
+    private String eventID;
+
+
 
     // No-argument constructor (required for Firestore serialization)
     public User() {}
@@ -25,10 +29,34 @@ public class User {
         this.device = device;
     }
 
-    // Getters and setters
+    public User(String firstName, String lastName, String userID) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.userID = userID;
+    }
+    public User(String userName, String userID) {
+        this.userName = userName;
+        this.userID = userID;
+    }
+
+    // Getter and Setter methods
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+
+
+
+
     public String getFirstName() {
         return firstName;
     }
+
+
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -69,6 +97,7 @@ public class User {
     public String getUserID() {
         return userID;
     }
+
 
     public void setUserID(String userID) {
         this.userID = userID;

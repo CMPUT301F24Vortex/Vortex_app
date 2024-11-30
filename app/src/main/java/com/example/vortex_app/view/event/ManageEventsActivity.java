@@ -1,5 +1,6 @@
 package com.example.vortex_app.view.event;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -11,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vortex_app.R;
 import com.example.vortex_app.controller.adapter.EventListAdapter;
+import com.example.vortex_app.view.entrant.EntrantActivity;
+import com.example.vortex_app.view.notification.NotificationsActivity;
+import com.example.vortex_app.view.profile.ProfileActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -46,8 +50,9 @@ public class ManageEventsActivity extends AppCompatActivity {
         adapter = new EventListAdapter(this, eventList);
         listView.setAdapter(adapter);
 
-        // Load the events the user has joined in the waiting list
+        // Load the events for both waitlisted and canceled categories
         loadWaitlistedEvents();
+        loadCancelledEvents();
 
         // Handle item click for unjoining
         listView.setOnItemClickListener((parent, view, position, id) -> {
@@ -67,8 +72,6 @@ public class ManageEventsActivity extends AppCompatActivity {
         db.collection("events")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    eventList.clear();
-
                     for (DocumentSnapshot eventDoc : querySnapshot.getDocuments()) {
                         String eventId = eventDoc.getId();
                         db.collection("events")
@@ -83,6 +86,7 @@ public class ManageEventsActivity extends AppCompatActivity {
                                         Map<String, String> eventData = new HashMap<>();
                                         eventData.put("eventID", eventId);
                                         eventData.put("eventName", eventName);
+                                        eventData.put("status", "Waitlisted");
 
                                         eventList.add(eventData);
                                         adapter.notifyDataSetChanged();
@@ -95,13 +99,38 @@ public class ManageEventsActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error fetching events", e);
-                    Toast.makeText(this, "Failed to load events.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Failed to load waitlisted events.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void loadCancelledEvents() {
+        db.collection("cancelled")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (DocumentSnapshot cancelledDoc : querySnapshot.getDocuments()) {
+                        String eventId = cancelledDoc.getString("eventID");
+                        String userId = cancelledDoc.getString("userID");
+
+                        if (userId != null && userId.equals(deviceID)) {
+                            Map<String, String> eventData = new HashMap<>();
+                            eventData.put("eventID", eventId);
+                            eventData.put("eventName", "Cancelled Event " + eventId); // Placeholder for event name
+                            eventData.put("status", "Cancelled");
+
+                            eventList.add(eventData);
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error fetching cancelled events", e);
+                    Toast.makeText(this, "Failed to load cancelled events.", Toast.LENGTH_SHORT).show();
                 });
     }
 
     private void showUnjoinDialog(String eventId, String eventName) {
         new AlertDialog.Builder(this)
-                .setTitle("Unjoin the Waiting List?")
+                .setTitle("Unjoin the Event?")
                 .setMessage("Do you want to unjoin from " + eventName + "?")
                 .setPositiveButton("Yes", (dialog, which) -> unjoinEvent(eventId))
                 .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
@@ -115,7 +144,7 @@ public class ManageEventsActivity extends AppCompatActivity {
                 .document(deviceID) // Remove the document using the device ID
                 .delete()
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Successfully unjoined from the waiting list.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Successfully unjoined from the event.", Toast.LENGTH_SHORT).show();
 
                     // Remove the unjoined event from the local list
                     for (int i = 0; i < eventList.size(); i++) {
@@ -127,28 +156,30 @@ public class ManageEventsActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error unjoining from waiting list", e);
-                    Toast.makeText(this, "Failed to unjoin from the waiting list.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error unjoining from the event", e);
+                    Toast.makeText(this, "Failed to unjoin from the event.", Toast.LENGTH_SHORT).show();
                 });
     }
-
 
     private void setupBottomNavigation() {
         com.google.android.material.bottomnavigation.BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_home) {
-                // Redirect to Home Activity
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                startActivity(new Intent(this, EntrantActivity.class));
+                finish();
                 return true;
-            } else if (id == R.id.nav_events) {
-                // Redirect to Events Activity
+            } else if (itemId == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                finish();
                 return true;
-            } else if (id == R.id.nav_notifications) {
-                // Redirect to Notifications Activity
+            } else if (itemId == R.id.nav_notifications) {
+                startActivity(new Intent(this, NotificationsActivity.class));
+                finish();
                 return true;
-            } else if (id == R.id.nav_profile) {
-                // Redirect to Profile Activity
+            } else if (itemId == R.id.nav_events) {
                 return true;
+
             }
             return false;
         });

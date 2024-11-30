@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,9 +13,9 @@ import com.example.vortex_app.model.User;
 
 import java.util.List;
 
-public class CancelledEntrantAdapter extends RecyclerView.Adapter<CancelledEntrantAdapter.EntrantViewHolder> {
+public class CancelledEntrantAdapter extends RecyclerView.Adapter<CancelledEntrantAdapter.ViewHolder> {
 
-    private List<User> entrantList;
+    private final List<User> entrantList;
 
     public CancelledEntrantAdapter(List<User> entrantList) {
         this.entrantList = entrantList;
@@ -22,28 +23,30 @@ public class CancelledEntrantAdapter extends RecyclerView.Adapter<CancelledEntra
 
     @NonNull
     @Override
-    public EntrantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user, parent, false);
-        return new EntrantViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_cancelled_entrant, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EntrantViewHolder holder, int position) {
-        User entrant = entrantList.get(position);
-        holder.textViewEntrantName.setText(entrant.getFullName());
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        User user = entrantList.get(position);
+        holder.textViewName.setText(user.getUserName()); // Display userName directly
     }
+
 
     @Override
     public int getItemCount() {
         return entrantList.size();
     }
 
-    static class EntrantViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewEntrantName;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView textViewName;
 
-        public EntrantViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewEntrantName = itemView.findViewById(R.id.textViewEntrantName);
+            textViewName = itemView.findViewById(R.id.textViewName);
         }
     }
 }

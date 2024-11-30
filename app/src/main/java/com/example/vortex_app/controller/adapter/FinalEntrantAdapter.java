@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,38 +13,39 @@ import com.example.vortex_app.model.User;
 
 import java.util.List;
 
-public class FinalEntrantAdapter extends RecyclerView.Adapter<FinalEntrantAdapter.FinalEntrantViewHolder> {
+public class FinalEntrantAdapter extends RecyclerView.Adapter<FinalEntrantAdapter.ViewHolder> {
 
-    private List<User> finalEntrantList;
+    private final List<User> entrantList;
 
-    public FinalEntrantAdapter(List<User> finalEntrantList) {
-        this.finalEntrantList = finalEntrantList;
+    public FinalEntrantAdapter(List<User> entrantList) {
+        this.entrantList = entrantList;
     }
 
     @NonNull
     @Override
-    public FinalEntrantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user, parent, false);
-        return new FinalEntrantViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_final_entrant, parent, false); // Use your layout file
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FinalEntrantViewHolder holder, int position) {
-        User entrant = finalEntrantList.get(position);
-        holder.textViewEntrantName.setText(entrant.getFullName());
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        User user = entrantList.get(position);
+        holder.textViewName.setText(user.getUserName()); // Display the userName field
     }
 
     @Override
     public int getItemCount() {
-        return finalEntrantList.size();
+        return entrantList.size();
     }
 
-    static class FinalEntrantViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewEntrantName;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView textViewName;
 
-        public FinalEntrantViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewEntrantName = itemView.findViewById(R.id.textViewEntrantName);
+            textViewName = itemView.findViewById(R.id.textViewName);
         }
     }
 }
