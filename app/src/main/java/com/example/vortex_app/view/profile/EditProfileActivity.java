@@ -13,21 +13,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vortex_app.R;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.example.vortex_app.model.User;
+import com.example.vortex_app.model.UserRepository;
 import com.bumptech.glide.Glide;
 
 public class EditProfileActivity extends AppCompatActivity {
-    private FirebaseFirestore db;
-    private FirebaseStorage storage;
     private static final String TAG = "EditProfileActivity";
 
     private EditText firstNameEditText, lastNameEditText, emailEditText, contactInfoEditText, deviceEditText;
@@ -35,7 +31,9 @@ public class EditProfileActivity extends AppCompatActivity {
     private ImageView editIcon, avatarImageView;
     private Uri imageUri;
     private String oldAvatarUrl;
-    private String androidId; // Device-specific unique ID
+    private String androidId;
+
+    private UserRepository userRepository;
 
     private final ActivityResultLauncher<Intent> fileChooserLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -45,30 +43,20 @@ public class EditProfileActivity extends AppCompatActivity {
                     avatarImageView.setImageURI(imageUri);
 
                     if (imageUri != null) {
-                        if (oldAvatarUrl != null && !oldAvatarUrl.isEmpty()) {
-                            StorageReference oldAvatarRef = storage.getReferenceFromUrl(oldAvatarUrl);
-                            oldAvatarRef.delete().addOnSuccessListener(aVoid ->
-                                            Log.d(TAG, "Old avatar successfully deleted"))
-                                    .addOnFailureListener(e ->
-                                            Log.w(TAG, "Failed to delete old avatar", e));
-                        }
+                        userRepository.uploadAvatar(androidId, imageUri, oldAvatarUrl, new UserRepository.OnAvatarUploadedCallback() {
+                            @Override
+                            public void onAvatarUploaded(String downloadUrl) {
+                                Log.d(TAG, "Avatar uploaded successfully!");
+                                Toast.makeText(EditProfileActivity.this, "Avatar uploaded successfully!", Toast.LENGTH_SHORT).show();
+                                oldAvatarUrl = downloadUrl;
+                            }
 
-                        StorageReference storageRef = storage.getReference()
-                                .child("user_avatars/" + androidId + ".jpg");
-
-                        storageRef.putFile(imageUri)
-                                .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                                    String downloadUrl = uri.toString();
-                                    DocumentReference docRef = db.collection("user_profile").document(androidId);
-                                    docRef.update("avatarUrl", downloadUrl)
-                                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Avatar URL successfully updated in Firestore!"))
-                                            .addOnFailureListener(e -> Log.w(TAG, "Error updating avatar URL in Firestore", e));
-                                    Toast.makeText(EditProfileActivity.this, "Avatar uploaded successfully!", Toast.LENGTH_SHORT).show();
-                                }))
-                                .addOnFailureListener(e -> {
-                                    Log.e(TAG, "Error uploading image to Firebase Storage", e);
-                                    Toast.makeText(EditProfileActivity.this, "Failed to upload avatar. Please try again.", Toast.LENGTH_SHORT).show();
-                                });
+                            @Override
+                            public void onFailure(Exception e) {
+                                Log.e(TAG, "Error uploading avatar", e);
+                                Toast.makeText(EditProfileActivity.this, "Failed to upload avatar. Please try again.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 }
             });
@@ -78,12 +66,9 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        // Initialize Firestore, Storage, and device-specific ID
-        db = FirebaseFirestore.getInstance();
-        storage = FirebaseStorage.getInstance();
+        userRepository = new UserRepository();
         androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        // Initialize UI components
         firstNameEditText = findViewById(R.id.firstNameEditText);
         lastNameEditText = findViewById(R.id.lastNameEditText);
         emailEditText = findViewById(R.id.emailEditText);
@@ -93,10 +78,8 @@ public class EditProfileActivity extends AppCompatActivity {
         editIcon = findViewById(R.id.editAvatarIcon);
         avatarImageView = findViewById(R.id.avatarImageView);
 
-        // Load existing user data
         loadUserData();
 
-        // Set save button listener
         saveButton.setOnClickListener(view -> {
             saveUserData();
             Intent intent = new Intent(EditProfileActivity.this, ProfileActivity.class);
@@ -104,7 +87,6 @@ public class EditProfileActivity extends AppCompatActivity {
             finish();
         });
 
-        // Set edit icon listener
         editIcon.setOnClickListener(v -> {
             editIcon.setVisibility(View.GONE);
             showPopupMenu(v);
@@ -112,21 +94,19 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void loadUserData() {
-        DocumentReference docRef = db.collection("user_profile").document(androidId);
-        docRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                if (document != null && document.exists()) {
-                    // Populate UI with data from Firestore
-                    firstNameEditText.setText(document.getString("firstName"));
-                    lastNameEditText.setText(document.getString("lastName"));
-                    emailEditText.setText(document.getString("email"));
-                    contactInfoEditText.setText(document.getString("contactInfo"));
-                    deviceEditText.setText(document.getString("device"));
+        userRepository.getUser(androidId, new UserRepository.OnUserLoadedCallback() {
+            @Override
+            public void onUserLoaded(User user) {
+                if (user != null) {
+                    firstNameEditText.setText(user.getFirstName());
+                    lastNameEditText.setText(user.getLastName());
+                    emailEditText.setText(user.getEmail());
+                    contactInfoEditText.setText(user.getContactInfo());
+                    deviceEditText.setText(user.getDevice()); // Should be androidId now
 
-                    oldAvatarUrl = document.getString("avatarUrl");
+                    oldAvatarUrl = user.getAvatarUrl();
                     if (oldAvatarUrl != null && !oldAvatarUrl.isEmpty()) {
-                        Glide.with(this)
+                        Glide.with(EditProfileActivity.this)
                                 .load(oldAvatarUrl)
                                 .placeholder(R.drawable.profile)
                                 .into(avatarImageView);
@@ -134,8 +114,11 @@ public class EditProfileActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "No such document");
                 }
-            } else {
-                Log.d(TAG, "get failed with ", task.getException());
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e(TAG, "Failed to load user data", e);
             }
         });
     }
@@ -147,14 +130,20 @@ public class EditProfileActivity extends AppCompatActivity {
         String contactInfo = contactInfoEditText.getText().toString();
         String device = deviceEditText.getText().toString();
 
-        DocumentReference docRef = db.collection("user_profile").document(androidId);
-        docRef.update("firstName", firstName,
-                        "lastName", lastName,
-                        "email", email,
-                        "contactInfo", contactInfo,
-                        "device", device)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
-                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+        User user = new User(firstName, lastName, email, contactInfo, device);
+        user.setAvatarUrl(oldAvatarUrl);
+
+        userRepository.saveUser(androidId, user, new UserRepository.OnUserSavedCallback() {
+            @Override
+            public void onUserSaved() {
+                Log.d(TAG, "User data successfully updated!");
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.w(TAG, "Error updating user data", e);
+            }
+        });
     }
 
     private void showPopupMenu(View view) {
@@ -172,11 +161,19 @@ public class EditProfileActivity extends AppCompatActivity {
             return true;
         } else if (itemId == R.id.option_remove) {
             avatarImageView.setImageResource(R.drawable.profile);
-            DocumentReference docRef = db.collection("user_profile").document(androidId);
-            docRef.update("avatarUrl", null)
-                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Avatar URL removed from Firestore"))
-                    .addOnFailureListener(e -> Log.w(TAG, "Error removing avatar URL from Firestore", e));
-            Toast.makeText(this, "Avatar removed", Toast.LENGTH_SHORT).show();
+            userRepository.deleteAvatar(androidId, oldAvatarUrl, new UserRepository.OnAvatarDeletedCallback() {
+                @Override
+                public void onAvatarDeleted() {
+                    Log.d(TAG, "Avatar removed");
+                    oldAvatarUrl = null;
+                    Toast.makeText(EditProfileActivity.this, "Avatar removed", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Log.w(TAG, "Error removing avatar", e);
+                }
+            });
             return true;
         } else {
             return false;

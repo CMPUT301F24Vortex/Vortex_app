@@ -223,28 +223,29 @@ public class EventInfoActivity extends AppCompatActivity {
     private void getUserLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            try {
-                fusedLocationProviderClient.getLastLocation()
-                        .addOnSuccessListener(location -> {
-                            if (location != null) {
-                                userLatitude = location.getLatitude();
-                                userLongitude = location.getLongitude();
-                                Log.d(TAG, "User Location: " + userLatitude + ", " + userLongitude);
-                                checkWaitingListStatus();
-                            } else {
-                                Toast.makeText(this, "Unable to get location.", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .addOnFailureListener(e -> {
-                            Log.e(TAG, "Error getting location", e);
-                            Toast.makeText(this, "Failed to get location.", Toast.LENGTH_SHORT).show();
-                        });
-            } catch (SecurityException e) {
-                Log.e(TAG, "SecurityException while accessing location", e);
-                Toast.makeText(this, "Permission issue while accessing location.", Toast.LENGTH_SHORT).show();
-            }
+            // Get the last known location
+            fusedLocationProviderClient.getLastLocation()
+                    .addOnSuccessListener(location -> {
+                        if (location != null) {
+                            userLatitude = location.getLatitude();
+                            userLongitude = location.getLongitude();
+                            Log.d(TAG, "User Location: " + userLatitude + ", " + userLongitude);
+                            checkWaitingListStatus();
+                        } else {
+                            Toast.makeText(this, "Unable to get location.", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Error getting location", e);
+                        Toast.makeText(this, "Failed to get location.", Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
+
 
     private void checkWaitingListStatus() {
         db.collection("waitlisted")
