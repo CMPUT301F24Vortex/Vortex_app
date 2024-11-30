@@ -33,6 +33,10 @@ public class ProfileActivity extends AppCompatActivity {
 
     private String androidId;
 
+    // 新增的变量，用于控制重试次数
+    private int retryCount = 0;
+    private final int MAX_RETRY = 5; // 最大重试次数
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +105,7 @@ public class ProfileActivity extends AppCompatActivity {
                     lastNameTextView.setText(lastName);
                     emailTextView.setText(user.getEmail());
                     contactInfoTextView.setText(user.getContactInfo());
-                    deviceTextView.setText(user.getDevice()); // This will be androidId now
+                    deviceTextView.setText(user.getDevice()); // 现在将是 androidId
 
                     fullNameTextView.setText(firstName + " " + lastName);
 
@@ -111,6 +115,17 @@ public class ProfileActivity extends AppCompatActivity {
                                 .load(avatarUrl)
                                 .placeholder(R.drawable.profile)
                                 .into(profileImageView);
+                        retryCount = 0; // 成功加载后重置重试计数
+                    } else {
+                        if (retryCount < MAX_RETRY) {
+                            retryCount++;
+                            Log.d(TAG, "Avatar URL not available, retrying... (" + retryCount + ")");
+                            profileImageView.postDelayed(() -> loadUserData(androidId), 1000); // 延迟 1 秒后重试
+                        } else {
+                            Log.w(TAG, "Max retries reached, avatar not updated.");
+                            retryCount = 0; // 重置重试计数
+                            // 可以在这里显示默认头像或其他处理
+                        }
                     }
                 } else {
                     Log.d(TAG, "No such document. Initializing user data...");
