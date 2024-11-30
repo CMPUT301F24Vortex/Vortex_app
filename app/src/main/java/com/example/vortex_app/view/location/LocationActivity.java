@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final String TAG = "LocationActivity";
@@ -70,7 +71,10 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         recyclerViewEntrants = findViewById(R.id.recyclerViewEntrants);
         recyclerViewEntrants.setLayoutManager(new LinearLayoutManager(this));
         entrantList = new ArrayList<>();
-        entrantAdapter = new EntrantAdapter(entrantList, this::onEntrantClicked);
+        entrantAdapter = new EntrantAdapter(entrantList, (entrant, position) -> {
+            entrantAdapter.setSelectedPosition(position); // Highlight selected item
+            onEntrantClicked(entrant); // Show entrant location on map
+        });
         recyclerViewEntrants.setAdapter(entrantAdapter);
     }
 
@@ -90,6 +94,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         Log.d(TAG, "Google Map is ready.");
         mMap = googleMap;
     }
+
     private void fetchEntrantLocations() {
         Log.d(TAG, "Fetching entrant locations for eventID: " + eventID);
         db.collection("waitlisted")

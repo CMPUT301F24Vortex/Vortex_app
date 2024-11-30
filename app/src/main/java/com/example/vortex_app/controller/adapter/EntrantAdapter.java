@@ -1,5 +1,4 @@
 package com.example.vortex_app.controller.adapter;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,32 +12,46 @@ import com.example.vortex_app.model.Entrant;
 
 import java.util.List;
 
-public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.EntrantViewHolder> {
+public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.ViewHolder> {
 
-    private final List<Entrant> entrantList;
-    private final OnEntrantClickListener listener;
+    private List<Entrant> entrantList;
+    private OnItemClickListener listener;
+    private int selectedPosition = RecyclerView.NO_POSITION;
 
-    public interface OnEntrantClickListener {
-        void onEntrantClick(Entrant entrant);
+    public interface OnItemClickListener {
+        void onItemClick(Entrant entrant, int position);
     }
 
-    public EntrantAdapter(List<Entrant> entrantList, OnEntrantClickListener listener) {
+    public EntrantAdapter(List<Entrant> entrantList, OnItemClickListener listener) {
         this.entrantList = entrantList;
         this.listener = listener;
     }
 
+    public void setSelectedPosition(int position) {
+        int previousPosition = selectedPosition;
+        selectedPosition = position;
+        notifyItemChanged(previousPosition); // Update the previously selected item
+        notifyItemChanged(selectedPosition); // Update the newly selected item
+    }
+
     @NonNull
     @Override
-    public EntrantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_entrant, parent, false);
-        return new EntrantViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EntrantViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Entrant entrant = entrantList.get(position);
         holder.nameTextView.setText(entrant.getFirstName() + " " + entrant.getLastName());
-        holder.itemView.setOnClickListener(v -> listener.onEntrantClick(entrant));
+
+        // Highlight the selected item
+        holder.itemView.setBackgroundColor(selectedPosition == position
+                ? holder.itemView.getContext().getResources().getColor(R.color.selected_item) // Highlight color
+                : holder.itemView.getContext().getResources().getColor(android.R.color.transparent)); // Default color
+
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(entrant, position));
     }
 
     @Override
@@ -46,12 +59,12 @@ public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.EntrantV
         return entrantList.size();
     }
 
-    static class EntrantViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView;
 
-        public EntrantViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            nameTextView = itemView.findViewById(R.id.textViewEntrantName);
+            nameTextView = itemView.findViewById(R.id.nameTextView);
         }
     }
 }
