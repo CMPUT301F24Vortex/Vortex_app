@@ -70,7 +70,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
      */
     private void handleAccept(Context context, String userID, String eventID) {
         // Query to find the user's document in 'selected' collection
-        db.collection("selected")
+        db.collection("selected_but_not_confirmed")
                 .whereEqualTo("userID", userID)
                 .whereEqualTo("eventID", eventID)
                 .get()
@@ -113,7 +113,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
      */
     private void handleDecline(Context context, String userID, String eventID) {
         // Query to find the user's document in 'selected' collection
-        db.collection("selected")
+        db.collection("selected_but_not_confirmed")
                 .whereEqualTo("userID", userID)
                 .whereEqualTo("eventID", eventID)
                 .get()
