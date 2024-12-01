@@ -13,6 +13,7 @@ import com.example.vortex_app.model.NotificationModel;
 import com.example.vortex_app.controller.adapter.NotificationAdapter;
 import com.example.vortex_app.view.entrant.EntrantActivity;
 import com.example.vortex_app.view.event.EventInfoActivity;
+import com.example.vortex_app.view.event.ManageEventsActivity;
 import com.example.vortex_app.view.profile.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -53,22 +54,30 @@ public class NotificationsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notifications);
 
         // Set up bottom navigation
+        // Set up bottom navigation and handle item selection
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.nav_events);
+        bottomNavigationView.setSelectedItemId(R.id.nav_notifications);
+
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
                 startActivity(new Intent(this, EntrantActivity.class));
                 finish();
                 return true;
-            } else if (itemId == R.id.nav_profile) {
-                startActivity(new Intent(this, ProfileActivity.class));
+            } else if (itemId == R.id.nav_events) {
+                startActivity(new Intent(this, ManageEventsActivity.class));
                 finish();
                 return true;
-            } else if (itemId == R.id.nav_notifications) {
+            } else if (itemId == R.id.nav_profile) {
+                Intent intent = new Intent(this, ProfileActivity.class);
+                startActivity(intent);
+                finish();
                 return true;
-            } else if (itemId == R.id.nav_events) {
-                startActivity(new Intent(this, EventInfoActivity.class));
+
+
+            } else if (itemId == R.id.nav_notifications) {
+                // Current activity; do nothing
+                return true;
             }
             return false;
         });
@@ -146,5 +155,7 @@ public class NotificationsActivity extends AppCompatActivity {
         intent.putExtra("status", notification.getStatus());
         startActivity(intent);
     }
+
+
 
 }

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.vortex_app.R;
 import com.example.vortex_app.controller.adapter.EventAdapter;
 import com.example.vortex_app.model.Event;
+import com.example.vortex_app.view.entrant.EntrantActivity;
 import com.example.vortex_app.view.notification.NotificationsActivity;
 import com.example.vortex_app.view.profile.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -62,20 +63,29 @@ public class ManageEventsActivity extends AppCompatActivity {
 
         fetchUserEventIDs(currentUserID);
 
+        // Set up bottom navigation and handle item selection
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.nav_events);
+
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.nav_profile) {
-                startActivity(new Intent(this, ProfileActivity.class));
+            if (itemId == R.id.nav_home) {
+                startActivity(new Intent(this, EntrantActivity.class));
+                finish();
                 return true;
-            } else if (itemId == R.id.nav_events) {
-                startActivity(new Intent(this, ManageEventsActivity.class));
+            } else if (itemId == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                finish();
                 return true;
             } else if (itemId == R.id.nav_notifications) {
-                startActivity(new Intent(this, NotificationsActivity.class));
+                Intent intent = new Intent(this, NotificationsActivity.class);
+                startActivity(intent);
+                finish();
                 return true;
-            } else if (itemId == R.id.nav_home) {
-                startActivity(new Intent(this, EventInfoActivity.class));
+
+
+            } else if (itemId == R.id.nav_events) {
+                // Current activity; do nothing
                 return true;
             }
             return false;

@@ -70,23 +70,34 @@ public class EntrantActivity extends AppCompatActivity {
         Button scanQrButton = findViewById(R.id.button_scan_qr);
         scanQrButton.setOnClickListener(v -> checkCameraPermission());
 
+        // Set up bottom navigation and handle item selection
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
+
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_profile) {
                 startActivity(new Intent(this, ProfileActivity.class));
+                finish();
                 return true;
             } else if (itemId == R.id.nav_events) {
                 startActivity(new Intent(this, ManageEventsActivity.class));
+                finish();
                 return true;
             } else if (itemId == R.id.nav_notifications) {
-                startActivity(new Intent(this, NotificationsActivity.class));
+                Intent intent = new Intent(this, NotificationsActivity.class);
+                startActivity(intent);
+                finish();
                 return true;
+
+
             } else if (itemId == R.id.nav_home) {
+                // Current activity; do nothing
                 return true;
             }
             return false;
         });
+
 
         // Fetch all event IDs related to the user (selected, waitlisted, final)
         fetchUserEventIDs(currentUserID,collectionName);

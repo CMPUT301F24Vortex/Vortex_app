@@ -96,8 +96,12 @@ public class ProfileActivity extends AppCompatActivity {
                 finish();
                 return true;
             } else if (itemId == R.id.nav_notifications) {
-                startActivity(new Intent(this, NotificationsActivity.class));
+                Intent intent = new Intent(this, NotificationsActivity.class);
+                startActivity(intent);
+                finish();
                 return true;
+
+
             } else if (itemId == R.id.nav_profile) {
                 // Current activity; do nothing
                 return true;
