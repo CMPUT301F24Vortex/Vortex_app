@@ -73,7 +73,7 @@ public class AdminEventInfoScreen extends AppCompatActivity {
                 if (value != null && value.exists()) {
                     Event event = value.toObject(Event.class);
                     //Set all textViews to reflect user info
-                    eventDays.setText(event.getClassDay());
+                    eventDays.setText(String.join(", ", event.getClassDays()));
                     eventTime.setText(event.getTime());
                     eventPeriod.setText(event.getPeriod());
                     eventRegDueDate.setText(event.getRegistrationDueDate());
