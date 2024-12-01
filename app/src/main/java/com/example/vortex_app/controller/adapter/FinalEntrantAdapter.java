@@ -32,7 +32,8 @@ public class FinalEntrantAdapter extends RecyclerView.Adapter<FinalEntrantAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = entrantList.get(position);
-        holder.textViewName.setText(user.getUserName()); // Display the userName field
+        // Display the full name using firstName and lastName
+        holder.textViewName.setText(user.getFirstName() + " " + user.getLastName());
     }
 
     @Override

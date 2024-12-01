@@ -110,7 +110,7 @@ public class ManageEventsActivity extends AppCompatActivity {
     }
 
     private void fetchUserEventIDs(String currentUserID) {
-        fetchEventIDsFromCollection("selected", currentUserID);
+        fetchEventIDsFromCollection("selected_but_not_confirmed", currentUserID);
         fetchEventIDsFromCollection("waitlisted", currentUserID);
     }
 
@@ -137,9 +137,9 @@ public class ManageEventsActivity extends AppCompatActivity {
     }
 
     private void loadEventDetails(Set<String> allEventIDs, String collectionName) {
-        List<String> eventNames = collectionName.equals("selected") ? selectedEventNames : waitlistedEventNames;
-        List<String> eventIDs = collectionName.equals("selected") ? selectedEventIDs : waitlistedEventIDs;
-        List<String> eventImageUrls = collectionName.equals("selected") ? selectedEventImageUrls : waitlistedEventImageUrls;
+        List<String> eventNames = collectionName.equals("selected_but_not_confirmed") ? selectedEventNames : waitlistedEventNames;
+        List<String> eventIDs = collectionName.equals("selected_but_not_confirmed") ? selectedEventIDs : waitlistedEventIDs;
+        List<String> eventImageUrls = collectionName.equals("selected_but_not_confirmed") ? selectedEventImageUrls : waitlistedEventImageUrls;
 
         eventNames.clear();
         eventIDs.clear();
@@ -160,7 +160,7 @@ public class ManageEventsActivity extends AppCompatActivity {
                     if (documentSnapshot != null && documentSnapshot.exists()) {
                         String eventName = documentSnapshot.getString("eventName");
                         String eventImageUrl = documentSnapshot.getString("imageUrl");
-                        if (collectionName.equals("selected")) {
+                        if (collectionName.equals("selected_but_not_confirmed")) {
                             selectedEventNames.add(eventName);
                             selectedEventIDs.add(eventID);
                             selectedEventImageUrls.add(eventImageUrl);
@@ -176,7 +176,7 @@ public class ManageEventsActivity extends AppCompatActivity {
     }
 
     private void moveToFinalCollection(String eventID, String userID) {
-        db.collection("selected")
+        db.collection("selected_but_not_confirmed")
                 .whereEqualTo("userID", userID)
                 .whereEqualTo("eventID", eventID)
                 .get()
@@ -186,7 +186,7 @@ public class ManageEventsActivity extends AppCompatActivity {
                         db.collection("final")
                                 .add(document.getData())
                                 .addOnSuccessListener(documentReference -> {
-                                    removeFromList(eventID, userID, "selected");
+                                    removeFromList(eventID, userID, "selected_but_not_confirmed");
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(this, "Failed to add to final collection: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -207,7 +207,7 @@ public class ManageEventsActivity extends AppCompatActivity {
                                 .delete()
                                 .addOnCompleteListener(deleteTask -> {
                                     if (deleteTask.isSuccessful()) {
-                                        if (collectionName.equals("selected")) {
+                                        if (collectionName.equals("selected_but_not_confirmed")) {
                                             selectedEventNames.remove(eventID);
                                             selectedEventIDs.remove(eventID);
                                             selectedEventImageUrls.remove(eventID);

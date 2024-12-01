@@ -73,6 +73,7 @@ public class MyFacilityActivity extends AppCompatActivity {
 
     private void loadFacilityDetails() {
         db.collection("facility")
+                .whereEqualTo("organizerId", organizerID) // Filter by organizerID
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -81,15 +82,20 @@ public class MyFacilityActivity extends AppCompatActivity {
                             String id = document.getId();
                             String facilityName = document.getString("facilityName");
                             String address = document.getString("address");
+                            Log.d(TAG, "Facility found: " + facilityName + ", " + address);
                             facilityList.add(new Facility(id, facilityName, address));
                         });
                         facilityAdapter.notifyDataSetChanged();
-                        Log.d(TAG, "Facilities loaded: " + facilityList.size());
+                        Log.d(TAG, "Facilities loaded for organizer: " + facilityList.size());
                     } else {
                         Log.e(TAG, "Error fetching facilities", task.getException());
                     }
                 });
     }
+
+
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

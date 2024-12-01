@@ -89,6 +89,7 @@ public class OrganizerActivity extends AppCompatActivity {
 
     private void loadEvents() {
         db.collection("events")
+                .whereEqualTo("organizerId", organizerID) // Only fetch events created by this organizer
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -120,7 +121,7 @@ public class OrganizerActivity extends AppCompatActivity {
 
 
     private void ensureDefaultFacility() {
-        db.collection("facilities")
+        db.collection("facility")
                 .whereEqualTo("organizerId", organizerID)
                 .get()
                 .addOnCompleteListener(task -> {
