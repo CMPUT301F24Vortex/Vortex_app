@@ -182,7 +182,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                         WriteBatch batch = db.batch();
                         batch.set(cancelledRef, waitlistedDoc.getData());
                         batch.delete(waitlistedRef);
-
+                        // this one 
                         batch.commit()
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(context, "You have left the waiting list.", Toast.LENGTH_SHORT).show();
