@@ -1,12 +1,14 @@
 package com.example.vortex_app.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Event implements Serializable {
 
     private String name;
     private int imageResId; // Optional: For displaying an image in the UI
-    private String classDay;
+    //private String classDay;
+    private List<String> classDays; // Replace String with List<String>
     private String time;
     private String period;
     private String registrationDueDate;
@@ -28,7 +30,7 @@ public class Event implements Serializable {
                  String location, int maxPeople, String difficulty, boolean requiresGeolocation) {
         this.name = name;
         this.imageResId = imageResId;
-        this.classDay = classDay;
+        this.classDays = classDays;
         this.time = time;
         this.period = period;
         this.registrationDueDate = registrationDueDate;
@@ -72,12 +74,12 @@ public class Event implements Serializable {
         this.imageResId = imageResId;
     }
 
-    public String getClassDay() {
-        return classDay;
+    public List<String> getClassDays() {
+        return classDays;
     }
 
-    public void setClassDay(String classDay) {
-        this.classDay = classDay;
+    public void setClassDays(List<String> classDays) {
+        this.classDays = classDays;
     }
 
     public String getTime() {

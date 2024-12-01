@@ -70,15 +70,17 @@
             android:textColor="@color/black"/>
 
 
-        <Spinner
+        <EditText
             android:id="@+id/event_class_day_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/Week"
             android:layout_marginTop="10dp"
+            android:hint="Select Class Days"
             android:background="@drawable/white_box_background"
             android:minHeight="48dp"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:focusable="false"
+            android:clickable="true" />
 
         <TextView
             android:layout_width="match_parent"
