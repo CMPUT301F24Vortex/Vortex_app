@@ -70,7 +70,8 @@ public class OrgWaitingListActivity extends AppCompatActivity {
                             for (DocumentSnapshot document : querySnapshot) {
                                 String firstName = document.getString("firstName");
                                 String lastName = document.getString("lastName");
-                                String userID = document.getString("userID"); // Assuming userID is stored
+                                String userID = document.getString("userID");
+                                //String eventID = document.getString("eventID");// Assuming userID is stored
 
                                 User user = new User(firstName, lastName, userID);
                                 waitingListEntrants.add(user);
@@ -134,7 +135,7 @@ public class OrgWaitingListActivity extends AppCompatActivity {
                                                 DocumentReference waitlistedRef = waitlistedDoc.getReference();
 
                                                 // Reference to add to 'selected'
-                                                DocumentReference selectedRef = db.collection("selected").document();
+                                                DocumentReference selectedRef = db.collection("selected_but_not_confirmed").document();
                                                 orgList selectedUserObj = new orgList(userID, eventID);
                                                 batch.set(selectedRef, selectedUserObj);
 
