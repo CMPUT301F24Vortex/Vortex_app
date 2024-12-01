@@ -1,7 +1,6 @@
 package com.example.vortex_app.view.organizer;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,23 +10,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.vortex_app.R;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 public class OrgNotificationDetailsActivity extends AppCompatActivity {
+
+    private FirebaseFirestore db;
+    private String notificationId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_org_notification_details);
 
-        String date = getIntent().getStringExtra("DATE");
-        String title = getIntent().getStringExtra("TITLE");
-        String description = getIntent().getStringExtra("MESSAGE");
+        notificationId = getIntent().getStringExtra("notificationId");
 
-        System.out.println(date);
-        System.out.println(title);
-        System.out.println(description);
+        if (notificationId == null) {
+            Toast.makeText(this, "Notification ID is missing!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        db = FirebaseFirestore.getInstance();
 
         TextView textDate = findViewById(R.id.text_notification_date);
         TextView textTitle = findViewById(R.id.text_notification_title);
@@ -35,24 +36,30 @@ public class OrgNotificationDetailsActivity extends AppCompatActivity {
         Button buttonBack = findViewById(R.id.button_back);
         Button buttonDelete = findViewById(R.id.button_delete);
 
-        textDate.setText(date);
-        textTitle.setText(title);
-        textDescription.setText(description);
+        textDate.setText(getIntent().getStringExtra("DATE"));
+        textTitle.setText(getIntent().getStringExtra("TITLE"));
+        textDescription.setText(getIntent().getStringExtra("MESSAGE"));
 
-        buttonBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        buttonBack.setOnClickListener(view -> finish());
 
-        buttonDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // deklete operation
-                Toast.makeText(OrgNotificationDetailsActivity.this, "Notification deleted", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        });
+        buttonDelete.setOnClickListener(view -> deleteNotification());
+    }
+
+    private void deleteNotification() {
+        if (notificationId == null) {
+            Toast.makeText(this, "Cannot delete notification: ID is missing.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("notifications").document(notificationId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Notification deleted successfully!", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to delete notification!", Toast.LENGTH_SHORT).show();
+                });
+        finish();
     }
 }
