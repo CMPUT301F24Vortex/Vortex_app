@@ -112,6 +112,7 @@ public class OrganizerMenu extends AppCompatActivity {
         // Notifications
         fabNotification.setOnClickListener(view -> {
             Intent intent = new Intent(OrganizerMenu.this, OrgNotificationsActivity.class);
+            intent.putExtra("EVENT_ID", eventID);
             startActivity(intent);
         });
     }
