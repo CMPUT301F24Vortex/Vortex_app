@@ -89,7 +89,6 @@ public class OrganizerActivity extends AppCompatActivity {
 
     private void loadEvents() {
         db.collection("events")
-                .whereEqualTo("organizerId", organizerID) // Only fetch events created by this organizer
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
