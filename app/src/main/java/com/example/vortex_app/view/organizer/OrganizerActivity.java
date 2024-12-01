@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vortex_app.R;
 import com.example.vortex_app.controller.adapter.EventAdapter;
+import com.example.vortex_app.view.MainActivity;
 import com.example.vortex_app.view.event.AddEvent;
 import com.example.vortex_app.view.facility.MyFacilityActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -38,6 +39,8 @@ public class OrganizerActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String organizerID;
 
+    private Button buttonChangeRole;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +54,8 @@ public class OrganizerActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
         buttonNavigate = findViewById(R.id.button_add_event);
         buttonMyFacility = findViewById(R.id.button_my_facility);
+        buttonChangeRole = findViewById(R.id.button_change_role); // New button
+
 
         // Check for an existing facility or create a default one
         ensureDefaultFacility();
@@ -84,6 +89,15 @@ public class OrganizerActivity extends AppCompatActivity {
             Log.d(TAG, "My Facility button clicked!");
             Intent intent = new Intent(OrganizerActivity.this, MyFacilityActivity.class);
             startActivity(intent);
+        });
+
+
+        // Handle "Change Role" button click
+        buttonChangeRole.setOnClickListener(v -> {
+            Log.d(TAG, "Change Role button clicked!");
+            Intent intent = new Intent(OrganizerActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // Close the current activity
         });
     }
 

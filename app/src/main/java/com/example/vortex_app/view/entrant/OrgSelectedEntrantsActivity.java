@@ -1,7 +1,9 @@
 package com.example.vortex_app.view.entrant;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,6 +46,18 @@ public class OrgSelectedEntrantsActivity extends AppCompatActivity {
 
         // Initialize RecyclerViews and Adapters
         initializeRecyclerViews();
+
+
+        // Back Button Functionality
+        ImageView backButton = findViewById(R.id.imageViewBack);
+        backButton.setOnClickListener(view -> {
+            // Create an intent and add the event ID
+            Intent intent = new Intent();
+            intent.putExtra("EVENT_ID", eventID);
+            setResult(RESULT_OK, intent); // Pass result back to the calling activity
+            finish(); // Finish this activity and go back
+        });
+
 
         // Fetch data from Firestore
         fetchFinalEntrants();

@@ -39,5 +39,16 @@
             android:backgroundTint="#958B8B"
             android:text="My Facility"
             android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/button_change_role"
+            android:layout_width="120dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#4CAF50"
+            android:text="Change Role"
+            android:textColor="@android:color/white" />
+
+
     </LinearLayout>
 </LinearLayout>

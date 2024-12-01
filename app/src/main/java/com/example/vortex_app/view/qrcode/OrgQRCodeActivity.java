@@ -1,5 +1,6 @@
 package com.example.vortex_app.view.qrcode;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -47,6 +48,16 @@ public class OrgQRCodeActivity extends AppCompatActivity {
         // Generate the QR code using the eventID
         ImageView qrImageView = findViewById(R.id.imageView_qrCode);
         generateQRCode(eventID, qrImageView);
+
+        // Back Button Functionality
+        ImageView backButton = findViewById(R.id.imageViewBack);
+        backButton.setOnClickListener(view -> {
+            // Create an intent and add the event ID
+            Intent intent = new Intent();
+            intent.putExtra("EVENT_ID", eventID);
+            setResult(RESULT_OK, intent); // Pass result back to the calling activity
+            finish(); // Finish this activity and go back
+        });
     }
 
     /**

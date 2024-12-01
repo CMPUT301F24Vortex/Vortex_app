@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -112,6 +113,18 @@ public class OrganizerMenu extends AppCompatActivity {
             Intent intent = new Intent(OrganizerMenu.this, OrgNotificationsActivity.class);
             intent.putExtra("EVENT_ID", eventID);
             startActivity(intent);
+        });
+
+
+        // Back Button Functionality
+        ImageView backButton = findViewById(R.id.imageViewBack);
+        backButton.setOnClickListener(view -> {
+            // Navigate back to OrganizerActivity
+            Intent intent = new Intent(OrganizerMenu.this, OrganizerActivity.class);
+            intent.putExtra("EVENT_ID", eventID); // Pass the event ID back if needed
+            intent.putExtra("EVENT_NAME", eventName); // Pass the event name back if needed
+            startActivity(intent);
+            finish(); // Finish the current activity
         });
     }
 

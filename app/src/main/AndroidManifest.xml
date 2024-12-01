@@ -96,6 +96,11 @@
         <!-- Notification Activities -->
         <activity android:name=".view.notification.NotificationsActivity" android:exported="false" />
         <activity android:name=".view.notification.NotificationDetailActivity" android:exported="false" />
+<!--        -->
+<!--        Organizer Notification Activities-->
+        <activity android:name=".view.organizer.OrgNotificationsActivity" />
+        <activity android:name=".view.organizer.OrgNotificationDetailsActivity" />
+        <activity android:name=".view.organizer.OrgCreateNotificationActivity" />
 
         <!-- Profile Activities -->
         <activity android:name=".view.profile.ProfileActivity" android:exported="false" />

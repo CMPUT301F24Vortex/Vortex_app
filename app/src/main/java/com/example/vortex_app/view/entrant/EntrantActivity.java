@@ -1,5 +1,7 @@
 package com.example.vortex_app.view.entrant;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -17,9 +19,11 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import com.example.vortex_app.model.Event;
 import com.example.vortex_app.R;
+import com.example.vortex_app.view.MainActivity;
 import com.example.vortex_app.view.event.EventInfoActivity;
 import com.example.vortex_app.view.event.ManageEventsActivity;
 import com.example.vortex_app.view.notification.NotificationsActivity;
+import com.example.vortex_app.view.organizer.OrganizerActivity;
 import com.example.vortex_app.view.profile.ProfileActivity;
 import com.example.vortex_app.controller.adapter.EventAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -43,6 +47,7 @@ public class EntrantActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String currentUserID;
     private String collectionName;
+    private Button buttonChangeRole;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
 
     @Override
@@ -61,6 +66,7 @@ public class EntrantActivity extends AppCompatActivity {
         eventNames = new ArrayList<>();
         eventIDs = new ArrayList<>();
         eventImageUrls = new ArrayList<>();
+        buttonChangeRole = findViewById(R.id.button_change_role); // New button
 
 
 
@@ -98,6 +104,13 @@ public class EntrantActivity extends AppCompatActivity {
             return false;
         });
 
+        // Handle "Change Role" button click
+        buttonChangeRole.setOnClickListener(v -> {
+            Log.d(TAG, "Change Role button clicked!");
+            Intent intent = new Intent(EntrantActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // Close the current activity
+        });
 
         // Fetch all event IDs related to the user (selected, waitlisted, final)
         fetchUserEventIDs(currentUserID,collectionName);

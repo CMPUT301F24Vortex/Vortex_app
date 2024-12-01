@@ -21,22 +21,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
 
-
-    <!-- Scan QR Code Button -->
-
+    <!-- ListView for Events -->
     <ListView
         android:id="@+id/list_view_events"
-        android:layout_width="385dp"
-        android:layout_height="539dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="0.5dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_scan_qr"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_my_events"
-        app:layout_constraintVertical_bias="0.306" />
+        app:layout_constraintBottom_toTopOf="@+id/button_scan_qr"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
 
-
+    <!-- Scan QR Code Button -->
     <Button
         android:id="@+id/button_scan_qr"
         android:layout_width="wrap_content"
@@ -45,10 +44,25 @@
         android:text="Scan QR Code"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginBottom="16dp" />
+
+    <!-- Change Role Button -->
 
     <!-- Bottom navigation bar -->
+
+    <Button
+        android:id="@+id/button_change_role"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:backgroundTint="#4CAF50"
+        android:text="Change Role"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="0dp"

@@ -8,6 +8,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Back Button -->
+        <ImageView
+            android:id="@+id/imageViewBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_back"
+            android:contentDescription="Go Back"
+            />
+
         <TextView
             android:id="@+id/textViewFinalEntrants"
             android:layout_width="match_parent"
