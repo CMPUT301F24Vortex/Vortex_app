@@ -50,7 +50,6 @@ public class OrganizerMenu extends AppCompatActivity {
         Button buttonOrganizerWaiting = findViewById(R.id.button_waiting);
         Button buttonOrganizerQr = findViewById(R.id.button_Qrcode);
         Button buttonOrganizerSelected = findViewById(R.id.button_selected);
-        Button buttonOrganizerMedia = findViewById(R.id.button_media);
         Button buttonOrganizerCancel = findViewById(R.id.button_cancellation);
         Button buttonOrganizerLocal = findViewById(R.id.button_location);
         Button buttonOrganizerFinal = findViewById(R.id.button_final);
@@ -111,6 +110,7 @@ public class OrganizerMenu extends AppCompatActivity {
         // Notifications
         fabNotification.setOnClickListener(view -> {
             Intent intent = new Intent(OrganizerMenu.this, OrgNotificationsActivity.class);
+            intent.putExtra("EVENT_ID", eventID);
             startActivity(intent);
         });
     }

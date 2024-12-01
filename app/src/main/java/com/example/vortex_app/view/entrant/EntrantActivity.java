@@ -1,61 +1,75 @@
 package com.example.vortex_app.view.entrant;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.vortex_app.controller.adapter.EntrantEventAdapter;
+import android.Manifest;
 import com.example.vortex_app.model.Event;
 import com.example.vortex_app.R;
 import com.example.vortex_app.view.event.EventInfoActivity;
 import com.example.vortex_app.view.event.ManageEventsActivity;
 import com.example.vortex_app.view.notification.NotificationsActivity;
 import com.example.vortex_app.view.profile.ProfileActivity;
+import com.example.vortex_app.controller.adapter.EventAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class EntrantActivity extends AppCompatActivity {
 
+    private ListView listView;
+    private EventAdapter eventAdapter;
+    private List<String> eventNames;
+    private List<String> eventIDs;
+    private List<String> eventImageUrls;
+    private FirebaseFirestore db;
+    private String currentUserID;
+    private String collectionName;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
-
-    private RecyclerView recyclerView;
-    private EntrantEventAdapter eventAdapter;
-    private List<Event> eventList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entrant_new);
 
-        // Initialize RecyclerView
-        recyclerView = findViewById(R.id.recycler_view_events);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Load events
-        eventList = new ArrayList<>();
-        loadEventData();
-        eventAdapter = new EntrantEventAdapter(this, eventList);
-        recyclerView.setAdapter(eventAdapter);
+        db = FirebaseFirestore.getInstance();
+        currentUserID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        collectionName = "final";
 
-        // Scan QR Code Button
+
+
+        listView = findViewById(R.id.list_view_events);
+        eventNames = new ArrayList<>();
+        eventIDs = new ArrayList<>();
+        eventImageUrls = new ArrayList<>();
+
+
+
+        eventAdapter = new EventAdapter(this, eventNames, eventIDs, eventImageUrls);
+        listView.setAdapter(eventAdapter);
+
         Button scanQrButton = findViewById(R.id.button_scan_qr);
         scanQrButton.setOnClickListener(v -> checkCameraPermission());
 
-        // Bottom Navigation View
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -73,9 +87,76 @@ public class EntrantActivity extends AppCompatActivity {
             }
             return false;
         });
+
+        // Fetch all event IDs related to the user (selected, waitlisted, final)
+        fetchUserEventIDs(currentUserID,collectionName);
+
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            String clickedEventID = eventIDs.get(position);
+            Intent intent = new Intent(this, EventInfoActivity.class);
+            intent.putExtra("EVENT_ID", clickedEventID);
+            startActivity(intent);
+        });
     }
 
-    // Check and request camera permissions
+    private void fetchUserEventIDs(String currentUserID, String collectionName) {
+        Set<String> allEventIDs = new HashSet<>();
+
+        db.collection(collectionName)
+                .whereEqualTo("userID", currentUserID)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String eventID = document.getString("eventID");
+                            if (eventID != null) {
+                                allEventIDs.add(eventID);
+                            }
+                        }
+                        loadEventDetails(allEventIDs); // Now, load details only once
+                    } else {
+                        Toast.makeText(this, "Error fetching final events", Toast.LENGTH_SHORT).show();
+                    }
+
+                });
+    }
+
+    private void loadEventDetails(Set<String> allEventIDs) {
+        // Clear the lists to ensure fresh data
+        eventNames.clear();
+        eventIDs.clear();
+        eventImageUrls.clear();
+
+        // Iterate over the event IDs set and fetch details for each event
+        for (String eventID : allEventIDs) {
+            fetchEventDetails(eventID);
+        }
+    }
+
+    private void fetchEventDetails(String eventID) {
+        db.collection("events").document(eventID)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document != null && document.exists()) {
+                            String eventName = document.getString("eventName");
+                            String eventImageUrl = document.getString("imageUrl");
+
+                            // Only add event details if the event is not already in the list
+                            if (!eventIDs.contains(eventID)) {
+                                eventNames.add(eventName);
+                                eventIDs.add(eventID);
+                                eventImageUrls.add(eventImageUrl);
+                                eventAdapter.notifyDataSetChanged(); // Notify adapter to update the UI
+                            }
+                        }
+                    } else {
+                        Toast.makeText(this, "Error fetching event details", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     private void checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -86,7 +167,6 @@ public class EntrantActivity extends AppCompatActivity {
         }
     }
 
-    // Handle permission results
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -100,16 +180,14 @@ public class EntrantActivity extends AppCompatActivity {
         }
     }
 
-    // Start QR code scanner
     private void startQRCodeScanner() {
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setOrientationLocked(false);
         integrator.setBeepEnabled(true);
         integrator.setPrompt("Scan a QR code");
-        integrator.initiateScan(); // Default ZXing scanner
+        integrator.initiateScan();
     }
 
-    // Handle scan results
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -120,7 +198,6 @@ public class EntrantActivity extends AppCompatActivity {
                 String scannedContent = result.getContents();
                 Toast.makeText(this, "Scanned: " + scannedContent, Toast.LENGTH_LONG).show();
 
-                // Navigate to EventInfoActivity with scanned data
                 Intent intent = new Intent(this, EventInfoActivity.class);
                 intent.putExtra("EVENT_ID", scannedContent);
                 startActivity(intent);
@@ -130,11 +207,5 @@ public class EntrantActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "No scan result!", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    // Load sample event data
-    private void loadEventData() {
-        eventList.add(new Event("Class Name 1", "Difficulty: Beginner"));
-        eventList.add(new Event("Class Name 2", "Difficulty: Intermediate"));
     }
 }

@@ -23,14 +23,6 @@
         android:textColor="#FF3B30"
         android:paddingBottom="4dp" />
 
-    <!-- Days left -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="3 days left"
-        android:textSize="14sp"
-        android:textColor="#808080"
-        android:paddingBottom="8dp" />
 
     <!-- Waiting list area -->
     <androidx.recyclerview.widget.RecyclerView

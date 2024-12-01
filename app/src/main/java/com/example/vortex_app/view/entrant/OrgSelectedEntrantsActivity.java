@@ -23,7 +23,7 @@ public class OrgSelectedEntrantsActivity extends AppCompatActivity {
     private SelectedEntrantAdapter finalEntrantAdapter, selectedButNotConfirmedAdapter, canceledEntrantAdapter;
     private List<User> finalEntrantsList, selectedButNotConfirmedList, canceledEntrantsList;
     private FirebaseFirestore db;
-    private String eventID; // Event ID passed to this activity
+    private String eventID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,74 +82,66 @@ public class OrgSelectedEntrantsActivity extends AppCompatActivity {
                     finalEntrantsList.clear();
                     if (!querySnapshot.isEmpty()) {
                         for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                            String firstName = document.getString("firstName");
-                            String lastName = document.getString("lastName");
-                            String userID = document.getString("userID");
-
-                            Log.d(TAG, "Final entrant: " + firstName + " " + lastName + ", userID: " + userID);
-                            finalEntrantsList.add(new User(firstName, lastName, userID));
+                            addUserToList(document, finalEntrantsList);
                         }
                     } else {
                         Log.d(TAG, "No final entrants found for eventID: " + eventID);
                     }
                     finalEntrantAdapter.notifyDataSetChanged();
                 })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error fetching final entrants: ", e);
-                    Toast.makeText(this, "Failed to fetch final entrants.", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> logAndToastError("final entrants", e));
     }
-
 
     private void fetchSelectedButNotConfirmedEntrants() {
         db.collection("selected_but_not_confirmed")
-                .whereEqualTo("eventID", eventID) // Filter by eventID
+                .whereEqualTo("eventID", eventID)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     selectedButNotConfirmedList.clear();
                     if (!querySnapshot.isEmpty()) {
                         for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                            String firstName = document.getString("firstName");
-                            String lastName = document.getString("lastName");
-                            String userID = document.getString("userID");
-
-                            Log.d(TAG, "Selected but not confirmed entrant found: " + firstName + " " + lastName);
-                            selectedButNotConfirmedList.add(new User(firstName, lastName, userID));
+                            addUserToList(document, selectedButNotConfirmedList);
                         }
                     } else {
                         Log.d(TAG, "No selected but not confirmed entrants found for eventID: " + eventID);
                     }
                     selectedButNotConfirmedAdapter.notifyDataSetChanged();
                 })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error fetching selected but not confirmed entrants: ", e);
-                    Toast.makeText(this, "Failed to fetch selected but not confirmed entrants.", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> logAndToastError("selected but not confirmed entrants", e));
     }
 
     private void fetchCanceledEntrants() {
-        db.collection("canceled")
-                .whereEqualTo("eventID", eventID) // Filter by eventID
+        db.collection("cancelled")
+                .whereEqualTo("eventID", eventID)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     canceledEntrantsList.clear();
                     if (!querySnapshot.isEmpty()) {
                         for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                            String firstName = document.getString("firstName");
-                            String lastName = document.getString("lastName");
-                            String userID = document.getString("userID");
-
-                            Log.d(TAG, "Canceled entrant found: " + firstName + " " + lastName);
-                            canceledEntrantsList.add(new User(firstName, lastName, userID));
+                            addUserToList(document, canceledEntrantsList);
                         }
                     } else {
                         Log.d(TAG, "No canceled entrants found for eventID: " + eventID);
                     }
                     canceledEntrantAdapter.notifyDataSetChanged();
                 })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error fetching canceled entrants: ", e);
-                    Toast.makeText(this, "Failed to fetch canceled entrants.", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> logAndToastError("canceled entrants", e));
+    }
+
+    private void addUserToList(DocumentSnapshot document, List<User> list) {
+        String firstName = document.getString("firstName");
+        String lastName = document.getString("lastName");
+        String userID = document.getString("userID");
+
+        if (firstName != null && lastName != null && userID != null) {
+            list.add(new User(firstName, lastName, userID));
+        } else {
+            Log.d(TAG, "Document missing required fields: " + document.getId());
+        }
+    }
+
+    private void logAndToastError(String type, Exception e) {
+        Log.e(TAG, "Error fetching " + type + ": ", e);
+        Toast.makeText(this, "Failed to fetch " + type + ".", Toast.LENGTH_SHORT).show();
     }
 }

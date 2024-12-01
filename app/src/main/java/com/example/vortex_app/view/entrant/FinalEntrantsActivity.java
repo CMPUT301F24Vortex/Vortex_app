@@ -22,7 +22,7 @@ import java.util.List;
 public class FinalEntrantsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewEntrants;
-    private FinalEntrantAdapter entrantAdapter;
+    private FinalEntrantAdapter finalEntrantAdapter;
     private List<User> entrantList;
     private FirebaseFirestore db;
     private String eventId; // Store event ID
@@ -46,10 +46,10 @@ public class FinalEntrantsActivity extends AppCompatActivity {
         recyclerViewEntrants = findViewById(R.id.recyclerViewEntrants);
         db = FirebaseFirestore.getInstance();
         entrantList = new ArrayList<>();
-        entrantAdapter = new FinalEntrantAdapter(entrantList);
+        finalEntrantAdapter = new FinalEntrantAdapter(entrantList);
 
         recyclerViewEntrants.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewEntrants.setAdapter(entrantAdapter);
+        recyclerViewEntrants.setAdapter(finalEntrantAdapter);
 
         // Back Button Functionality
         ImageView backButton = findViewById(R.id.imageViewBack);
@@ -65,9 +65,7 @@ public class FinalEntrantsActivity extends AppCompatActivity {
         fetchFinalEntrants();
     }
 
-
     private void fetchFinalEntrants() {
-        Toast.makeText(this, "Event ID: " + eventId, Toast.LENGTH_SHORT).show(); // Debugging
         db.collection("final")
                 .whereEqualTo("eventID", eventId)
                 .get()
@@ -90,7 +88,7 @@ public class FinalEntrantsActivity extends AppCompatActivity {
                                 Log.d("FirestoreError", "Document missing required fields: " + document.getId());
                             }
                         }
-                        entrantAdapter.notifyDataSetChanged();
+                        finalEntrantAdapter.notifyDataSetChanged();
                     } else {
                         Log.e("FirestoreError", "Error fetching data: ", task.getException());
                         Toast.makeText(this, "Failed to fetch data", Toast.LENGTH_SHORT).show();
@@ -101,5 +99,4 @@ public class FinalEntrantsActivity extends AppCompatActivity {
                     Toast.makeText(this, "Error fetching data. Please try again.", Toast.LENGTH_SHORT).show();
                 });
     }
-
 }

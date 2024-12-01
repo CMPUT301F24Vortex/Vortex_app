@@ -12,7 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vortex_app.R;
-import com.example.vortex_app.controller.adapter.OrgEventAdapter;
+import com.example.vortex_app.controller.adapter.EventAdapter;
 import com.example.vortex_app.view.event.AddEvent;
 import com.example.vortex_app.view.facility.MyFacilityActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -28,7 +28,7 @@ public class OrganizerActivity extends AppCompatActivity {
     private static final String TAG = "OrganizerActivity";
 
     private ListView listView;
-    private OrgEventAdapter customAdapter;
+    private EventAdapter customAdapter;
     private List<String> eventNames = new ArrayList<>();
     private List<String> eventIDs = new ArrayList<>();
     private List<String> eventImageUrls = new ArrayList<>();
@@ -59,7 +59,7 @@ public class OrganizerActivity extends AppCompatActivity {
         loadEvents();
 
         // Set up custom adapter for ListView
-        customAdapter = new OrgEventAdapter(this, eventNames, eventIDs, eventImageUrls);
+        customAdapter = new EventAdapter(this, eventNames, eventIDs, eventImageUrls);
         listView.setAdapter(customAdapter);
 
         // Handle item clicks in ListView

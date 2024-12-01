@@ -20,6 +20,7 @@ public class Event implements Serializable {
     private String facilityID;
     private String organizerID;
     private String imageUrl;
+    public String userID;
 
     // Full constructor with all parameters
     public Event(String name, int imageResId, String classDay, String time, String period,
@@ -39,14 +40,18 @@ public class Event implements Serializable {
         this.requiresGeolocation = requiresGeolocation;
     }
 
-    // Constructor for minimal event (e.g., name and eventID only)
+
     public Event(String name, String eventID) {
         this.name = name;
         this.eventID = eventID;
     }
 
-    //Empty constructor for serialization
-    public Event () {}
+
+
+
+    public Event(String eventID) {
+        this.eventID = eventID;
+    }
 
     // Getters and Setters
     public String getName() {
@@ -56,6 +61,8 @@ public class Event implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+    public void setUserID(String userID){this.userID =userID;}
 
     public int getImageResId() {
         return imageResId;
@@ -177,4 +184,5 @@ public class Event implements Serializable {
             return 0.0; // Default value for invalid price input
         }
     }
+
 }

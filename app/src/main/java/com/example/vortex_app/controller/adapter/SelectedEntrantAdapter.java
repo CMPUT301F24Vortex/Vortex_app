@@ -30,11 +30,9 @@ public class SelectedEntrantAdapter extends RecyclerView.Adapter<SelectedEntrant
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = entrantList.get(position);
-        holder.textViewName.setText(user.getFirstName() + " " + user.getLastName());
-        // If userName is null or empty, fallback to showing first and last names
-        String userName = user.getUserName() != null && !user.getUserName().isEmpty()
-                ? user.getUserName() : user.getFirstName() + " " + user.getLastName();
-        holder.textViewName.setText(userName);
+
+        // Set the user's full name (firstName + lastName) for display
+        holder.textViewName.setText(user.getFullName());
     }
 
     @Override
@@ -47,7 +45,7 @@ public class SelectedEntrantAdapter extends RecyclerView.Adapter<SelectedEntrant
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewName = itemView.findViewById(R.id.textViewName);
+            textViewName = itemView.findViewById(R.id.textViewName); // Ensure this matches your layout's TextView ID
         }
     }
 }

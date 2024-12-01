@@ -49,6 +49,18 @@
             </intent-filter>
         </activity>
 
+
+
+<!--        orgwaitinglistActivity-->
+        <activity
+            android:name=".view.waitinglist.OrgWaitingListActivity"
+            android:label="Waiting List"
+            android:exported="true"> <!-- Required for Android 12+ -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <!-- QR Scanner Activities -->
         <activity
             android:name=".view.qrcode.QrScannerActivity"

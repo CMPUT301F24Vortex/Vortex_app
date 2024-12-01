@@ -51,4 +51,3 @@ public class OrgWaitingListAdapter extends RecyclerView.Adapter<OrgWaitingListAd
         notifyDataSetChanged();
     }
 }
-

@@ -5,7 +5,7 @@ package com.example.vortex_app.model;
  * This class is used for storing and retrieving user data from Firestore.
  */
 public class User {
-    private String userName; // User's username
+//    private String userName; // User's username
     private String firstName; // User's first name
     private String lastName; // User's last name
     private String email; // User's email
@@ -36,20 +36,20 @@ public class User {
         this.userID = userID;
     }
 
-    // Constructor for initializing userName and userID
-    public User(String userName, String userID) {
-        this.userName = userName;
-        this.userID = userID;
-    }
+//    // Constructor for initializing userName and userID
+//    public User(String userName, String userID) {
+//        this.userName = userName;
+//        this.userID = userID;
+//    }
 
     // Getter and Setter methods
-    public String getUserName() {
-        return userName;
-    }
+//    public String getUserName() {
+//        return userName;
+//    }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+//    public void setUserName(String userName) {
+//        this.userName = userName;
+//    }
 
     public String getFirstName() {
         return firstName;
@@ -131,7 +131,6 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "userName='" + userName + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +

@@ -32,9 +32,9 @@ public class CancelledEntrantAdapter extends RecyclerView.Adapter<CancelledEntra
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = entrantList.get(position);
-        holder.textViewName.setText(user.getUserName()); // Display userName directly
+        // Display firstName and lastName instead of userName
+        holder.textViewName.setText(user.getFirstName() + " " + user.getLastName());
     }
-
 
     @Override
     public int getItemCount() {

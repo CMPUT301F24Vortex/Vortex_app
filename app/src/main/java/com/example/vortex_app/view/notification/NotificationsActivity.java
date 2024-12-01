@@ -12,6 +12,7 @@ import com.example.vortex_app.R;
 import com.example.vortex_app.model.NotificationModel;
 import com.example.vortex_app.controller.adapter.NotificationAdapter;
 import com.example.vortex_app.view.entrant.EntrantActivity;
+import com.example.vortex_app.view.event.EventInfoActivity;
 import com.example.vortex_app.view.profile.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -67,7 +68,7 @@ public class NotificationsActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_notifications) {
                 return true;
             } else if (itemId == R.id.nav_events) {
-                startActivity(new Intent(this, NotificationsActivity.class));
+                startActivity(new Intent(this, EventInfoActivity.class));
             }
             return false;
         });
