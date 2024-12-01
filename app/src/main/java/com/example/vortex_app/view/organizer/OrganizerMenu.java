@@ -3,7 +3,6 @@ package com.example.vortex_app.view.organizer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +17,7 @@ import com.example.vortex_app.R;
 import com.example.vortex_app.view.location.LocationActivity;
 import com.example.vortex_app.view.entrant.CancelledEntrantsActivity;
 import com.example.vortex_app.view.entrant.FinalEntrantsActivity;
-import com.example.vortex_app.view.entrant.SelectedEntrantsActivity;
+import com.example.vortex_app.view.entrant.OrgSelectedEntrantsActivity;
 import com.example.vortex_app.view.qrcode.OrgQRCodeActivity;
 import com.example.vortex_app.view.waitinglist.OrgWaitingListActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -83,7 +82,7 @@ public class OrganizerMenu extends AppCompatActivity {
 
         // Selected Entrants
         buttonOrganizerSelected.setOnClickListener(view -> {
-            Intent intent = new Intent(OrganizerMenu.this, SelectedEntrantsActivity.class);
+            Intent intent = new Intent(OrganizerMenu.this, OrgSelectedEntrantsActivity.class);
             intent.putExtra("EVENT_ID", eventID);
             startActivity(intent);
         });

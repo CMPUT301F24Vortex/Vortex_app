@@ -16,7 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectedEntrantsActivity extends AppCompatActivity {
+public class OrgSelectedEntrantsActivity extends AppCompatActivity {
 
     private static final String TAG = "SelectedEntrantsActivity";
     private RecyclerView recyclerViewFinalEntrants, recyclerViewSelectedButNotConfirmed, recyclerViewCanceledEntrants;
@@ -28,7 +28,7 @@ public class SelectedEntrantsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_selected_entrants);
+        setContentView(R.layout.activity_org_selected_entrants);
 
         db = FirebaseFirestore.getInstance();
 

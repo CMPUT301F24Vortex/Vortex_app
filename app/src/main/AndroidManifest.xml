@@ -74,7 +74,7 @@
         <!-- Entrant Activities -->
         <activity android:name=".view.entrant.EntrantActivity" android:exported="false" />
         <activity android:name=".view.entrant.CancelledEntrantsActivity" />
-        <activity android:name=".view.entrant.SelectedEntrantsActivity" />
+        <activity android:name=".view.entrant.OrgSelectedEntrantsActivity" />
         <activity android:name=".view.entrant.FinalEntrantsActivity" />
 
         <!-- Event Activities -->

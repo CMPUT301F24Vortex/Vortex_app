@@ -20,34 +20,13 @@ public class User {
     // Default constructor
     public User() {}
 
-    // Constructor for initializing mandatory fields
+    // Constructor to initialize mandatory fields
     public User(String firstName, String lastName, String email, String contactInfo, String device) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.contactInfo = contactInfo;
         this.device = device;
-    }
-
-    // Constructor with userName and other fields
-    public User(String userName, String firstName, String lastName, String email, String contactInfo, String device) {
-        this.userName = userName;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.contactInfo = contactInfo;
-        this.device = device;
-    }
-
-    // Constructor for event-based details
-    public User(String userName, String firstName, String lastName, String userID, String eventID, String status, boolean isConfirmed) {
-        this.userName = userName;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.userID = userID;
-        this.eventID = eventID;
-        this.status = status;
-        this.isConfirmed = isConfirmed;
     }
 
     // Constructor for waiting list users

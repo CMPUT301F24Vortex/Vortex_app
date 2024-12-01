@@ -67,7 +67,7 @@ public class CancelledEntrantsActivity extends AppCompatActivity {
 
     private void fetchCancelledEntrants() {
         Toast.makeText(this, "Event ID: " + eventId, Toast.LENGTH_SHORT).show(); // Debugging
-        db.collection("cancelled") // Fetch from the "cancelled" collection
+        db.collection("cancelled")
                 .whereEqualTo("eventID", eventId)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -79,19 +79,26 @@ public class CancelledEntrantsActivity extends AppCompatActivity {
                         }
 
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            String userName = document.getString("userName");
+                            String firstName = document.getString("firstName") != null ? document.getString("firstName") : "Unknown";
+                            String lastName = document.getString("lastName") != null ? document.getString("lastName") : "User";
                             String userID = document.getString("userID");
 
-                            if (userName != null && userID != null) {
-                                entrantList.add(new User(userName, userID)); // Updated constructor
+                            if (userID != null) {
+                                entrantList.add(new User(firstName, lastName, userID));
                             } else {
                                 Log.d("FirestoreError", "Document missing required fields: " + document.getId());
                             }
                         }
                         entrantAdapter.notifyDataSetChanged();
                     } else {
+                        Log.e("FirestoreError", "Error fetching data: ", task.getException());
                         Toast.makeText(this, "Failed to fetch data", Toast.LENGTH_SHORT).show();
                     }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FirestoreError", "Error fetching cancelled entrants", e);
+                    Toast.makeText(this, "Error fetching data. Please try again.", Toast.LENGTH_SHORT).show();
                 });
     }
+
 }
