@@ -1,62 +1,56 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F5F5F5"
     android:padding="16dp">
 
-    <!-- Selected entrants -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Selected Entrants"
-        android:textSize="18sp"
-        android:textColor="#808080"
-        android:paddingBottom="16dp" />
-
-    <!-- Entrants -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Entrants"
-        android:textSize="16sp"
-        android:textColor="#FF3B30"
-        android:paddingBottom="8dp" />
-
-    <!-- Entrant list area -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewSelectedEntrants"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Bottom action bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingTop="16dp">
+        android:orientation="vertical">
 
-        <!-- Menu icon -->
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/baseline_menu_24"
-            android:contentDescription="Menu"
-            android:layout_marginRight="16dp" />
-
-        <!-- Draw button -->
-        <Button
-            android:id="@+id/buttonDraw"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/textViewFinalEntrants"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Draw"
-            android:backgroundTint="#FF3B30"
-            android:textColor="#FFFFFF"
-            android:padding="12dp"
-            android:layout_gravity="end" />
-    </LinearLayout>
+            android:text="Final Entrants"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewFinalEntrants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/textViewSelectedButNotConfirmed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Selected But Not Confirmed"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewSelectedButNotConfirmed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/textViewCanceledEntrants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Canceled Entrants"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewCanceledEntrants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</ScrollView>
