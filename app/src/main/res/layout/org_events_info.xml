@@ -38,6 +38,22 @@
             android:textSize="16sp" />
 
         <TextView
+            android:id="@+id/label_location_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/text_location_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Facility Assigned"
+            android:textSize="16sp" />
+
+        <TextView
             android:id="@+id/label_class_day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -86,12 +87,21 @@ public class EventInfoActivity extends AppCompatActivity {
             return;
         }
 
+        // Check if the activity was opened from EntrantActivity
+        boolean fromEntrantActivity = getIntent().getBooleanExtra("FROM_ENTRANT", false);
+
+        // Hide the "Join Waiting List" button if from EntrantActivity
+        if (fromEntrantActivity) {
+            joinWaitingListButton.setVisibility(View.GONE);
+        }
+
         // Load event details
         loadEventDetails();
 
         // Set up "Join Waiting List" button
         joinWaitingListButton.setOnClickListener(view -> checkIfAlreadyJoined());
     }
+
 
     private void loadEventDetails() {
         db.collection("events")

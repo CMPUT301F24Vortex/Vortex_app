@@ -119,8 +119,10 @@ public class EntrantActivity extends AppCompatActivity {
             String clickedEventID = eventIDs.get(position);
             Intent intent = new Intent(this, EventInfoActivity.class);
             intent.putExtra("EVENT_ID", clickedEventID);
+            intent.putExtra("FROM_ENTRANT", true); // Indicate the source
             startActivity(intent);
         });
+
     }
 
     private void fetchUserEventIDs(String currentUserID, String collectionName) {
