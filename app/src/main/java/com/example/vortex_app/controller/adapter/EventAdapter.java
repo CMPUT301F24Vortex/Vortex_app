@@ -13,13 +13,13 @@ import com.example.vortex_app.R;
 
 import java.util.List;
 
-public class OrgEventAdapter extends BaseAdapter {
+public class EventAdapter extends BaseAdapter {
     private Context context;
     private List<String> eventNames;
     private List<String> eventIDs;
     private List<String> eventImageUrls;
 
-    public OrgEventAdapter(Context context, List<String> eventNames, List<String> eventIDs, List<String> eventImageUrls) {
+    public EventAdapter(Context context, List<String> eventNames, List<String> eventIDs, List<String> eventImageUrls) {
         this.context = context;
         this.eventNames = eventNames;
         this.eventIDs = eventIDs;
@@ -58,7 +58,7 @@ public class OrgEventAdapter extends BaseAdapter {
         String imageUrl = eventImageUrls.get(position);
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Glide.with(context)
-                    .load(imageUrl)// Optional: Error image if loading fails
+                    .load(imageUrl)
                     .into(imageViewEventIndicator);
         } else {
             imageViewEventIndicator.setVisibility(View.GONE);  // Hide the ImageView if no image URL

@@ -4,34 +4,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.vortex_app.R;
 import com.example.vortex_app.model.User;
-
 import java.util.List;
 
 public class SelectedEntrantAdapter extends RecyclerView.Adapter<SelectedEntrantAdapter.SelectedEntrantViewHolder> {
 
     private List<User> selectedEntrantList;
 
+    // Constructor
     public SelectedEntrantAdapter(List<User> selectedEntrantList) {
         this.selectedEntrantList = selectedEntrantList;
     }
 
-    @NonNull
     @Override
-    public SelectedEntrantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user, parent, false);
+    public SelectedEntrantViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_user, parent, false);
         return new SelectedEntrantViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SelectedEntrantViewHolder holder, int position) {
-        User entrant = selectedEntrantList.get(position);
-        holder.textViewEntrantName.setText(entrant.getFullName());
-        //holder.textViewSignUpStatus.setText("Sign Up: " + (entrant.isConfirmed() ? "Confirmed" : "Not Confirmed"));
+    public void onBindViewHolder(SelectedEntrantViewHolder holder, int position) {
+        User selectedEntrant = selectedEntrantList.get(position);
+        holder.userNameTextView.setText(selectedEntrant.getUserName());
     }
 
     @Override
@@ -39,14 +36,14 @@ public class SelectedEntrantAdapter extends RecyclerView.Adapter<SelectedEntrant
         return selectedEntrantList.size();
     }
 
-    static class SelectedEntrantViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewEntrantName;
-        TextView textViewSignUpStatus;
+    // ViewHolder class
+    public static class SelectedEntrantViewHolder extends RecyclerView.ViewHolder {
 
-        public SelectedEntrantViewHolder(@NonNull View itemView) {
+        TextView userNameTextView;
+
+        public SelectedEntrantViewHolder(View itemView) {
             super(itemView);
-            textViewEntrantName = itemView.findViewById(R.id.textViewEntrantName);
-            //textViewSignUpStatus = itemView.findViewById(R.id.textViewSignUpStatus);
+            userNameTextView = itemView.findViewById(R.id.textViewEntrantName);
         }
     }
 }
