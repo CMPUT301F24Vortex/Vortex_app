@@ -1,0 +1,16 @@
+com.example.vortex_app
+com.example.vortex_app.controller
+com.example.vortex_app.controller.adapter
+com.example.vortex_app.model
+com.example.vortex_app.services
+com.example.vortex_app.view
+com.example.vortex_app.view.admin
+com.example.vortex_app.view.entrant
+com.example.vortex_app.view.event
+com.example.vortex_app.view.facility
+com.example.vortex_app.view.location
+com.example.vortex_app.view.notification
+com.example.vortex_app.view.organizer
+com.example.vortex_app.view.profile
+com.example.vortex_app.view.qrcode
+com.example.vortex_app.view.waitinglist
