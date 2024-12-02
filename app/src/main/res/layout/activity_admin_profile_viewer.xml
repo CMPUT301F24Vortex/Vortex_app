@@ -128,7 +128,7 @@
         android:layout_height="67dp"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/back_arrow"
         android:background="#00000000"
         android:contentDescription="Back button"
         app:layout_constraintBottom_toBottomOf="parent"
