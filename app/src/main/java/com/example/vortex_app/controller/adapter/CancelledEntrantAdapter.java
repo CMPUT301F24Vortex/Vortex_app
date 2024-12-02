@@ -15,7 +15,7 @@ import java.util.List;
 
 public class CancelledEntrantAdapter extends RecyclerView.Adapter<CancelledEntrantAdapter.ViewHolder> {
 
-    private List<User> entrantList;
+    private final List<User> entrantList;
 
     public CancelledEntrantAdapter(List<User> entrantList) {
         this.entrantList = entrantList;
