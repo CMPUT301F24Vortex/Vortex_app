@@ -19,6 +19,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * CancelledEntrantsActivity displays a list of users who have been cancelled from an event.
+ * This activity retrieves and displays data from Firestore related to cancelled entrants.
+ * It also allows the user to go back to the previous screen and pass the event ID back to the calling activity.
+ */
 public class CancelledEntrantsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewEntrants;
@@ -27,6 +32,12 @@ public class CancelledEntrantsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String eventId; // Store event ID
 
+    /**
+     * Called when the activity is created.
+     * Initializes the RecyclerView, sets up the adapter, and fetches cancelled entrants data.
+     *
+     * @param savedInstanceState The saved instance state (if any) when the activity is recreated.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +76,10 @@ public class CancelledEntrantsActivity extends AppCompatActivity {
         fetchCancelledEntrants();
     }
 
+    /**
+     * Fetches the list of cancelled entrants from Firestore based on the event ID.
+     * It retrieves the data, populates the RecyclerView with user information, and handles errors if data cannot be fetched.
+     */
     private void fetchCancelledEntrants() {
         Toast.makeText(this, "Event ID: " + eventId, Toast.LENGTH_SHORT).show(); // Debugging
         db.collection("cancelled")
@@ -78,6 +93,7 @@ public class CancelledEntrantsActivity extends AppCompatActivity {
                             return;
                         }
 
+                        // Add each user to the entrantList
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             String firstName = document.getString("firstName") != null ? document.getString("firstName") : "Unknown";
                             String lastName = document.getString("lastName") != null ? document.getString("lastName") : "User";
@@ -100,5 +116,4 @@ public class CancelledEntrantsActivity extends AppCompatActivity {
                     Toast.makeText(this, "Error fetching data. Please try again.", Toast.LENGTH_SHORT).show();
                 });
     }
-
 }

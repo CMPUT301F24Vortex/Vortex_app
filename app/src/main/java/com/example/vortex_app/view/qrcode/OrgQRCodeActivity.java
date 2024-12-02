@@ -1,4 +1,3 @@
-
 package com.example.vortex_app.view.qrcode;
 
 import android.content.Intent;
@@ -19,45 +18,56 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+/**
+ * OrgQRCodeActivity is responsible for generating and displaying a QR code based on the event ID passed from the previous activity.
+ * It also allows the user to go back to the previous activity with the event ID.
+ */
 public class OrgQRCodeActivity extends AppCompatActivity {
 
-    private static final String TAG = "OrgQRCodeActivity";
+    private static final String TAG = "OrgQRCodeActivity";  // Log tag for debugging
 
+    /**
+     * Initializes the activity by retrieving the event ID from the intent,
+     * generating a QR code, and displaying it.
+     * Also sets up a back button to return to the previous activity with the event ID.
+     *
+     * @param savedInstanceState The saved state of the activity, if any.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.org_qrcode_activity);
+        setContentView(R.layout.org_qrcode_activity);  // Set the layout for the activity
 
-        // Retrieve the eventID passed from the Intent
+        // Retrieve the event ID passed from the Intent
         String eventID = getIntent().getStringExtra("EVENT_ID");
 
-        // Check if the eventID is null or empty
+        // Check if the event ID is valid
         if (eventID == null || eventID.trim().isEmpty()) {
             Log.e(TAG, "No eventID passed. Cannot generate QR code.");
             Toast.makeText(this, "Invalid event ID. Cannot generate QR code.", Toast.LENGTH_SHORT).show();
-            finish(); // Exit the activity if no eventID is provided
+            finish();  // Exit the activity if no event ID is provided
             return;
         }
 
-        // Debugging: Log the received eventID
+        // Log the event ID for debugging purposes
         Log.d(TAG, "Received eventID: " + eventID);
 
-        // Set the eventID in a TextView for display
+        // Set the event ID in a TextView for display
         TextView qrTextView = findViewById(R.id.textView_qrHashValue);
         qrTextView.setText("Event ID: " + eventID);
 
-        // Generate the QR code using the eventID
+        // Generate and display the QR code
         ImageView qrImageView = findViewById(R.id.imageView_qrCode);
         generateQRCode(eventID, qrImageView);
 
-        // Back Button Functionality
+        // Back button functionality
         ImageView backButton = findViewById(R.id.imageViewBack);
         backButton.setOnClickListener(view -> {
-            // Create an intent and add the event ID
+            // Pass the event ID back to the previous activity
             Intent intent = new Intent();
             intent.putExtra("EVENT_ID", eventID);
-            setResult(RESULT_OK, intent); // Pass result back to the calling activity
-            finish(); // Finish this activity and go back
+            setResult(RESULT_OK, intent);  // Set the result with the event ID
+            finish();  // Finish the current activity and go back
         });
     }
 
@@ -65,14 +75,14 @@ public class OrgQRCodeActivity extends AppCompatActivity {
      * Generates a QR code for the given text and displays it in the provided ImageView.
      *
      * @param text        The text to encode in the QR code.
-     * @param qrImageView The ImageView to display the QR code.
+     * @param qrImageView The ImageView where the QR code will be displayed.
      */
     private void generateQRCode(String text, ImageView qrImageView) {
         try {
-            // Generate a BitMatrix for the QR code
+            // Create a BitMatrix for the QR code based on the input text
             BitMatrix bitMatrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, 400, 400);
 
-            // Convert the BitMatrix to a Bitmap
+            // Convert the BitMatrix to a Bitmap to display as a QR code
             int width = bitMatrix.getWidth();
             int height = bitMatrix.getHeight();
             Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
@@ -83,10 +93,11 @@ public class OrgQRCodeActivity extends AppCompatActivity {
                 }
             }
 
-            // Set the Bitmap in the ImageView
+            // Set the generated Bitmap as the QR code in the ImageView
             qrImageView.setImageBitmap(bitmap);
             Log.d(TAG, "QR code generated successfully for: " + text);
         } catch (WriterException e) {
+            // Log any error that occurs during QR code generation
             Log.e(TAG, "Error generating QR code: ", e);
             Toast.makeText(this, "Failed to generate QR code.", Toast.LENGTH_SHORT).show();
         }

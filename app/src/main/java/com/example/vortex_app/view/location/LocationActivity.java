@@ -26,6 +26,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * LocationActivity displays the location of event entrants on a Google Map and in a RecyclerView.
+ * It fetches entrant data from Firestore, displaying their names and locations (latitude and longitude).
+ * Entrants are shown on the map with markers, and clicking on an entrant in the RecyclerView
+ * zooms the map to their location.
+ */
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final String TAG = "LocationActivity";
@@ -37,6 +43,12 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private EntrantAdapter entrantAdapter;
     private List<Entrant> entrantList;
 
+    /**
+     * Called when the activity is created. This method initializes Firestore, sets up the RecyclerView,
+     * initializes the map fragment, and fetches entrant data from Firestore.
+     *
+     * @param savedInstanceState A Bundle containing the saved instance state from a previous activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +86,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         fetchAllEntrantLocations();
     }
 
+    /**
+     * Initializes the RecyclerView for displaying entrants.
+     */
     private void initializeRecyclerView() {
         recyclerViewEntrants = findViewById(R.id.recyclerViewEntrants);
         recyclerViewEntrants.setLayoutManager(new LinearLayoutManager(this));
@@ -85,6 +100,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         recyclerViewEntrants.setAdapter(entrantAdapter);
     }
 
+    /**
+     * Initializes the map fragment and sets up the callback for when the map is ready.
+     */
     private void initializeMapFragment() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -96,18 +114,32 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
+    /**
+     * Called when the map is ready. This method stores the map object for later use.
+     *
+     * @param googleMap The GoogleMap instance that is ready to use.
+     */
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         Log.d(TAG, "Google Map is ready.");
     }
 
+    /**
+     * Fetches entrant data from multiple Firestore collections based on the event ID.
+     * The collections include "waitlisted", "selected_but_not_confirmed", and "final".
+     */
     private void fetchAllEntrantLocations() {
         fetchEntrantLocationsFromCollection("waitlisted");
         fetchEntrantLocationsFromCollection("selected_but_not_confirmed");
         fetchEntrantLocationsFromCollection("final");
     }
 
+    /**
+     * Fetches entrant data from a specific Firestore collection and adds valid entrants to the list.
+     *
+     * @param collectionName The name of the Firestore collection to fetch entrant data from.
+     */
     private void fetchEntrantLocationsFromCollection(String collectionName) {
         Log.d(TAG, "Fetching users from collection: " + collectionName);
 
@@ -150,6 +182,12 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 });
     }
 
+    /**
+     * Parses a value to a Double safely.
+     *
+     * @param value The value to parse.
+     * @return The parsed Double value, or null if the value is invalid.
+     */
     private Double parseDoubleSafe(Object value) {
         if (value instanceof Double) {
             return (Double) value;
@@ -165,6 +203,12 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         return null;
     }
 
+    /**
+     * Handles the click event on an entrant. When an entrant is clicked, the map is moved to their location
+     * and a marker is added to the map showing their name.
+     *
+     * @param entrant The entrant whose location is being clicked.
+     */
     private void onEntrantClicked(Entrant entrant) {
         if (mMap != null) {
             LatLng location = new LatLng(entrant.getLatitude(), entrant.getLongitude());
@@ -180,6 +224,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
+    /**
+     * Displays all entrants on the map with markers showing their names and locations.
+     */
     private void displayAllEntrantsOnMap() {
         if (mMap != null) {
             mMap.clear();
@@ -201,6 +248,11 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
+    /**
+     * Displays a toast message on the screen.
+     *
+     * @param message The message to display in the toast.
+     */
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }

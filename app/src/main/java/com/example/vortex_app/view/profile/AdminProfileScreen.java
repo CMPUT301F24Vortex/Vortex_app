@@ -25,6 +25,8 @@ import java.util.ArrayList;
 
 /**
  * AdminProfileScreen allows administrators to browse user profiles and view details of each user.
+ * The activity listens for changes in the "user_profile" collection in Firestore
+ * and dynamically updates the list of users displayed on the screen.
  */
 public class AdminProfileScreen extends AppCompatActivity {
 
@@ -38,6 +40,12 @@ public class AdminProfileScreen extends AppCompatActivity {
     private ArrayList<User> userDataList;
     private AdminUserArrayAdapter userArrayAdapter;
 
+    /**
+     * Called when the activity is first created. Initializes the UI components, Firestore references,
+     * and sets up the listener to dynamically load and update the user profile data.
+     *
+     * @param savedInstanceState a Bundle object containing the activity's previously saved state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,7 +110,7 @@ public class AdminProfileScreen extends AppCompatActivity {
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                finish(); // Close the activity when back button is clicked
             }
         });
     }

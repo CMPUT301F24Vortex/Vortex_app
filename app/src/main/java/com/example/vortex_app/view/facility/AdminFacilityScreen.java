@@ -4,26 +4,36 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vortex_app.R;
 import com.example.vortex_app.model.Facility;
-import com.example.vortex_app.view.admin.AdminFacilityArrayAdapter;
+import com.example.vortex_app.controller.adapter.AdminFacilityArrayAdapter;
 import com.example.vortex_app.view.event.AdminEventScreen;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+
+/**
+ * AdminFacilityScreen is an Activity class that allows an administrator to manage facilities in the system.
+ * It provides functionalities to view, delete, and manage facilities and their associated events.
+ * This screen includes:
+ * <ul>
+ *     <li>A list of facilities fetched from Firestore.</li>
+ *     <li>The ability to view detailed events associated with a facility.</li>
+ *     <li>The ability to delete a facility and all associated events.</li>
+ * </ul>
+ * <p>
+ * The activity listens for changes to the facility data and updates the list accordingly.
+ * </p>
+ */
 public class AdminFacilityScreen extends AppCompatActivity {
 
     private static final String TAG = "AdminFacilityScreen";
@@ -37,6 +47,14 @@ public class AdminFacilityScreen extends AppCompatActivity {
     private ArrayList<Facility> facilityDataList;
     private AdminFacilityArrayAdapter facilityArrayAdapter;
 
+
+    /**
+     * Called when the activity is first created.
+     * Initializes Firestore references, UI components, and sets up event listeners.
+     * It also listens for changes in the facility data and updates the list dynamically.
+     *
+     * @param savedInstanceState A Bundle containing any saved instance state from a previous activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +125,14 @@ public class AdminFacilityScreen extends AppCompatActivity {
     }
 
     /**
-     * Deletes the selected facility and all associated events.
+     * Deletes the selected facility and all associated events from the Firestore database.
+     * <p>
+     * The process is carried out in two steps:
+     * <ul>
+     *     <li>Deleting all events associated with the facility.</li>
+     *     <li>Deleting the facility itself.</li>
+     * </ul>
+     * </p>
      *
      * @param facility The facility to delete.
      */

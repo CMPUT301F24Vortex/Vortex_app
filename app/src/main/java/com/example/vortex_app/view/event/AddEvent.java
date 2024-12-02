@@ -5,13 +5,15 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -19,11 +21,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.vortex_app.R;
+import com.example.vortex_app.view.organizer.OrganizerInfo;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,6 +35,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+
+/**
+ * AddEvent Activity class handles the UI and logic for adding or editing an event.
+ * It allows event creation, selection of class days, and uploading event images.
+ * It communicates with Firebase Firestore to fetch event data and facilities, and with Firebase Storage to upload images.
+ */
 public class AddEvent extends AppCompatActivity {
 
     private FirebaseFirestore db;
@@ -49,6 +58,12 @@ public class AddEvent extends AppCompatActivity {
     private boolean[] selectedDays = new boolean[daysOfWeek.length];
     private List<String> selectedDayList = new ArrayList<>();
 
+    private Spinner facilitySpinner;
+    private List<String> facilityList = new ArrayList<>();
+    private ArrayAdapter<String> facilityAdapter;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +73,9 @@ public class AddEvent extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference();
 
         initializeUI();
+
+        // Load available facilities
+        loadFacilities();
 
         // 检查是否是编辑已有事件
         eventID = getIntent().getStringExtra("EVENT_ID");
@@ -86,6 +104,9 @@ public class AddEvent extends AppCompatActivity {
         eventClassDayInput.setOnClickListener(v -> showMultiChoiceDialog());
     }
 
+    /**
+     * Initializes the UI components by finding views by their IDs and setting up the facility spinner.
+     */
     private void initializeUI() {
         eventNameInput = findViewById(R.id.event_name_input);
         eventClassDayInput = findViewById(R.id.event_class_day_input); // 对应 XML 中的 Spinner
@@ -100,8 +121,49 @@ public class AddEvent extends AppCompatActivity {
         imageUploadBox = findViewById(R.id.image_upload_box);
         addButton = findViewById(R.id.add_event_button);
         uploadButton = findViewById(R.id.upload_button);
+
+
+
+        facilitySpinner = findViewById(R.id.facility_spinner); // Initialize the Spinner
+        facilityAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, facilityList);
+        facilityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        facilitySpinner.setAdapter(facilityAdapter);
     }
 
+    /**
+     * Fetches available facilities from Firestore and updates the facility spinner.
+     */
+    private void loadFacilities() {
+        String organizerID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID); // Get current organizer ID
+
+        db.collection("facility")
+                .whereEqualTo("organizerId", organizerID)  // Query facilities with the same organizerID
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        // Clear the list and add the facilities
+                        facilityList.clear();
+                        for (DocumentSnapshot document : queryDocumentSnapshots) {
+                            String facilityName = document.getString("facilityName");
+                            if (facilityName != null) {
+                                facilityList.add(facilityName);
+                            }
+                        }
+                        facilityAdapter.notifyDataSetChanged();  // Notify the adapter to update the spinner
+                    } else {
+                        Toast.makeText(this, "No facilities found", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to load facilities", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    /**
+     * Loads event details from Firestore to edit an existing event.
+     *
+     * @param eventID The ID of the event to be loaded.
+     */
     private void loadEventDetails(String eventID) {
         db.collection("events").document(eventID).get()
                 .addOnSuccessListener(document -> {
@@ -136,6 +198,10 @@ public class AddEvent extends AppCompatActivity {
                 });
     }
 
+
+    /**
+     * Displays a multi-choice dialog allowing the user to select class days.
+     */
     private void showMultiChoiceDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select Class Days");
@@ -153,6 +219,12 @@ public class AddEvent extends AppCompatActivity {
         builder.show();
     }
 
+
+    /**
+     * Opens a date picker dialog to select a date and sets it in the corresponding EditText.
+     *
+     * @param dateInput The EditText field to set the selected date.
+     */
     private void showDatePickerDialog(EditText dateInput) {
         Calendar calendar = Calendar.getInstance();
         new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
@@ -162,6 +234,11 @@ public class AddEvent extends AppCompatActivity {
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
+
+
+    /**
+     * Displays a time picker dialog for selecting a time.
+     */
     private void showTimePickerDialog() {
         Calendar calendar = Calendar.getInstance();
         new TimePickerDialog(this, (view, hourOfDay, minute) -> {
@@ -172,12 +249,26 @@ public class AddEvent extends AppCompatActivity {
         }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();
     }
 
+
+    /**
+     * Opens the image chooser for selecting an event image.
+     */
     private void openImageChooser() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         startActivityForResult(intent, 1);
     }
 
+
+
+    /**
+     * Handles the result of an activity started for a result, such as an image picker.
+     * This method is called when the image picker activity finishes.
+     *
+     * @param requestCode The request code passed in the original startActivityForResult.
+     * @param resultCode The result code returned by the activity.
+     * @param data The Intent that contains the result data, in this case, the URI of the selected image.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -188,6 +279,13 @@ public class AddEvent extends AppCompatActivity {
         }
     }
 
+
+
+    /**
+     * Uploads the selected image to Firebase Storage.
+     * If the upload is successful, the download URL of the image is obtained and passed to the addOrUpdateEvent method.
+     * If the upload fails, a failure message is displayed to the user.
+     */
     private void uploadImageToFirebase() {
         if (imageUri != null) {
             StorageReference fileRef = storageReference.child("event_images/" + System.currentTimeMillis() + ".jpg");
@@ -198,82 +296,73 @@ public class AddEvent extends AppCompatActivity {
         }
     }
 
+
+
+
+    /**
+     * Adds or updates an event in the Firestore database with the provided event details and image URL.
+     * If the event ID is provided, it updates the existing event; otherwise, it creates a new event document.
+     *
+     * @param imageUrl The URL of the uploaded image.
+     */
     private void addOrUpdateEvent(String imageUrl) {
-        // Get input values
         String eventName = eventNameInput.getText().toString();
-        String eventTime = eventTimeInput.getText().toString();
-        String eventStartPeriod = eventStartPeriodInput.getText().toString();
-        String eventEndPeriod = eventEndPeriodInput.getText().toString();
-        String eventRegDueDate = eventRegDueDateInput.getText().toString();
-        String eventRegOpenDate = eventRegOpenDateInput.getText().toString();
-        String eventPrice = eventPriceInput.getText().toString();
-        String eventMaxPeople = eventMaxPeopleInput.getText().toString();
-        String eventWaitlistLimit = eventLimitInput.getText().toString();
+        String time = eventTimeInput.getText().toString();
+        String startPeriod = eventStartPeriodInput.getText().toString();
+        String endPeriod = eventEndPeriodInput.getText().toString();
+        String regDueDate = eventRegDueDateInput.getText().toString();
+        String regOpenDate = eventRegOpenDateInput.getText().toString();
+        String price = eventPriceInput.getText().toString();
+        String maxPeople = eventMaxPeopleInput.getText().toString();
+        String eventLimit = eventLimitInput.getText().toString();
+        String organizerID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        String selectedFacility = facilitySpinner.getSelectedItem().toString();  // Get the selected facility
 
-        // Create the event data map
-        Map<String, Object> eventData = new HashMap<>();
-        eventData.put("eventName", eventName);
-        eventData.put("time", eventTime);
-        eventData.put("startPeriod", eventStartPeriod);
-        eventData.put("endPeriod", eventEndPeriod);
-        eventData.put("regDueDate", eventRegDueDate);
-        eventData.put("regOpenDate", eventRegOpenDate);
-        eventData.put("price", eventPrice);
-        eventData.put("maxPeople", eventMaxPeople);
-        eventData.put("waitlistLimit", eventWaitlistLimit);
-        eventData.put("classDays", selectedDayList);
 
-        // If an image is uploaded, add the image URL, else use the existing image
-        if (imageUrl != null) {
-            eventData.put("imageUrl", imageUrl);
-        } else if (existingImage != null) {
-            eventData.put("imageUrl", existingImage);
-        }
+        Map<String, Object> event = new HashMap<>();
+        event.put("eventName", eventName);
+        event.put("classDays", selectedDayList);
+        event.put("time", time);
+        event.put("startPeriod", startPeriod);
+        event.put("endPeriod", endPeriod);
+        event.put("regDueDate", regDueDate);
+        event.put("regOpenDate", regOpenDate);
+        event.put("price", price);
+        event.put("maxPeople", maxPeople);
+        event.put("waitlistLimit", eventLimit);
+        event.put("organizerId", organizerID);
+        event.put("imageUrl", imageUrl);
+        event.put("facilityName", selectedFacility);  // Store the selected facility
 
-        // Add or update the event in Firestore
-        if (eventID == null) {
-            // Add a new event
-            db.collection("events").add(eventData)
-                    .addOnSuccessListener(documentReference -> {
-                        Toast.makeText(AddEvent.this, "Event added successfully", Toast.LENGTH_SHORT).show();
-                        finish();  // Finish the activity after adding the event
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(AddEvent.this, "Failed to add event", Toast.LENGTH_SHORT).show();
-                    });
-        } else {
-            // Update the existing event
-            db.collection("events").document(eventID).set(eventData)
+        if (eventID != null) {
+            db.collection("events").document(eventID).set(event)
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(AddEvent.this, "Event updated successfully", Toast.LENGTH_SHORT).show();
-                        finish();  // Finish the activity after updating the event
+                        Toast.makeText(this, "Event updated successfully", Toast.LENGTH_SHORT).show();
+                        navigateBackToOrganizerInfo(eventID, eventName);
                     })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(AddEvent.this, "Failed to update event", Toast.LENGTH_SHORT).show();
-                    });
+                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to update event", Toast.LENGTH_SHORT).show());
+        } else {
+            db.collection("events").add(event)
+                    .addOnSuccessListener(documentReference -> {
+                        Toast.makeText(this, "Event added successfully", Toast.LENGTH_SHORT).show();
+                        navigateBackToOrganizerInfo(documentReference.getId(), eventName);
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to add event", Toast.LENGTH_SHORT).show());
         }
     }
 
-    private void uploadQRCodeToFirebase(Bitmap qrCodeBitmap) {
-        // Convert the Bitmap to a file (or a byte array) to upload it to Firebase Storage
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        qrCodeBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] data = baos.toByteArray();
 
-        // Create a reference to Firebase Storage
-        StorageReference qrCodeRef = storageReference.child("event_qrcodes/" + System.currentTimeMillis() + ".png");
-
-        // Upload the QR code image
-        qrCodeRef.putBytes(data)
-                .addOnSuccessListener(taskSnapshot -> qrCodeRef.getDownloadUrl()
-                        .addOnSuccessListener(uri -> {
-                            // Once the QR code is uploaded, update Firestore with the QR code URL
-                            String qrCodeUrl = uri.toString();
-                            addOrUpdateEvent(qrCodeUrl); // Use the QR code URL when updating the event
-                        }))
-                .addOnFailureListener(e -> Toast.makeText(this, "QR code upload failed", Toast.LENGTH_SHORT).show());
+    /**
+     * Navigates back to the OrganizerInfo activity and passes the event ID and event name.
+     *
+     * @param eventID The ID of the event.
+     * @param eventName The name of the event.
+     */
+    private void navigateBackToOrganizerInfo(String eventID, String eventName) {
+        Intent intent = new Intent(this, OrganizerInfo.class);
+        intent.putExtra("EVENT_ID", eventID);
+        intent.putExtra("EVENT_NAME", eventName);
+        startActivity(intent);
+        finish();
     }
-
-
-
 }

@@ -20,6 +20,11 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 
+
+/**
+ * Activity for managing events in the admin interface. It allows viewing events, deleting images,
+ * removing QR codes, and deleting events from Firestore. It displays events for a specific facility.
+ */
 public class AdminEventScreen extends AppCompatActivity {
 
     private static final String TAG = "AdminEventScreen";
@@ -34,6 +39,13 @@ public class AdminEventScreen extends AppCompatActivity {
     private ArrayList<Event> eventDataList;
     private EventListAdapter eventListAdapter;
 
+
+    /**
+     * Initializes the activity, sets up the UI components, and loads events for the specified facility.
+     * Sets up a click listener for each event and the back button.
+     *
+     * @param savedInstanceState The saved instance state if the activity is being re-initialized.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
