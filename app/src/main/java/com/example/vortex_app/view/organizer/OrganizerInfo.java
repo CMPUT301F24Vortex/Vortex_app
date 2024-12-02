@@ -29,6 +29,8 @@ public class OrganizerInfo extends AppCompatActivity {
     private ImageView posterImageView;
     private Button editButton, doneButton;
 
+    private TextView locationTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +51,8 @@ public class OrganizerInfo extends AppCompatActivity {
         maxPeopleTextView = findViewById(R.id.text_max_people);
         facilityNameTextView = findViewById(R.id.text_facility_name); // Initialize the facility name text view
         posterImageView = findViewById(R.id.image_event);
+        locationTextView = findViewById(R.id.text_location_name);
+
 
         loadEventDetails(eventID);
 
@@ -70,7 +74,7 @@ public class OrganizerInfo extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference eventRef = db.collection("events").document(eventID);
 
-        // Fetch the document
+        // Fetch the event document
         eventRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -105,6 +109,9 @@ public class OrganizerInfo extends AppCompatActivity {
                     String facilityName = document.getString("facilityName");
                     if (facilityName != null && !facilityName.isEmpty()) {
                         facilityNameTextView.setText(facilityName);
+
+                        // Fetch location information from the facility collection
+                        fetchFacilityLocation(db, facilityName);
                     } else {
                         facilityNameTextView.setText("No Facility Assigned");
                     }
@@ -121,5 +128,31 @@ public class OrganizerInfo extends AppCompatActivity {
                 Log.e("OrganizerInfo", "Error fetching event details", task.getException());
             }
         });
+    }
+
+    private void fetchFacilityLocation(FirebaseFirestore db, String facilityName) {
+        db.collection("facility")
+                .whereEqualTo("facilityName", facilityName)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        DocumentSnapshot facilityDoc = task.getResult().getDocuments().get(0);
+                        String locationAddress = facilityDoc.getString("address");
+
+                        if (locationAddress != null) {
+                            // Display the location address
+                            locationTextView.setText(locationAddress);
+                        } else {
+                            locationTextView.setText("Location not available");
+                        }
+                    } else {
+                        Log.e("OrganizerInfo", "Error fetching facility location: Facility not found");
+                        locationTextView.setText("Location not available");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("OrganizerInfo", "Error fetching facility location", e);
+                    locationTextView.setText("Failed to load location");
+                });
     }
 }

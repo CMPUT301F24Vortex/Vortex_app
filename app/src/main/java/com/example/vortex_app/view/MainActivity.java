@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TEST_USER_ID = "020422"; // Fixed user ID for login
     private FirebaseFirestore db;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

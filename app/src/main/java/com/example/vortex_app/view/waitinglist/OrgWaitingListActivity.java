@@ -1,7 +1,9 @@
 package com.example.vortex_app.view.waitinglist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,6 +45,20 @@ public class OrgWaitingListActivity extends AppCompatActivity {
         waitlistDrawButton = findViewById(R.id.waitlist_draw_button);
         db = FirebaseFirestore.getInstance();
         eventID = getIntent().getStringExtra("EVENT_ID");
+
+
+        // Back Button Functionality
+        ImageView backButton = findViewById(R.id.imageViewBack);
+        backButton.setOnClickListener(view -> {
+            // Create an intent and add the event ID
+            Intent intent = new Intent();
+            intent.putExtra("EVENT_ID", eventID);
+            setResult(RESULT_OK, intent); // Pass result back to the calling activity
+            finish(); // Finish this activity and go back
+        });
+
+
+
 
         // Fetch the waiting list and set the draw button's functionality
         fetchWaitingList(eventID);
@@ -104,6 +120,8 @@ public class OrgWaitingListActivity extends AppCompatActivity {
                                         .add(user)
                                         .addOnSuccessListener(documentReference -> removeFromWaitlisted(user))
                                         .addOnFailureListener(e -> Toast.makeText(this, "Failed to store selected user", Toast.LENGTH_SHORT).show());
+
+
                             }
 
                             Toast.makeText(this, "Selected users stored successfully.", Toast.LENGTH_SHORT).show();

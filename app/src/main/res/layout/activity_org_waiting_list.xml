@@ -5,6 +5,14 @@
     android:background="#F5F5F5"
     android:padding="16dp">
 
+    <!-- Back Button -->
+    <ImageView
+        android:id="@+id/imageViewBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_back"
+        android:contentDescription="Go Back" />
+
     <!-- Waiting list -->
     <TextView
         android:layout_width="wrap_content"
@@ -23,7 +31,6 @@
         android:textColor="#FF3B30"
         android:paddingBottom="4dp" />
 
-
     <!-- Waiting list area -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewWaitingList"
@@ -36,24 +43,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingTop="16dp">
-
-        <!-- Menu bar -->
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/baseline_menu_24"
-            android:contentDescription="Menu" />
 
         <Button
             android:id="@+id/waitlist_draw_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Draw"
             android:backgroundTint="@color/red"
-            android:layout_marginStart="240dp"/>
+            android:text="Draw"
+            android:textColor="@android:color/white"
+            android:padding="16dp" />
     </LinearLayout>
 
 </LinearLayout>
