@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.vortex_app.R;
 import com.example.vortex_app.model.Facility;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.FacilityViewHolder> {
@@ -23,8 +24,16 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
     private final OnItemClickListener listener;
 
     public FacilityAdapter(List<Facility> facilityList, OnItemClickListener listener) {
-        this.facilityList = facilityList;
+        this.facilityList = facilityList != null ? facilityList : new ArrayList<>();
         this.listener = listener;
+    }
+
+    public void updateFacilities(List<Facility> newFacilities) {
+        facilityList.clear();
+        if (newFacilities != null) {
+            facilityList.addAll(newFacilities);
+        }
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -39,8 +48,15 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
         Facility facility = facilityList.get(position);
         holder.textViewFacilityName.setText(facility.getFacilityName());
         holder.textViewFacilityAddress.setText(facility.getAddress());
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(facility));
+
+        // Set the click listener on the itemView
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(facility);
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {

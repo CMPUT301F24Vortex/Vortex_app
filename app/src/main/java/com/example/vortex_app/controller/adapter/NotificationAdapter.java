@@ -95,6 +95,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 intent.putExtra("title", notification.getTitle());
                 intent.putExtra("message", notification.getMessage());
                 intent.putExtra("status", notification.getStatus());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Add this flag
                 context.startActivity(intent);
             } else {
                 Log.e("NotificationAdapter", "Context is null, cannot start NotificationDetailActivity");

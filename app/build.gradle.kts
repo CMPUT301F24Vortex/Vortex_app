@@ -11,9 +11,6 @@ android {
         applicationId = "com.example.vortex_app"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -28,9 +25,14 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+
 }
 
 dependencies {
@@ -63,13 +65,22 @@ dependencies {
     // Geolocation and Maps
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.android.gms:play-services-maps:18.1.0")
-    implementation ("com.google.android.gms:play-services-maps:18.1.0")
-    implementation ("com.google.firebase:firebase-firestore")
 
     // Testing libraries
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.0.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.0.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    // Mockito for mocking Firebase interactions
+    testImplementation("org.mockito:mockito-core:4.8.0")
+
+    // Robolectric for unit testing
+    testImplementation("org.robolectric:robolectric:4.10.3")
+
+    // Add AndroidX Test Core for Robolectric compatibility
+    testImplementation("androidx.test:core:1.5.0")
+
+    // JUnit
+    testImplementation("junit:junit:4.13.2")
+
 }
