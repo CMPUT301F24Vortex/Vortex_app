@@ -1,4 +1,4 @@
-package com.example.vortex_app;
+package com.example.vortex_app.model;
 
 import org.junit.Test;
 

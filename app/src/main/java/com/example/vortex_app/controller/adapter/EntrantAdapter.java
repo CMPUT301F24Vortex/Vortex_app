@@ -1,4 +1,6 @@
 package com.example.vortex_app.controller.adapter;
+
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +16,13 @@ import java.util.List;
 
 public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.ViewHolder> {
 
-    private List<Entrant> entrantList;
-    private OnItemClickListener listener;
-    private int selectedPosition = RecyclerView.NO_POSITION;
+    private final List<Entrant> entrantList;
+    private final OnItemClickListener listener;
+    private int selectedPosition = RecyclerView.NO_POSITION; // Keeps track of selected position
 
+    /**
+     * Interface for handling item click events.
+     */
     public interface OnItemClickListener {
         void onItemClick(Entrant entrant, int position);
     }
@@ -27,11 +32,23 @@ public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.ViewHold
         this.listener = listener;
     }
 
+    /**
+     * Returns the currently selected position.
+     */
+    public int getSelectedPosition() {
+        return selectedPosition;
+    }
+
+    /**
+     * Updates the selected position and refreshes the RecyclerView.
+     *
+     * @param position The new selected position.
+     */
     public void setSelectedPosition(int position) {
         int previousPosition = selectedPosition;
         selectedPosition = position;
-        notifyItemChanged(previousPosition); // Update the previously selected item
-        notifyItemChanged(selectedPosition); // Update the newly selected item
+        notifyItemChanged(previousPosition); // Refresh previously selected item
+        notifyItemChanged(selectedPosition); // Refresh newly selected item
     }
 
     @NonNull
@@ -47,11 +64,18 @@ public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.ViewHold
         holder.nameTextView.setText(entrant.getFirstName() + " " + entrant.getLastName());
 
         // Highlight the selected item
-        holder.itemView.setBackgroundColor(selectedPosition == position
-                ? holder.itemView.getContext().getResources().getColor(R.color.selected_item) // Highlight color
-                : holder.itemView.getContext().getResources().getColor(android.R.color.transparent)); // Default color
+        holder.itemView.setBackgroundColor(
+                selectedPosition == position
+                        ? holder.itemView.getContext().getResources().getColor(R.color.selected_item, null) // Highlight color
+                        : Color.TRANSPARENT // Default color
+        );
 
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(entrant, position));
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(entrant, position);
+            }
+            setSelectedPosition(position); // Update selection state
+        });
     }
 
     @Override
@@ -59,6 +83,9 @@ public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.ViewHold
         return entrantList.size();
     }
 
+    /**
+     * ViewHolder for displaying Entrant details.
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView;
 
