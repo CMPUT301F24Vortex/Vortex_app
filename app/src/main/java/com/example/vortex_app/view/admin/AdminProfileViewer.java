@@ -64,8 +64,8 @@ public class AdminProfileViewer extends AppCompatActivity implements AdminConfir
         db = FirebaseFirestore.getInstance();
         usersRef = db.collection("user_profile");
         waitlistedRef = db.collection("waitlisted");
-        selectedRef = db.collection("selected");
-        enrolledRef = db.collection("enrolled");
+        selectedRef = db.collection("selected_but_not_confirmed");
+        enrolledRef = db.collection("final");
         cancelledRef = db.collection("cancelled");
 
 
@@ -131,8 +131,8 @@ public class AdminProfileViewer extends AppCompatActivity implements AdminConfir
         db = FirebaseFirestore.getInstance();
         usersRef = db.collection("user_profile");
         waitlistedRef = db.collection("waitlisted");
-        selectedRef = db.collection("selected");
-        enrolledRef = db.collection("enrolled");
+        selectedRef = db.collection("selected_but_not_confirmed");
+        enrolledRef = db.collection("final");
         cancelledRef = db.collection("cancelled");
 
         //For each collection, query by userID to get relevant docs, and delete each

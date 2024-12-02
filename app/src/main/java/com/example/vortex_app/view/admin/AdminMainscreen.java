@@ -45,7 +45,8 @@ public class AdminMainscreen extends AppCompatActivity {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(AdminMainscreen.this, AdminImageScreen.class);
+                startActivity(intent);
             }
         });
 

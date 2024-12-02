@@ -131,8 +131,8 @@ public class AdminEventScreen extends AppCompatActivity implements AdminConfirmE
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
         waitlistedRef = db.collection("waitlisted");
-        selectedRef = db.collection("selected");
-        enrolledRef = db.collection("enrolled");
+        selectedRef = db.collection("selected_but_not_confirmed");
+        enrolledRef = db.collection("final");
         cancelledRef = db.collection("cancelled");
 
         //For each collection, query by eventID to get relevant docs, and delete each

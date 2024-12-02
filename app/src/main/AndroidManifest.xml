@@ -112,6 +112,7 @@
         <activity android:name=".view.admin.AdminProfileScreen" android:exported="false" />
         <activity android:name=".view.admin.AdminProfileViewer" android:exported="false" />
         <activity android:name=".view.admin.AdminEventInfoScreen" android:exported="false" />
+        <activity android:name=".view.admin.AdminImageScreen" android:exported="false"/>
 
     </application>
 </manifest>
