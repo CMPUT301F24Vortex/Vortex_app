@@ -73,7 +73,7 @@ public class AdminEventScreen extends AppCompatActivity implements AdminConfirmE
         eventList.setAdapter(eventArrayAdapter);
 
         //Dynamically update event list
-        eventsRef.whereEqualTo("facilityID", facilityID).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        eventsRef.whereEqualTo("facilityName", facilityID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -131,8 +131,8 @@ public class AdminEventScreen extends AppCompatActivity implements AdminConfirmE
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
         waitlistedRef = db.collection("waitlisted");
-        selectedRef = db.collection("selected");
-        enrolledRef = db.collection("enrolled");
+        selectedRef = db.collection("selected_but_not_confirmed");
+        enrolledRef = db.collection("final");
         cancelledRef = db.collection("cancelled");
 
         //For each collection, query by eventID to get relevant docs, and delete each

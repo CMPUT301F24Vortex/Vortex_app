@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vortex_app.R;
+import com.example.vortex_app.view.admin.AdminMainscreen;
 import com.example.vortex_app.view.entrant.EntrantActivity;
 import com.example.vortex_app.view.organizer.OrganizerActivity;
 import com.google.firebase.firestore.DocumentReference;
@@ -84,5 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void navigateToAdmin() {
         Toast.makeText(this, "Admin role selected", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, AdminMainscreen.class);
+        startActivity(intent);
     }
 }

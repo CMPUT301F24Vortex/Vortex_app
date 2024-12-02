@@ -13,7 +13,7 @@
         android:layout_marginTop="28dp"
         android:background="@drawable/rounded_corner_view"
         android:padding="10dp"
-        android:text="Facilities"
+        android:text="Images"
         android:textColor="@color/red"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,10 +22,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
-        android:id="@+id/listview_facilities"
+        android:id="@+id/listview_images"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toTopOf="@+id/button_back"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,5 +43,7 @@
         android:contentDescription="Back button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

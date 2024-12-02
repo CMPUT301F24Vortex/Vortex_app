@@ -4,6 +4,7 @@ public class Facility {
     private String id; // Firestore document ID
     private String facilityName;
     private String address;
+    private String organizerID;
 
     // No-arg constructor required for Firestore deserialization
     public Facility() {}
@@ -43,5 +44,9 @@ public class Facility {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getOrganizerID() {
+        return organizerID;
     }
 }
