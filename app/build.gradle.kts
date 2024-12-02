@@ -57,6 +57,7 @@ dependencies {
     // ZXing for QR code scanning and generation
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0") // QR code Android Embedded
+    implementation ("com.google.zxing:core:3.3.0")
 
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.12.0")
@@ -82,5 +83,8 @@ dependencies {
 
     // JUnit
     testImplementation("junit:junit:4.13.2")
+
+    implementation ("com.google.firebase:firebase-storage:20.0.1")
+    implementation ("com.google.firebase:firebase-firestore:24.0.0")
 
 }

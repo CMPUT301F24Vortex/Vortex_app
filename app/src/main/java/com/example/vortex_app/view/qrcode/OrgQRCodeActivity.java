@@ -1,3 +1,4 @@
+
 package com.example.vortex_app.view.qrcode;
 
 import android.content.Intent;

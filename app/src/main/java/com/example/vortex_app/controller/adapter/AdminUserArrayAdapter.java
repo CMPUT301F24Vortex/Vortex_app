@@ -1,29 +1,30 @@
-package com.example.vortex_app.view.admin;
+package com.example.vortex_app.controller.adapter;
 
+import android.widget.ArrayAdapter;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+
 import com.bumptech.glide.Glide;
 import com.example.vortex_app.R;
-import com.example.vortex_app.model.Event;
+import com.example.vortex_app.model.User;
 
 import java.util.ArrayList;
 
-public class AdminEventArrayAdapter extends ArrayAdapter<Event> {
-    private ArrayList<Event> events;
+public class AdminUserArrayAdapter extends ArrayAdapter<User> {
+    private ArrayList<User> users;
     private Context context;
 
-    public AdminEventArrayAdapter (Context context, ArrayList<Event> events) {
-        super(context, 0, events);
-        this.events = events;
+    public AdminUserArrayAdapter (Context context, ArrayList<User> users) {
+        super(context, 0, users);
+        this.users = users;
         this.context = context;
     }
 
@@ -38,22 +39,22 @@ public class AdminEventArrayAdapter extends ArrayAdapter<Event> {
             view = LayoutInflater.from(context).inflate(R.layout.admin_profile_listitem, parent, false);
         }
 
-        Event event = events.get(position);
+        User user = users.get(position);
 
-        TextView eventName = view.findViewById(R.id.textView_eventname);
-        TextView eventID = view.findViewById(R.id.textView_eventid);
-        ImageView eventPoster = view.findViewById(R.id.imageView_profilepic);
+        TextView userName = view.findViewById(R.id.textView_username);
+        TextView userID = view.findViewById(R.id.textView_userid);
+        ImageView userProfilePic = view.findViewById(R.id.imageView_profilepic);
 
-        eventName.setText(event.getName());
-        eventID.setText(event.getEventID());
+        userName.setText(user.getFullName());
+        userID.setText(user.getUserID());
 
-        // load event poster
-        String profilePicUrl = event.getImageUrl();
+        // load user pfp
+        String profilePicUrl = user.getAvatarUrl();
         if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
             Glide.with(this.getContext())
                     .load(profilePicUrl)
-                    .placeholder(R.drawable.sample_event_image) // Placeholder image
-                    .into(eventPoster);
+                    .placeholder(R.drawable.profile) // Placeholder image
+                    .into(userProfilePic);
         }
 
         return view;

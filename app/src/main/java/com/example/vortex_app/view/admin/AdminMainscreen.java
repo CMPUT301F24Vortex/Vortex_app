@@ -9,6 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vortex_app.R;
 import com.example.vortex_app.view.MainActivity;
+import com.example.vortex_app.view.facility.AdminFacilityScreen;
+import com.example.vortex_app.view.image.AdminImageScreen;
+import com.example.vortex_app.view.profile.AdminProfileScreen;
 
 public class AdminMainscreen extends AppCompatActivity {
 
@@ -20,7 +23,6 @@ public class AdminMainscreen extends AppCompatActivity {
         //Set button id's
         Button profileButton = findViewById(R.id.button_profile);
         Button facilityEventButton = findViewById(R.id.button_facility_event);
-        Button imageButton = findViewById(R.id.button_image);
         Button notificationButton = findViewById(R.id.button_notification);
         Button logoutButton = findViewById(R.id.button_logout);
 
@@ -42,13 +44,7 @@ public class AdminMainscreen extends AppCompatActivity {
             }
         });
 
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AdminMainscreen.this, AdminImageScreen.class);
-                startActivity(intent);
-            }
-        });
+
 
         notificationButton.setOnClickListener(new View.OnClickListener() {
             @Override

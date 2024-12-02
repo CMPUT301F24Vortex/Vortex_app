@@ -8,80 +8,69 @@
     android:background="@color/background"
     tools:context=".view.admin.AdminMainscreen">
 
-
+    <!-- Button for Profile -->
     <Button
         android:id="@+id/button_profile"
-        android:layout_width="250dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="272dp"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
         android:backgroundTint="#F8F8F8"
         android:text="Profiles"
         android:textColor="#3A3A3A"
-        android:textSize="24sp"
-        app:cornerRadius="5dp"
+        android:textSize="20sp"
+        android:padding="16dp"
+        app:cornerRadius="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Button for Events & Facilities -->
     <Button
         android:id="@+id/button_facility_event"
-        android:layout_width="250dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="4dp"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:backgroundTint="#F8F8F8"
         android:text="Events &amp; Facilities"
         android:textColor="#3A3A3A"
-        android:textSize="24sp"
-        app:cornerRadius="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_profile" />
-
-    <Button
-        android:id="@+id/button_image"
-        android:layout_width="250dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="4dp"
-        android:backgroundTint="#F8F8F8"
-        android:text="Images"
-        android:textColor="#3A3A3A"
-        android:textSize="24sp"
-        app:cornerRadius="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_facility_event" />
-
-    <Button
-        android:id="@+id/button_logout"
-        android:layout_width="170dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="48dp"
-        android:backgroundTint="#F8F8F8"
-        android:text="Logout"
-
-        android:textColor="#3A3A3A"
         android:textSize="20sp"
-        app:cornerRadius="5dp"
+        android:padding="16dp"
+        app:cornerRadius="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_notification" />
+        app:layout_constraintTop_toBottomOf="@id/button_profile" />
 
+    <!-- Button for Notifications (Fixed accessibility issue) -->
     <Button
         android:id="@+id/button_notification"
-        android:layout_width="170dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="48dp"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:backgroundTint="#F8F8F8"
-        android:drawableTop="@drawable/notification"
-        android:drawablePadding="200dp"
+        android:drawablePadding="12dp"
+        android:text="Notifications"
         android:textColor="#3A3A3A"
         android:textSize="20sp"
-        app:cornerRadius="5dp"
+        android:padding="16dp"
+        app:cornerRadius="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_image" />
+        app:layout_constraintTop_toBottomOf="@id/button_facility_event" />
 
+    <!-- Button for Logout -->
+    <Button
+        android:id="@+id/button_logout"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/red"
+        android:text="Logout"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:padding="16dp"
+        app:cornerRadius="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_notification"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

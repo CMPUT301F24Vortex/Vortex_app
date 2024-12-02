@@ -1,76 +1,53 @@
 package com.example.vortex_app.model;
 
+import com.google.firebase.firestore.PropertyName;
+
 import java.io.Serializable;
 import java.util.List;
 
 public class Event implements Serializable {
 
+    @PropertyName("eventName")
     private String name;
-    private int imageResId; // Optional: For displaying an image in the UI
-    //private String classDay;
-    private List<String> classDays; // Replace String with List<String>
+
+    private String imageResId; // Kept as String since it's stored as String in Firestore
+    private List<String> classDays; // List of Strings
     private String time;
     private String period;
     private String registrationDueDate;
     private String registrationOpenDate;
-    private double price;
+    private String price; // Store as String to match Firestore
     private String location;
-    private int maxPeople;
+    private String maxPeople; // Stored as String in Firestore
     private String difficulty;
-    private boolean requiresGeolocation;
+    private String requiresGeolocation; // Stored as String
     private String eventID;
-    private String facilityID;
+    private String facilityName;
     private String organizerID;
     private String imageUrl;
-    public String userID;
+    private String userID;
+    private String qrCode;
 
-    // Full constructor with all parameters
-    public Event(String name, int imageResId, String classDay, String time, String period,
-                 String registrationDueDate, String registrationOpenDate, String price,
-                 String location, int maxPeople, String difficulty, boolean requiresGeolocation) {
-        this.name = name;
-        this.imageResId = imageResId;
-        this.classDays = classDays;
-        this.time = time;
-        this.period = period;
-        this.registrationDueDate = registrationDueDate;
-        this.registrationOpenDate = registrationOpenDate;
-        this.price = parsePrice(price); // Parse price as a double
-        this.location = location;
-        this.maxPeople = maxPeople;
-        this.difficulty = difficulty;
-        this.requiresGeolocation = requiresGeolocation;
-    }
-
-
-    public Event(String name, String eventID) {
-        this.name = name;
-        this.eventID = eventID;
-    }
-
-
-
-
-    public Event(String eventID) {
-        this.eventID = eventID;
+    // No-argument constructor (required for Firestore deserialization)
+    public Event() {
     }
 
     // Getters and Setters
+    @PropertyName("eventName")
     public String getName() {
         return name;
     }
 
+    @PropertyName("eventName")
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setUserID(String userID){this.userID =userID;}
-
-    public int getImageResId() {
+    public String getImageResId() {
         return imageResId;
     }
 
-    public void setImageResId(int imageResId) {
+    public void setImageResId(String imageResId) {
         this.imageResId = imageResId;
     }
 
@@ -114,16 +91,12 @@ public class Event implements Serializable {
         this.registrationOpenDate = registrationOpenDate;
     }
 
-    public double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
     public void setPrice(String price) {
-        this.price = parsePrice(price);
+        this.price = price;
     }
 
     public String getLocation() {
@@ -134,11 +107,11 @@ public class Event implements Serializable {
         this.location = location;
     }
 
-    public int getMaxPeople() {
+    public String getMaxPeople() {
         return maxPeople;
     }
 
-    public void setMaxPeople(int maxPeople) {
+    public void setMaxPeople(String maxPeople) {
         this.maxPeople = maxPeople;
     }
 
@@ -150,6 +123,14 @@ public class Event implements Serializable {
         this.difficulty = difficulty;
     }
 
+    public String getRequiresGeolocation() {
+        return requiresGeolocation;
+    }
+
+    public void setRequiresGeolocation(String requiresGeolocation) {
+        this.requiresGeolocation = requiresGeolocation;
+    }
+
     public String getEventID() {
         return eventID;
     }
@@ -158,33 +139,45 @@ public class Event implements Serializable {
         this.eventID = eventID;
     }
 
-    public boolean isRequiresGeolocation() {
-        return requiresGeolocation;
+    public String getFacilityName() {
+        return facilityName;
     }
 
-    public void setRequiresGeolocation(boolean requiresGeolocation) {
-        this.requiresGeolocation = requiresGeolocation;
-    }
-
-    public String getFacilityID() {
-        return facilityID;
+    public void setFacilityName(String facilityName) {
+        this.facilityName = facilityName;
     }
 
     public String getOrganizerID() {
         return organizerID;
     }
 
+    public void setOrganizerID(String organizerID) {
+        this.organizerID = organizerID;
+    }
+
     public String getImageUrl() {
         return imageUrl;
     }
 
-    // Utility Method: Parse Price
-    private double parsePrice(String price) {
-        try {
-            return Double.parseDouble(price);
-        } catch (NumberFormatException e) {
-            return 0.0; // Default value for invalid price input
-        }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+
+    // Add getters and setters for qrCode
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
+    }
 }
