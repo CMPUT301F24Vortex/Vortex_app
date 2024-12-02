@@ -15,6 +15,14 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.List;
+
+/**
+ * The OrganizerInfo activity is responsible for displaying detailed information about a specific event.
+ * It retrieves event details from Firebase Firestore, including event name, class days, time, price,
+ * registration dates, and the associated facility's information such as its name and location.
+ * The user can also edit the event or navigate back to the event list.
+ */
 public class OrganizerInfo extends AppCompatActivity {
 
     private TextView eventNameTextView;
@@ -31,6 +39,13 @@ public class OrganizerInfo extends AppCompatActivity {
 
     private TextView locationTextView;
 
+    /**
+     * Called when the activity is created.
+     * Initializes the UI elements and loads event details from Firebase Firestore.
+     * Sets up listeners for the edit and done buttons.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,9 +68,9 @@ public class OrganizerInfo extends AppCompatActivity {
         posterImageView = findViewById(R.id.image_event);
         locationTextView = findViewById(R.id.text_location_name);
 
-
         loadEventDetails(eventID);
 
+        // Set up listeners for the buttons
         editButton.setOnClickListener(v -> {
             Intent intent = new Intent(OrganizerInfo.this, AddEvent.class);
             intent.putExtra("EVENT_ID", eventID);
@@ -70,6 +85,13 @@ public class OrganizerInfo extends AppCompatActivity {
         });
     }
 
+    /**
+     * Loads the details of the event from Firebase Firestore and displays them in the respective UI elements.
+     * It retrieves the event name, class days, time, period, registration dates, price, maximum people,
+     * facility name, and event poster.
+     *
+     * @param eventID The ID of the event whose details are to be loaded.
+     */
     private void loadEventDetails(String eventID) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference eventRef = db.collection("events").document(eventID);
@@ -83,8 +105,14 @@ public class OrganizerInfo extends AppCompatActivity {
                     String eventName = document.getString("eventName");
                     eventNameTextView.setText(eventName);
 
-                    String eventDay = document.getString("classDay");
-                    classDayTextView.setText(eventDay);
+                    // Check if classDay is an array or list
+                    Object classDayObject = document.get("classDays");
+                    if (classDayObject instanceof List) {
+                        List<String> classDays = (List<String>) classDayObject;
+                        classDayTextView.setText(String.join(", ", classDays)); // Join array items with commas
+                    } else {
+                        classDayTextView.setText("No class days available");
+                    }
 
                     String eventTime = document.getString("time");
                     timeTextView.setText(eventTime);
@@ -130,6 +158,13 @@ public class OrganizerInfo extends AppCompatActivity {
         });
     }
 
+    /**
+     * Fetches the location of the facility associated with the event from Firebase Firestore
+     * and updates the UI to display the location address.
+     *
+     * @param db           The FirebaseFirestore instance.
+     * @param facilityName The name of the facility whose location is to be fetched.
+     */
     private void fetchFacilityLocation(FirebaseFirestore db, String facilityName) {
         db.collection("facility")
                 .whereEqualTo("facilityName", facilityName)

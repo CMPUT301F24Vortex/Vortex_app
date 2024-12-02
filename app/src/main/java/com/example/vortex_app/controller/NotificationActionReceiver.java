@@ -8,19 +8,21 @@ import android.widget.Toast;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
- * {@code NotificationActionReceiver} is a {@link BroadcastReceiver} that handles actions
- * from notification buttons, such as accepting or declining an invitation, staying on or leaving a waiting list.
- * It updates the invitation status in Firestore based on the user's response.
+ * {@code NotificationActionReceiver} is a {@link BroadcastReceiver} that handles user actions
+ * from notifications, such as accepting, declining, staying on, or leaving a waiting list.
+ * It updates the corresponding invitation status in Firestore based on the user's response.
  *
- * <p>This receiver allows the app to perform actions in response to user interactions with notifications
- * without needing to open an activity.
+ * <p>This receiver performs actions in response to user interactions with notifications, such as
+ * updating the status of invitations or providing feedback, all without the need for the user
+ * to open an activity.</p>
  */
 public class NotificationActionReceiver extends BroadcastReceiver {
     private FirebaseFirestore db;
 
     /**
      * Called when the receiver receives a broadcasted intent. It determines the action taken
-     * by the user and calls the appropriate method to handle the action.
+     * by the user (e.g., accept, decline, stay, leave) and calls the appropriate method to handle
+     * that action by updating Firestore or showing a confirmation message.
      *
      * @param context The {@link Context} in which the receiver is running.
      * @param intent  The {@link Intent} being received, containing the action and invitation ID.
@@ -85,8 +87,8 @@ public class NotificationActionReceiver extends BroadcastReceiver {
     }
 
     /**
-     * Handles the "Stay" action, which keeps the user on the waiting list. No Firestore update is required;
-     * this method simply shows a confirmation message to the user.
+     * Handles the "Stay" action, which keeps the user on the waiting list. This method displays
+     * a confirmation message to the user but does not require a Firestore update.
      *
      * @param context The {@link Context} in which the receiver is running.
      */

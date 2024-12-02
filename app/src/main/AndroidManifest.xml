@@ -82,7 +82,6 @@
         <activity android:name=".view.profile.AdminProfileScreen" android:exported="false" />
 <!--        <activity android:name=".view.profile.AdminProfileViewer" android:exported="false" />-->
         <activity android:name=".view.profile.UserDetailActivity" android:exported="false" />
-        <activity android:name=".view.admin.AdminEventInfoScreen" android:exported="false" />
 
         <activity android:name=".view.image.AdminImageScreen" android:exported="false"/>
 

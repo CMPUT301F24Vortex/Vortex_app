@@ -27,8 +27,7 @@ import java.util.Locale;
  */
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
 
-    private List<NotificationModel> notificationList;
-    private OnNotificationClickListener listener;
+    private final List<NotificationModel> notificationList;
     private final Context context;
 
     /**
@@ -40,18 +39,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     public NotificationAdapter(List<NotificationModel> notificationList, Context context) {
         this.notificationList = notificationList;
         this.context = context;
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when a notification item is clicked.
-     */
-    public interface OnNotificationClickListener {
-        /**
-         * Called when a notification item is clicked.
-         *
-         * @param notification The {@link NotificationModel} associated with the clicked item.
-         */
-        void onNotificationClick(NotificationModel notification);
     }
 
     /**
@@ -92,9 +79,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.itemView.setOnClickListener(v -> {
             if (context != null) {
                 Intent intent = new Intent(context, NotificationDetailActivity.class);
-                intent.putExtra("title", notification.getTitle());
-                intent.putExtra("message", notification.getMessage());
-                intent.putExtra("status", notification.getStatus());
+                intent.putExtra("EXTRA_NOTIFICATION_TITLE", notification.getTitle());
+                intent.putExtra("EXTRA_NOTIFICATION_MESSAGE", notification.getMessage());
+                intent.putExtra("EXTRA_NOTIFICATION_STATUS", notification.getStatus());
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Add this flag
                 context.startActivity(intent);
             } else {

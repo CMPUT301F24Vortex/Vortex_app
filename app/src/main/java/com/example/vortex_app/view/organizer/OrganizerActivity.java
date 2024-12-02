@@ -24,6 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Activity that allows the organizer to manage events, navigate to other parts of the app,
+ * and handle facilities associated with the organizer.
+ */
 public class OrganizerActivity extends AppCompatActivity {
 
     private static final String TAG = "OrganizerActivity";
@@ -35,12 +39,15 @@ public class OrganizerActivity extends AppCompatActivity {
     private List<String> eventImageUrls = new ArrayList<>();
     private Button buttonNavigate;
     private Button buttonMyFacility;
+    private Button buttonChangeRole;
 
     private FirebaseFirestore db;
     private String organizerID;
 
-    private Button buttonChangeRole;
-
+    /**
+     * Called when the activity is created. Initializes UI elements, Firebase Firestore, and
+     * sets up event listeners for buttons and list items.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,8 +61,7 @@ public class OrganizerActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
         buttonNavigate = findViewById(R.id.button_add_event);
         buttonMyFacility = findViewById(R.id.button_my_facility);
-        buttonChangeRole = findViewById(R.id.button_change_role); // New button
-
+        buttonChangeRole = findViewById(R.id.button_change_role);
 
         // Check for an existing facility or create a default one
         ensureDefaultFacility();
@@ -91,19 +97,20 @@ public class OrganizerActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-
         // Handle "Change Role" button click
         buttonChangeRole.setOnClickListener(v -> {
-            Log.d(TAG, "Change Role button clicked!");
-            Intent intent = new Intent(OrganizerActivity.this, MainActivity.class);
+            Intent intent = new Intent(OrganizerActivity.this, MainActivity.class);  // Navigate to MainActivity
             startActivity(intent);
-            finish(); // Close the current activity
         });
     }
 
+    /**
+     * Loads the events created by the current organizer from Firebase Firestore.
+     * Filters events by organizer ID and updates the ListView with event data.
+     */
     private void loadEvents() {
         db.collection("events")
-                .whereEqualTo("organizerId", organizerID) // Only fetch events created by this organizer
+                .whereEqualTo("organizerId", organizerID)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -133,7 +140,10 @@ public class OrganizerActivity extends AppCompatActivity {
                 });
     }
 
-
+    /**
+     * Ensures that a default facility exists for the organizer. If no facility is found,
+     * a default facility is created.
+     */
     private void ensureDefaultFacility() {
         db.collection("facility")
                 .whereEqualTo("organizerId", organizerID)
@@ -153,13 +163,16 @@ public class OrganizerActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Creates a default facility for the organizer with predefined values.
+     */
     private void createDefaultFacility() {
         Map<String, Object> facilityData = new HashMap<>();
         facilityData.put("facilityName", "Default Facility Name");
         facilityData.put("address", "Default Location");
         facilityData.put("organizerId", organizerID);
 
-        db.collection("facilities")
+        db.collection("facility")
                 .add(facilityData)
                 .addOnSuccessListener(documentReference -> {
                     Log.d(TAG, "Default facility created with ID: " + documentReference.getId());

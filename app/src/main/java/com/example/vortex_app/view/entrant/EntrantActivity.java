@@ -37,6 +37,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * EntrantActivity displays a list of events that the current user has joined (based on their user ID).
+ * The activity also allows the user to scan a QR code for event details, navigate between different screens via bottom navigation,
+ * and change their user role by navigating to the MainActivity.
+ */
 public class EntrantActivity extends AppCompatActivity {
 
     private ListView listView;
@@ -50,36 +55,38 @@ public class EntrantActivity extends AppCompatActivity {
     private Button buttonChangeRole;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
 
+    /**
+     * Called when the activity is created. Initializes the UI components, fetches event details,
+     * and handles bottom navigation and button clicks.
+     *
+     * @param savedInstanceState The saved instance state (if any) when the activity is recreated.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entrant_new);
 
-
         db = FirebaseFirestore.getInstance();
         currentUserID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         collectionName = "final";
 
-
-
+        // Initialize UI components
         listView = findViewById(R.id.list_view_events);
         eventNames = new ArrayList<>();
         eventIDs = new ArrayList<>();
         eventImageUrls = new ArrayList<>();
-        buttonChangeRole = findViewById(R.id.button_change_role); // New button
-
-
+        buttonChangeRole = findViewById(R.id.button_change_role);
 
         eventAdapter = new EventAdapter(this, eventNames, eventIDs, eventImageUrls);
         listView.setAdapter(eventAdapter);
 
+        // Set up QR scan button click listener
         Button scanQrButton = findViewById(R.id.button_scan_qr);
         scanQrButton.setOnClickListener(v -> checkCameraPermission());
 
-        // Set up bottom navigation and handle item selection
+        // Set up bottom navigation bar
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
-
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_profile) {
@@ -95,10 +102,7 @@ public class EntrantActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
                 return true;
-
-
             } else if (itemId == R.id.nav_home) {
-                // Current activity; do nothing
                 return true;
             }
             return false;
@@ -109,22 +113,29 @@ public class EntrantActivity extends AppCompatActivity {
             Log.d(TAG, "Change Role button clicked!");
             Intent intent = new Intent(EntrantActivity.this, MainActivity.class);
             startActivity(intent);
-            finish(); // Close the current activity
+            finish();
         });
 
-        // Fetch all event IDs related to the user (selected, waitlisted, final)
-        fetchUserEventIDs(currentUserID,collectionName);
+        // Fetch events the user has joined
+        fetchUserEventIDs(currentUserID, collectionName);
 
+        // Set up item click listener for event details
         listView.setOnItemClickListener((parent, view, position, id) -> {
             String clickedEventID = eventIDs.get(position);
             Intent intent = new Intent(this, EventInfoActivity.class);
             intent.putExtra("EVENT_ID", clickedEventID);
-            intent.putExtra("FROM_ENTRANT", true); // Indicate the source
+            intent.putExtra("FROM_ENTRANT", true);
             startActivity(intent);
         });
-
     }
 
+    /**
+     * Fetches the event IDs that the current user has joined (from the Firestore database).
+     * It retrieves events that the user has selected, waitlisted, or marked as final.
+     *
+     * @param currentUserID The ID of the current user.
+     * @param collectionName The name of the Firestore collection to query.
+     */
     private void fetchUserEventIDs(String currentUserID, String collectionName) {
         Set<String> allEventIDs = new HashSet<>();
 
@@ -139,26 +150,35 @@ public class EntrantActivity extends AppCompatActivity {
                                 allEventIDs.add(eventID);
                             }
                         }
-                        loadEventDetails(allEventIDs); // Now, load details only once
+                        loadEventDetails(allEventIDs);
                     } else {
                         Toast.makeText(this, "Error fetching final events", Toast.LENGTH_SHORT).show();
                     }
-
                 });
     }
 
+    /**
+     * Loads the event details for the given set of event IDs. The event details include the event name and image URL.
+     *
+     * @param allEventIDs A set of event IDs to fetch details for.
+     */
     private void loadEventDetails(Set<String> allEventIDs) {
-        // Clear the lists to ensure fresh data
+        // Clear previous event data
         eventNames.clear();
         eventIDs.clear();
         eventImageUrls.clear();
 
-        // Iterate over the event IDs set and fetch details for each event
+        // Fetch details for each event
         for (String eventID : allEventIDs) {
             fetchEventDetails(eventID);
         }
     }
 
+    /**
+     * Fetches the details of a specific event from the Firestore database.
+     *
+     * @param eventID The ID of the event to fetch details for.
+     */
     private void fetchEventDetails(String eventID) {
         db.collection("events").document(eventID)
                 .get()
@@ -169,12 +189,12 @@ public class EntrantActivity extends AppCompatActivity {
                             String eventName = document.getString("eventName");
                             String eventImageUrl = document.getString("imageUrl");
 
-                            // Only add event details if the event is not already in the list
+                            // Only add event details if not already in the list
                             if (!eventIDs.contains(eventID)) {
                                 eventNames.add(eventName);
                                 eventIDs.add(eventID);
                                 eventImageUrls.add(eventImageUrl);
-                                eventAdapter.notifyDataSetChanged(); // Notify adapter to update the UI
+                                eventAdapter.notifyDataSetChanged(); // Update the adapter
                             }
                         }
                     } else {
@@ -183,6 +203,9 @@ public class EntrantActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Checks if the app has permission to access the camera. If not, requests camera permission.
+     */
     private void checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -193,6 +216,13 @@ public class EntrantActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Handles the result of the camera permission request. If permission is granted, starts the QR code scanner.
+     *
+     * @param requestCode The request code passed in the permission request.
+     * @param permissions The list of permissions requested.
+     * @param grantResults The results of the permission request.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -206,6 +236,9 @@ public class EntrantActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Starts the QR code scanner by initializing an IntentIntegrator.
+     */
     private void startQRCodeScanner() {
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setOrientationLocked(false);
@@ -214,8 +247,16 @@ public class EntrantActivity extends AppCompatActivity {
         integrator.initiateScan();
     }
 
+    /**
+     * Handles the result of a QR code scan. If a valid result is found, navigates to the event info page.
+     *
+     * @param requestCode The request code for the activity result.
+     * @param resultCode The result code for the activity result.
+     * @param data The intent data returned by the scan.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         super.onActivityResult(requestCode, resultCode, data);
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);

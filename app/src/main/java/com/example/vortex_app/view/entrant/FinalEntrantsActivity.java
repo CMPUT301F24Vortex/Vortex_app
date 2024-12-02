@@ -18,15 +18,45 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Activity class for displaying the final entrants for a specific event.
+ * The activity retrieves and displays a list of users who are final entrants for the event.
+ * The event ID is passed through an intent, and a RecyclerView is used to display the entrants.
+ *
+ * Includes functionality to go back to the previous activity, passing back the event ID.
+ *
+ * <p>Uses Firebase Firestore to fetch data about the final entrants for the event.</p>
+ *
+ * <p>Requires the following permissions:
+ * - Access to Firebase Firestore</p>
+ *
+ * @author Gyurim
+ * @version 1.0
+ * @since 2024-12-02
+ */
 public class FinalEntrantsActivity extends AppCompatActivity {
 
+    /** RecyclerView to display the final entrants list. */
     private RecyclerView recyclerViewEntrants;
-    private FinalEntrantAdapter finalEntrantAdapter;
-    private List<User> entrantList;
-    private FirebaseFirestore db;
-    private String eventId; // Store event ID
 
+    /** Adapter for displaying the list of final entrants. */
+    private FinalEntrantAdapter finalEntrantAdapter;
+
+    /** List to store the final entrants fetched from Firestore. */
+    private List<User> entrantList;
+
+    /** Firestore instance to fetch the final entrants data. */
+    private FirebaseFirestore db;
+
+    /** Event ID used to filter the final entrants. */
+    private String eventId;
+
+    /**
+     * Called when the activity is created. Initializes the UI components and fetches the event ID from the intent.
+     * Sets up the RecyclerView and the back button functionality. Fetches the final entrants data from Firestore.
+     *
+     * @param savedInstanceState The saved instance state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +95,12 @@ public class FinalEntrantsActivity extends AppCompatActivity {
         fetchFinalEntrants();
     }
 
+    /**
+     * Fetches the final entrants data from Firebase Firestore based on the event ID.
+     * Updates the RecyclerView with the list of entrants or displays a Toast if no entrants are found.
+     *
+     * Logs any errors encountered during the Firestore data retrieval.
+     */
     private void fetchFinalEntrants() {
         db.collection("final")
                 .whereEqualTo("eventID", eventId)

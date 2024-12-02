@@ -18,12 +18,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * MainActivity is the entry point of the application, where the user can select their role
+ * (Entrant, Organizer, Admin). It also ensures that a user profile exists in Firebase for the specified user ID.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String TEST_USER_ID = "020422"; // Fixed user ID for login
     private FirebaseFirestore db;
 
-
+    /**
+     * Initializes the main activity, sets up UI elements, and handles user role selection.
+     * It also ensures the user profile exists in Firebase for the specified user ID.
+     *
+     * @param savedInstanceState The saved state of the activity, if any.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,14 +49,19 @@ public class MainActivity extends AppCompatActivity {
         // Ensure the user profile exists in Firebase
         ensureUserProfileExists(TEST_USER_ID);
 
-        // Navigate to the relevant activity
+        // Navigate to the relevant activity based on user role selection
         buttonEntrant.setOnClickListener(v -> navigateToEntrant());
         buttonOrganizer.setOnClickListener(v -> navigateToOrganizer());
         buttonAdmin.setOnClickListener(v -> navigateToAdmin());
     }
 
+    /**
+     * Ensures that the user profile exists in Firebase. If it does not exist, a new profile
+     * with default values is created for the specified user ID.
+     *
+     * @param userId The user ID for which the profile should be checked or created.
+     */
     private void ensureUserProfileExists(String userId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference userDoc = db.collection("user_profile").document(userId);
 
         userDoc.get().addOnSuccessListener(documentSnapshot -> {
@@ -70,19 +84,27 @@ public class MainActivity extends AppCompatActivity {
         }).addOnFailureListener(e -> Log.e("MainActivity", "Error checking user profile", e));
     }
 
-
+    /**
+     * Navigates the user to the EntrantActivity where they can interact as an entrant.
+     */
     private void navigateToEntrant() {
         Intent intent = new Intent(this, EntrantActivity.class);
         intent.putExtra("USER_ID", TEST_USER_ID); // Pass the user ID to EntrantActivity
         startActivity(intent);
     }
 
+    /**
+     * Navigates the user to the OrganizerActivity where they can interact as an organizer.
+     */
     private void navigateToOrganizer() {
         Toast.makeText(this, "Organizer role selected", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, OrganizerActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Navigates the user to the AdminMainscreen activity where they can interact as an admin.
+     */
     private void navigateToAdmin() {
         Toast.makeText(this, "Admin role selected", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, AdminMainscreen.class);

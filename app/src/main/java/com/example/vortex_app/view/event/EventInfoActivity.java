@@ -30,6 +30,27 @@ import com.google.firebase.firestore.FieldValue;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * EventInfoActivity is the screen that displays detailed information about a specific event.
+ * It fetches event details from Firebase Firestore and displays the event's name, schedule,
+ * location, price, registration dates, and other relevant data. The activity also includes
+ * functionality for checking if the user can join a waiting list based on geolocation requirements.
+ *
+ * <p>This activity allows users to:
+ * <ul>
+ *   <li>View event details, including the poster image, using Glide.</li>
+ *   <li>Join the waiting list for the event (if applicable).</li>
+ *   <li>See if a geolocation check is required before joining the waiting list.</li>
+ * </ul>
+ *
+ * <p>The activity is initialized by retrieving the event ID passed from the previous screen
+ * (either the list of events or EntrantActivity) and loading event details from Firestore.
+ * If the event requires geolocation, the user is warned before they can join the waiting list.
+ *
+ * @see EntrantActivity
+ * @see com.bumptech.glide.Glide
+ * @see FirebaseFirestore
+ */
 public class EventInfoActivity extends AppCompatActivity {
 
     private static final String TAG = "EventInfoActivity";
@@ -103,6 +124,16 @@ public class EventInfoActivity extends AppCompatActivity {
     }
 
 
+
+    /**
+     * Fetches and displays event details from Firebase Firestore.
+     * Sets the UI elements with event-specific information including name, class day,
+     * schedule, location, price, registration details, and the event's poster image.
+     *
+     * If the event is associated with a facility, its location is also fetched and displayed.
+     *
+     * @see FirebaseFirestore
+     */
     private void loadEventDetails() {
         db.collection("events")
                 .document(eventID)
@@ -166,6 +197,13 @@ public class EventInfoActivity extends AppCompatActivity {
                 });
     }
 
+
+    /**
+     * Fetches and displays the location (address) of the facility from the "facility" collection.
+     * Updates the location UI element with the fetched address.
+     *
+     * @param facilityName The name of the facility to fetch the location for.
+     */
     private void fetchLocationFromFacility(String facilityName) {
         if (facilityName == null || facilityName.isEmpty()) {
             locationTextView.setText("Facility not specified");
@@ -192,6 +230,11 @@ public class EventInfoActivity extends AppCompatActivity {
                 });
     }
 
+
+    /**
+     * Checks whether the event has a geolocation requirement. If it does, prompts the user to
+     * grant location access, otherwise proceeds to check the user's status on the waiting list.
+     */
     private void checkIfAlreadyJoined() {
         db.collection("events")
                 .document(eventID)
@@ -209,6 +252,12 @@ public class EventInfoActivity extends AppCompatActivity {
                 });
     }
 
+
+
+
+    /**
+     * Displays a warning dialog if the event requires geolocation to register.
+     */
     private void showGeolocationWarning() {
         new AlertDialog.Builder(this)
                 .setTitle("Warning!")
@@ -219,6 +268,11 @@ public class EventInfoActivity extends AppCompatActivity {
                 .show();
     }
 
+
+    /**
+     * Requests the user's location permission if not already granted. If permission is granted,
+     * the user's location is retrieved.
+     */
     private void requestUserLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -230,6 +284,11 @@ public class EventInfoActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Retrieves the user's last known location and checks their status on the event's waiting list.
+     * If the location is unavailable, a message is displayed to the user.
+     */
     private void getUserLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -257,6 +316,11 @@ public class EventInfoActivity extends AppCompatActivity {
     }
 
 
+
+    /**
+     * Checks whether the user has already joined the event's waiting list. If the user is not on
+     * the list, they are added to it.
+     */
     private void checkWaitingListStatus() {
         db.collection("waitlisted")
                 .document(eventID + "_" + deviceID)
@@ -274,6 +338,12 @@ public class EventInfoActivity extends AppCompatActivity {
                 });
     }
 
+
+
+    /**
+     * Adds the user to the event's waiting list by retrieving their profile and saving the
+     * necessary information to the database, including their location coordinates.
+     */
     private void joinWaitingList() {
         db.collection("user_profile")
                 .document(deviceID)
@@ -317,6 +387,15 @@ public class EventInfoActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Handles the result of a location permission request. If permission is granted, the user's
+     * location is retrieved; otherwise, a message is displayed indicating that location permission
+     * is required.
+     *
+     * @param requestCode The request code passed in requestPermissions().
+     * @param permissions The requested permissions.
+     * @param grantResults The grant results for the corresponding permissions.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

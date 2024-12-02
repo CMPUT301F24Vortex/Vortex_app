@@ -27,6 +27,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
+/**
+ * Activity that allows the user to manage events they have selected or are on a waitlist for.
+ * The activity displays two lists: selected events and waitlisted events, and allows the user to confirm participation, remove themselves from the waitlist, and navigate between different app sections via a bottom navigation bar.
+ */
 public class ManageEventsActivity extends AppCompatActivity {
 
     private ListView selectedListView, waitlistedListView;
@@ -36,6 +41,12 @@ public class ManageEventsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String currentUserID;
 
+    /**
+     * Called when the activity is created. Initializes the UI, sets up the event lists,
+     * configures bottom navigation, and fetches event data for the current user.
+     *
+     * @param savedInstanceState Bundle containing the activity's previously saved state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,8 +93,6 @@ public class ManageEventsActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
                 return true;
-
-
             } else if (itemId == R.id.nav_events) {
                 // Current activity; do nothing
                 return true;
@@ -119,11 +128,22 @@ public class ManageEventsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Fetches event IDs from the "selected_but_not_confirmed" and "waitlisted" collections for the given user.
+     *
+     * @param currentUserID The user ID to fetch event data for.
+     */
     private void fetchUserEventIDs(String currentUserID) {
         fetchEventIDsFromCollection("selected_but_not_confirmed", currentUserID);
         fetchEventIDsFromCollection("waitlisted", currentUserID);
     }
 
+    /**
+     * Fetches event IDs from the specified Firestore collection for the given user.
+     *
+     * @param collectionName The Firestore collection to fetch data from.
+     * @param currentUserID  The user ID to filter the events.
+     */
     private void fetchEventIDsFromCollection(String collectionName, String currentUserID) {
         db.collection(collectionName)
                 .whereEqualTo("userID", currentUserID)
@@ -146,6 +166,12 @@ public class ManageEventsActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Loads event details for the given set of event IDs from Firestore and updates the corresponding event list.
+     *
+     * @param allEventIDs    The set of event IDs to fetch details for.
+     * @param collectionName The name of the collection to fetch the events from.
+     */
     private void loadEventDetails(Set<String> allEventIDs, String collectionName) {
         List<String> eventNames = collectionName.equals("selected_but_not_confirmed") ? selectedEventNames : waitlistedEventNames;
         List<String> eventIDs = collectionName.equals("selected_but_not_confirmed") ? selectedEventIDs : waitlistedEventIDs;
@@ -160,6 +186,12 @@ public class ManageEventsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Fetches event details (name and image URL) for a specific event from Firestore.
+     *
+     * @param eventID        The ID of the event to fetch details for.
+     * @param collectionName The name of the collection from which to fetch the event data.
+     */
     private void fetchEventDetails(String eventID, String collectionName) {
         db.collection("events").document(eventID)
                 .addSnapshotListener((documentSnapshot, e) -> {
@@ -185,6 +217,12 @@ public class ManageEventsActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Moves the event to the "final" collection after confirming participation.
+     *
+     * @param eventID   The ID of the event to move.
+     * @param userID    The ID of the user participating in the event.
+     */
     private void moveToFinalCollection(String eventID, String userID) {
         db.collection("selected_but_not_confirmed")
                 .whereEqualTo("userID", userID)
@@ -205,6 +243,13 @@ public class ManageEventsActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Removes the event from the specified collection.
+     *
+     * @param eventID        The ID of the event to remove.
+     * @param currentUserID  The user ID of the person removing the event.
+     * @param collectionName The collection from which to remove the event.
+     */
     private void removeFromList(String eventID, String currentUserID, String collectionName) {
         db.collection(collectionName)
                 .whereEqualTo("userID", currentUserID)

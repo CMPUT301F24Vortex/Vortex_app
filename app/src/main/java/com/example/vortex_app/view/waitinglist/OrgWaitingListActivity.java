@@ -21,6 +21,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * OrgWaitingListActivity displays the list of users who are on the waiting list for a particular event.
+ * It allows the event organizer to draw users from the waiting list and store the selected users in the database.
+ */
 public class OrgWaitingListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewWaitingList;
@@ -30,6 +34,13 @@ public class OrgWaitingListActivity extends AppCompatActivity {
     private String eventID;
     private Button waitlistDrawButton;
 
+    /**
+     * Initializes the activity by setting up the RecyclerView, Firebase Firestore instance,
+     * and fetching the event's waiting list.
+     * It also sets up the functionality for the draw button and back button.
+     *
+     * @param savedInstanceState The saved state of the activity, if any.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +57,6 @@ public class OrgWaitingListActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         eventID = getIntent().getStringExtra("EVENT_ID");
 
-
         // Back Button Functionality
         ImageView backButton = findViewById(R.id.imageViewBack);
         backButton.setOnClickListener(view -> {
@@ -57,14 +67,17 @@ public class OrgWaitingListActivity extends AppCompatActivity {
             finish(); // Finish this activity and go back
         });
 
-
-
-
         // Fetch the waiting list and set the draw button's functionality
         fetchWaitingList(eventID);
         waitlistDrawButton.setOnClickListener(v -> selectAndStoreUsers());
     }
 
+    /**
+     * Fetches the list of users who are on the waiting list for the given event ID.
+     * The data is retrieved from Firestore, and the list is populated in the RecyclerView.
+     *
+     * @param eventID The event ID for which the waiting list should be fetched.
+     */
     private void fetchWaitingList(String eventID) {
         db.collection("waitlisted")
                 .whereEqualTo("eventID", eventID)
@@ -98,6 +111,11 @@ public class OrgWaitingListActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Selects users from the waiting list based on the event's maximum capacity.
+     * The users are shuffled and the selected ones are moved to the 'selected_but_not_confirmed' collection in Firestore.
+     * The selected users are also removed from the waiting list.
+     */
     private void selectAndStoreUsers() {
         db.collection("events")
                 .document(eventID)
@@ -120,8 +138,6 @@ public class OrgWaitingListActivity extends AppCompatActivity {
                                         .add(user)
                                         .addOnSuccessListener(documentReference -> removeFromWaitlisted(user))
                                         .addOnFailureListener(e -> Toast.makeText(this, "Failed to store selected user", Toast.LENGTH_SHORT).show());
-
-
                             }
 
                             Toast.makeText(this, "Selected users stored successfully.", Toast.LENGTH_SHORT).show();
@@ -135,6 +151,12 @@ public class OrgWaitingListActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(this, "Failed to fetch event details.", Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Removes the specified user from the waiting list after they have been selected.
+     * The user is deleted from the 'waitlisted' collection in Firestore.
+     *
+     * @param user The user to be removed from the waitlist.
+     */
     private void removeFromWaitlisted(User user) {
         db.collection("waitlisted")
                 .whereEqualTo("userID", user.getUserID())

@@ -19,6 +19,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * MyFacilityActivity displays a list of facilities created by the current organizer.
+ * It allows the user to view and edit the details of each facility and create new facilities.
+ * The facilities are loaded from Firestore and displayed in a RecyclerView. A FloatingActionButton
+ * is provided for creating new facilities, which leads to the CreateFacilityActivity.
+ */
 public class MyFacilityActivity extends AppCompatActivity {
 
     private static final String TAG = "MyFacilityActivity";
@@ -31,6 +37,13 @@ public class MyFacilityActivity extends AppCompatActivity {
     private List<Facility> facilityList;
     private FloatingActionButton fabCreateFacility;
 
+    /**
+     * Called when the activity is created. This method initializes the Firestore instance,
+     * sets up the RecyclerView, and loads the facilities associated with the current organizer.
+     * It also defines the FloatingActionButton for creating new facilities.
+     *
+     * @param savedInstanceState A Bundle containing the saved instance state from a previous activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +55,7 @@ public class MyFacilityActivity extends AppCompatActivity {
         recyclerViewFacilities = findViewById(R.id.recyclerViewFacilities);
         fabCreateFacility = findViewById(R.id.fabCreateFacility);
 
-        // Initialize RecyclerView
+        // Initialize RecyclerView and adapter
         facilityList = new ArrayList<>();
         facilityAdapter = new FacilityAdapter(facilityList, facility -> {
             // Handle item click to edit the facility
@@ -55,7 +68,7 @@ public class MyFacilityActivity extends AppCompatActivity {
         recyclerViewFacilities.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewFacilities.setAdapter(facilityAdapter);
 
-        // Load Facilities
+        // Load the facility details from Firestore
         loadFacilityDetails();
 
         // Floating button to create a new facility
@@ -65,19 +78,27 @@ public class MyFacilityActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Called when the activity resumes. This method reloads the list of facilities
+     * from Firestore when returning to the activity.
+     */
     @Override
     protected void onResume() {
         super.onResume();
-        loadFacilityDetails(); // Reload facilities when returning to this activity
+        loadFacilityDetails(); // Reload the facility list when returning to this activity
     }
 
+    /**
+     * Loads the facility details from Firestore for the current organizer.
+     * The facilities are filtered by the organizer's ID and displayed in the RecyclerView.
+     */
     private void loadFacilityDetails() {
         db.collection("facility")
-                .whereEqualTo("organizerId", organizerID) // Filter by organizerID
+                .whereEqualTo("organizerId", organizerID) // Filter facilities by organizer ID
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        facilityList.clear();
+                        facilityList.clear(); // Clear the previous list of facilities
                         task.getResult().forEach(document -> {
                             String id = document.getId();
                             String facilityName = document.getString("facilityName");
@@ -85,7 +106,7 @@ public class MyFacilityActivity extends AppCompatActivity {
                             Log.d(TAG, "Facility found: " + facilityName + ", " + address);
                             facilityList.add(new Facility(id, facilityName, address));
                         });
-                        facilityAdapter.notifyDataSetChanged();
+                        facilityAdapter.notifyDataSetChanged(); // Notify adapter of data change
                         Log.d(TAG, "Facilities loaded for organizer: " + facilityList.size());
                     } else {
                         Log.e(TAG, "Error fetching facilities", task.getException());
@@ -93,10 +114,14 @@ public class MyFacilityActivity extends AppCompatActivity {
                 });
     }
 
-
-
-
-
+    /**
+     * Called when a result is returned from an activity. In this case, it reloads the
+     * list of facilities if a new facility was created.
+     *
+     * @param requestCode  The request code passed in startActivityForResult().
+     * @param resultCode   The result code returned by the child activity.
+     * @param data         The Intent returned by the child activity.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
