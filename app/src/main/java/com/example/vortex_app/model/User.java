@@ -16,6 +16,8 @@ public class User {
     private String eventID; // Event ID associated with the user
     private String status; // Status of the user (e.g., confirmed, pending)
     private boolean isConfirmed; // Whether the user is confirmed
+    private double latitude;
+    private double longitude;
 
     // Default constructor
     public User() {}
@@ -50,6 +52,14 @@ public class User {
 //    public void setUserName(String userName) {
 //        this.userName = userName;
 //    }
+
+    public User(String firstName, String lastName, double latitude, double longitude) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
 
     public String getFirstName() {
         return firstName;
@@ -121,6 +131,14 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
     // Utility method for getting full name
