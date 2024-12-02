@@ -12,14 +12,15 @@ import androidx.annotation.Nullable;
 
 import com.example.vortex_app.R;
 import com.example.vortex_app.model.Center;
+import com.example.vortex_app.model.Facility;
 
 import java.util.ArrayList;
 
-public class AdminFacilityArrayAdapter extends ArrayAdapter<Center> {
-    private ArrayList<Center> facilities;
+public class AdminFacilityArrayAdapter extends ArrayAdapter<Facility> {
+    private ArrayList<Facility> facilities;
     private Context context;
 
-    public AdminFacilityArrayAdapter (Context context, ArrayList<Center> facilities) {
+    public AdminFacilityArrayAdapter (Context context, ArrayList<Facility> facilities) {
         super(context, 0, facilities);
         this.facilities = facilities;
         this.context = context;
@@ -36,14 +37,14 @@ public class AdminFacilityArrayAdapter extends ArrayAdapter<Center> {
             view = LayoutInflater.from(context).inflate(R.layout.admin_facility_listitem, parent, false);
         }
 
-        Center facility = facilities.get(position);
+        Facility facility = facilities.get(position);
 
         TextView facilityName = view.findViewById(R.id.textView_facilityname);
-        TextView facilityID = view.findViewById(R.id.textView_facilityid);
+        TextView organizerID = view.findViewById(R.id.textView_facilityid);
         TextView facilityAddress = view.findViewById(R.id.textView_facilityaddress);
 
-        facilityName.setText(facility.getName());
-        facilityID.setText(facility.getFacilityID());
+        facilityName.setText(facility.getFacilityName());
+        organizerID.setText(facility.getOrganizerID());
         facilityAddress.setText(facility.getAddress());
 
         return view;
