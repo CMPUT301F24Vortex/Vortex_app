@@ -59,6 +59,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".view.organizer.OrgNotificationsActivity"/>
+
         <!-- Register the NotificationActionReceiver -->
         <receiver android:name=".controller.NotificationActionReceiver"
             android:exported="false">
