@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vortex_app.R;
 import com.example.vortex_app.model.Center;
+import com.example.vortex_app.model.Facility;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,7 +44,7 @@ public class AdminFacilityScreen extends AppCompatActivity implements AdminConfi
 
     ImageButton buttonBack;
     ListView facilityList;
-    ArrayList<Center> facilityDataList;
+    ArrayList<Facility> facilityDataList;
     AdminFacilityArrayAdapter facilityArrayAdapter;
 
 
@@ -80,8 +81,8 @@ public class AdminFacilityScreen extends AppCompatActivity implements AdminConfi
 
                 facilityDataList.clear();
                 for (QueryDocumentSnapshot doc : value) {
-                    Center center = doc.toObject(Center.class);
-                    facilityDataList.add(center);
+                    Facility facility = doc.toObject(Facility.class);
+                    facilityDataList.add(facility);
                 }
                 facilityArrayAdapter.notifyDataSetChanged();
             }
@@ -93,7 +94,7 @@ public class AdminFacilityScreen extends AppCompatActivity implements AdminConfi
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //get id of facility clicked
-                String facilityID = facilityDataList.get(position).getFacilityID();
+                String facilityID = facilityDataList.get(position).getFacilityName();
 
                 //start new activity to view facility events
                 Intent intent = new Intent(AdminFacilityScreen.this, AdminEventScreen.class);
@@ -108,7 +109,7 @@ public class AdminFacilityScreen extends AppCompatActivity implements AdminConfi
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
                 //get id of facility clicked
-                String facilityID = facilityDataList.get(position).getFacilityID();
+                String facilityID = facilityDataList.get(position).getFacilityName();
                 new AdminConfirmFacilityDeleteFragment(facilityID).show(getSupportFragmentManager(), "Delete facility");
 
                 return true;
@@ -132,7 +133,7 @@ public class AdminFacilityScreen extends AppCompatActivity implements AdminConfi
         facilitiesRef = db.collection("facility");
 
         //Delete all events for the facility
-        Query queryEvents = eventsRef.whereEqualTo("facilityID", facilityID);
+        Query queryEvents = eventsRef.whereEqualTo("facilityName", facilityID);
         queryEvents.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -144,7 +145,7 @@ public class AdminFacilityScreen extends AppCompatActivity implements AdminConfi
             }
         });
 
-        Query queryFacilities = facilitiesRef.whereEqualTo("facilityID", facilityID);
+        Query queryFacilities = facilitiesRef.whereEqualTo("facilityName", facilityID);
         queryFacilities.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

@@ -73,7 +73,7 @@ public class AdminEventScreen extends AppCompatActivity implements AdminConfirmE
         eventList.setAdapter(eventArrayAdapter);
 
         //Dynamically update event list
-        eventsRef.whereEqualTo("facilityID", facilityID).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        eventsRef.whereEqualTo("facilityName", facilityID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
