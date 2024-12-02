@@ -40,7 +40,7 @@ public class OrgWaitingListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_org_waiting_list);
 
-        // Initialize the RecyclerView and the adapter
+        // Initialize UI elements
         recyclerViewWaitingList = findViewById(R.id.recyclerViewWaitingList);
         waitingListEntrants = new ArrayList<>();
         recyclerViewWaitingList.setLayoutManager(new LinearLayoutManager(this));
@@ -51,10 +51,8 @@ public class OrgWaitingListActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         eventID = getIntent().getStringExtra("EVENT_ID");
 
-        // Fetch the waiting list
+        // Fetch the waiting list and set the draw button's functionality
         fetchWaitingList(eventID);
-
-        // Set up the draw button
         waitlistDrawButton.setOnClickListener(v -> selectAndStoreUsers());
     }
 
@@ -71,22 +69,25 @@ public class OrgWaitingListActivity extends AppCompatActivity {
                                 String firstName = document.getString("firstName");
                                 String lastName = document.getString("lastName");
                                 String userID = document.getString("userID");
-                                //String eventID = document.getString("eventID");// Assuming userID is stored
+                                String eventIDFromDoc = document.getString("eventID");
 
-                                User user = new User(firstName, lastName, userID);
-                                waitingListEntrants.add(user);
+                                if (firstName != null && lastName != null && userID != null) {
+                                    User user = new User(firstName, lastName, userID);
+                                    user.setEventID(eventIDFromDoc);
+                                    waitingListEntrants.add(user);
+                                } else {
+                                    Toast.makeText(this, "Missing data for a user.", Toast.LENGTH_SHORT).show();
+                                }
                             }
                             waitingListAdapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(this, "No users found in the waiting list.", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(this, "Failed to fetch waiting list", Toast.LENGTH_SHORT).show();
-                        Log.e("OrgWaitingListActivity", "Error fetching waitlisted users: ", task.getException());
+                        Toast.makeText(this, "Failed to fetch waiting list.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
-
-
-
 
     /**
      * Selects users from the waiting list based on the event's maxPeople limit,
@@ -94,87 +95,46 @@ public class OrgWaitingListActivity extends AppCompatActivity {
      * and logs notifications for each selected and non-selected user based on their preference.
      */
     private void selectAndStoreUsers() {
-        // Fetch maxPeople for the event
         db.collection("events")
                 .document(eventID)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         String maxPeopleStr = documentSnapshot.getString("maxPeople");
-                        int maxPeople = 0;
-                        try {
-                            maxPeople = maxPeopleStr != null ? Integer.parseInt(maxPeopleStr) : 0;
-                        } catch (NumberFormatException e) {
-                            Toast.makeText(this, "Invalid maxPeople value.", Toast.LENGTH_SHORT).show();
-                            Log.e("OrgWaitingListActivity", "Invalid maxPeople value: ", e);
-                            return;
-                        }
+                        int maxPeople = maxPeopleStr != null ? Integer.parseInt(maxPeopleStr) : 0;
 
-                        if (maxPeople > 0 && waitingListEntrants.size() >= maxPeople) {
-                            // Shuffle the list to randomize selection
+                        // If there are fewer users than maxPeople, select everyone
+                        int usersToSelect = Math.min(maxPeople, waitingListEntrants.size());
+                        if (usersToSelect > 0) {
                             List<User> shuffledList = new ArrayList<>(waitingListEntrants);
                             Collections.shuffle(shuffledList);
-                            List<User> selectedUsers = shuffledList.subList(0, maxPeople);
-                            List<User> nonSelectedUsers = shuffledList.subList(maxPeople, shuffledList.size());
+                            List<User> selectedUsers = shuffledList.subList(0, usersToSelect);
+                            List<User> nonSelectedUsers = shuffledList.subList(usersToSelect, shuffledList.size());
 
-                            // Initialize Firestore WriteBatch
                             WriteBatch batch = db.batch();
 
                             // Process selected users
                             for (User user : selectedUsers) {
                                 String userID = user.getUserID();
+                                // Save the User object directly to the Firestore
+                                db.collection("selected_but_not_confirmed")
+                                        .add(user)
+                                        .addOnSuccessListener(documentReference -> removeFromWaitlisted(user))
+                                        .addOnFailureListener(e -> Toast.makeText(this, "Failed to store selected user", Toast.LENGTH_SHORT).show());
 
-                                // Query to find the specific document in 'waitlisted' for this user and event
-                                db.collection("waitlisted")
-                                        .whereEqualTo("userID", userID)
-                                        .whereEqualTo("eventID", eventID)
-                                        .get()
-                                        .addOnSuccessListener(querySnapshot -> {
-                                            if (!querySnapshot.isEmpty()) {
-                                                DocumentSnapshot waitlistedDoc = querySnapshot.getDocuments().get(0);
-                                                DocumentReference waitlistedRef = waitlistedDoc.getReference();
+                                // Reference to log notification
+                                Map<String, Object> selectedNotificationData = new HashMap<>();
+                                selectedNotificationData.put("eventID", eventID);
+                                selectedNotificationData.put("timestamp", new Date());
+                                selectedNotificationData.put("title", "Congratulations!");
+                                selectedNotificationData.put("message", "You've been selected for the event.");
+                                selectedNotificationData.put("userID", userID);
+                                selectedNotificationData.put("status", "unread");
+                                selectedNotificationData.put("notificationType", "selected");
 
-                                                // Reference to add to 'selected'
-                                                DocumentReference selectedRef = db.collection("selected_but_not_confirmed").document();
-                                                orgList selectedUserObj = new orgList(userID, eventID);
-                                                batch.set(selectedRef, selectedUserObj);
-
-                                                // Reference to delete from 'waitlisted'
-                                                batch.delete(waitlistedRef);
-
-                                                // Reference to log notification
-                                                Map<String, Object> selectedNotificationData = new HashMap<>();
-                                                selectedNotificationData.put("eventID", eventID);
-                                                selectedNotificationData.put("timestamp", new Date());
-                                                selectedNotificationData.put("title", "Congratulations!");
-                                                selectedNotificationData.put("message", "You've been selected for the event.");
-                                                selectedNotificationData.put("userID", userID);
-                                                selectedNotificationData.put("status", "unread");
-
-                                                DocumentReference selectedNotificationRef = db.collection("notifications").document();
-                                                batch.set(selectedNotificationRef, selectedNotificationData);
-
-                                                // Commit the batch after all selected users are processed
-                                                // (This simplistic approach works if the number is small)
-                                                batch.commit()
-                                                        .addOnSuccessListener(aVoid -> {
-                                                            Toast.makeText(this, "Draw completed successfully.", Toast.LENGTH_SHORT).show();
-                                                            // Refresh the waiting list
-                                                            fetchWaitingList(eventID);
-                                                        })
-                                                        .addOnFailureListener(e -> {
-                                                            Toast.makeText(this, "Failed to perform the draw.", Toast.LENGTH_SHORT).show();
-                                                            Log.e("OrgWaitingListActivity", "Error committing batch: ", e);
-                                                        });
-                                            } else {
-                                                Toast.makeText(this, "Waitlisted document not found for user: " + userID, Toast.LENGTH_SHORT).show();
-                                                Log.e("OrgWaitingListActivity", "Waitlisted document not found for userID: " + userID);
-                                            }
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            Toast.makeText(this, "Error fetching waitlisted document.", Toast.LENGTH_SHORT).show();
-                                            Log.e("OrgWaitingListActivity", "Error fetching waitlisted document: ", e);
-                                        });
+                                // storing in notifications collection using batch operations
+                                DocumentReference selectedNotificationRef = db.collection("notifications").document();
+                                batch.set(selectedNotificationRef, selectedNotificationData);
                             }
 
                             // Process non-selected users
@@ -189,36 +149,53 @@ public class OrgWaitingListActivity extends AppCompatActivity {
                                 lostNotificationData.put("message", "You have not been selected for the event.");
                                 lostNotificationData.put("userID", userID);
                                 lostNotificationData.put("status", "unread");
+                                lostNotificationData.put("notificationType", "lost");
 
                                 DocumentReference lostNotificationRef = db.collection("notifications").document();
                                 batch.set(lostNotificationRef, lostNotificationData);
                             }
 
-                            // Commit the batch for non-selected users
+                            // Commit the batch for notifications
                             batch.commit()
                                     .addOnSuccessListener(aVoid -> {
-                                        Toast.makeText(this, "Draw completed successfully.", Toast.LENGTH_SHORT).show();
-                                        // Refresh the waiting list
-                                        fetchWaitingList(eventID);
+                                        Toast.makeText(this, "Notifications sent successfully.", Toast.LENGTH_SHORT).show();
                                     })
                                     .addOnFailureListener(e -> {
-                                        Toast.makeText(this, "Failed to perform the draw.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(this, "Failed to send notifications.", Toast.LENGTH_SHORT).show();
                                         Log.e("OrgWaitingListActivity", "Error committing batch: ", e);
                                     });
 
+                            // Refresh the waiting list
+                            fetchWaitingList(eventID);
+                            Toast.makeText(this, "Selected users stored successfully.", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(this, "Not enough users in the waiting list or invalid maxPeople.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "No users to select or invalid maxPeople.", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         Toast.makeText(this, "Event details not found.", Toast.LENGTH_SHORT).show();
-                        Log.e("OrgWaitingListActivity", "Event document does not exist.");
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to fetch event details.", Toast.LENGTH_SHORT).show();
-                    Log.e("OrgWaitingListActivity", "Error fetching event details: ", e);
-                });
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to fetch event details.", Toast.LENGTH_SHORT).show());
     }
 
-
+    private void removeFromWaitlisted(User user) {
+        db.collection("waitlisted")
+                .whereEqualTo("userID", user.getUserID())
+                .whereEqualTo("eventID", eventID)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            document.getReference().delete()
+                                    .addOnSuccessListener(aVoid -> {
+                                        waitingListEntrants.remove(user);
+                                        waitingListAdapter.notifyDataSetChanged();
+                                    })
+                                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to remove user from waitlist.", Toast.LENGTH_SHORT).show());
+                        }
+                    } else {
+                        Toast.makeText(this, "Failed to fetch waitlist user for removal.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 }

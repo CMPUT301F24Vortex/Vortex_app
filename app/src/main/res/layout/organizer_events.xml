@@ -2,25 +2,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    >
+    android:padding="16dp">
 
+    <!-- ListView for events -->
     <ListView
         android:id="@+id/listView"
-        android:layout_width="350dp"
-        android:layout_marginTop="30dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:divider="@color/white"
-        android:dividerHeight="40dp" />
+        android:dividerHeight="16dp"
+        android:padding="8dp" />
 
-    <Button
-        android:id="@+id/button_add_event"
-        android:layout_width="150dp"
-        android:layout_height="70dp"
-        android:layout_gravity="center_horizontal"
-        android:backgroundTint="@color/red"
-        android:layout_marginBottom="16dp"
-        android:text="Create" />
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
 
+        <Button
+            android:id="@+id/button_add_event"
+            android:layout_width="150dp"
+            android:layout_height="70dp"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/red"
+            android:text="Create"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/button_my_facility"
+            android:layout_width="150dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#958B8B"
+            android:text="My Facility"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
 </LinearLayout>

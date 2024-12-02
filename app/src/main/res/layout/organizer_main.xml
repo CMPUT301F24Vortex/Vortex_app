@@ -87,16 +87,6 @@
                 android:textSize="20sp" />
 
             <Button
-                android:id="@+id/button_media"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@android:color/transparent"
-                android:text="@string/media"
-                android:textColor="@android:color/black"
-                android:textSize="20sp" />
-
-            <Button
                 android:id="@+id/button_cancellation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

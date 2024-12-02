@@ -28,7 +28,7 @@ import com.example.vortex_app.controller.NotificationActionReceiver;
 import com.example.vortex_app.model.NotificationModel;
 import com.example.vortex_app.controller.adapter.NotificationAdapter;
 import com.example.vortex_app.view.entrant.EntrantActivity;
-import com.example.vortex_app.view.event.EventActivity;
+import com.example.vortex_app.view.event.ManageEventsActivity;
 import com.example.vortex_app.view.profile.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -127,7 +127,7 @@ public class NotificationsActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_notifications) {
                 return true;
             } else if (itemId == R.id.nav_events) {
-                startActivity(new Intent(this, EventActivity.class));
+                startActivity(new Intent(this, ManageEventsActivity.class));
             }
             return false;
         });
@@ -372,14 +372,14 @@ public class NotificationsActivity extends AppCompatActivity {
                                     adapter.notifyItemInserted(0);
 
                                     // Determine the notification type based on title or other fields
-                                    String notificationType = "lost"; // Default
+                                    String Type = "lost"; // Default
                                     if (notification.getTitle().contains("Congratulations")) {
-                                        notificationType = "selected";
+                                        Type = "selected";
                                     }
 
                                     // Send a local notification using the title and message from the notification
                                     sendNotification(notification.getTitle(), notification.getMessage(),
-                                            notification.getUserID(), notification.getEventID(), notificationType);
+                                            notification.getUserID(), notification.getEventID(), Type);
                                     break;
 
                                 case MODIFIED:
@@ -404,16 +404,18 @@ public class NotificationsActivity extends AppCompatActivity {
      * @param message          The message/content of the notification.
      * @param userID           The ID of the user receiving the notification.
      * @param eventID          The ID of the associated event.
-     * @param notificationType The type of notification ("selected" for winners, "lost" for non-winners).
+     * @param Type The type of notification ("selected" for winners, "lost" for non-winners).
      */
-    private void sendNotification(String title, String message, String userID, String eventID, String notificationType) {
+    private void sendNotification(String title, String message, String userID, String eventID, String Type) {
         createNotificationChannel();
 
+        // Intent to open NotificationDetailActivity
         Intent intent = new Intent(this, NotificationDetailActivity.class);
         intent.putExtra("title", title);
         intent.putExtra("message", message);
-        intent.putExtra("userID", userID); // Pass userID and eventID if needed in detail
+        intent.putExtra("userID", userID);
         intent.putExtra("eventID", eventID);
+        intent.putExtra("notificationType", Type); // Ensure key matches in Detail Activity
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
@@ -429,15 +431,15 @@ public class NotificationsActivity extends AppCompatActivity {
         String actionButton1 = "";
         String actionButton2 = "";
 
-        if ("selected".equals(notificationType)) {
+        if ("selected".equalsIgnoreCase(Type)) {
             // For winners: Accept and Decline
             Intent acceptIntent = new Intent(this, NotificationActionReceiver.class);
-            acceptIntent.setAction(ACTION_ACCEPT);
+            acceptIntent.setAction(NotificationActionReceiver.ACTION_ACCEPT);
             acceptIntent.putExtra("userID", userID);
             acceptIntent.putExtra("eventID", eventID);
 
             Intent declineIntent = new Intent(this, NotificationActionReceiver.class);
-            declineIntent.setAction(ACTION_DECLINE);
+            declineIntent.setAction(NotificationActionReceiver.ACTION_DECLINE);
             declineIntent.putExtra("userID", userID);
             declineIntent.putExtra("eventID", eventID);
 
@@ -446,15 +448,15 @@ public class NotificationsActivity extends AppCompatActivity {
 
             actionButton1 = "Accept";
             actionButton2 = "Decline";
-        } else if ("lost".equals(notificationType)) {
+        } else if ("lost".equalsIgnoreCase(Type)) {
             // For non-winners: Stay and Leave
             Intent stayIntent = new Intent(this, NotificationActionReceiver.class);
-            stayIntent.setAction(ACTION_STAY);
+            stayIntent.setAction(NotificationActionReceiver.ACTION_STAY);
             stayIntent.putExtra("userID", userID);
             stayIntent.putExtra("eventID", eventID);
 
             Intent leaveIntent = new Intent(this, NotificationActionReceiver.class);
-            leaveIntent.setAction(ACTION_LEAVE);
+            leaveIntent.setAction(NotificationActionReceiver.ACTION_LEAVE);
             leaveIntent.putExtra("userID", userID);
             leaveIntent.putExtra("eventID", eventID);
 
@@ -467,22 +469,23 @@ public class NotificationsActivity extends AppCompatActivity {
 
         // Build the notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "status_channel_id")
-                .setSmallIcon(R.drawable.notification) // Use your app's notification icon
+                .setSmallIcon(R.drawable.notification) // Ensure this icon exists
                 .setContentTitle(title)
                 .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_HIGH) // Use high priority for action buttons
+                .setPriority(NotificationCompat.PRIORITY_HIGH) // High priority for action buttons
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
         // Add action buttons if applicable
         if (actionIntent1 != null && actionIntent2 != null) {
-            builder.addAction(R.drawable.ic_notifications, actionButton1, actionIntent1);
-            builder.addAction(R.drawable.ic_notifications, actionButton2, actionIntent2);
+            // Use distinct icons for actions if available
+            builder.addAction(R.drawable.ic_acceptt, actionButton1, actionIntent1);
+            builder.addAction(R.drawable.ic_decline, actionButton2, actionIntent2);
         }
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
-        int notificationId = (int) System.currentTimeMillis();
+        int notificationId = (int) System.currentTimeMillis(); // Unique ID
 
         // Check notification permission for Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -495,7 +498,10 @@ public class NotificationsActivity extends AppCompatActivity {
         } else {
             notificationManager.notify(notificationId, builder.build());
         }
+
+        Log.d("NotificationsActivity", "Notification sent: " + title);
     }
+
 
 
     /**
@@ -540,8 +546,9 @@ public class NotificationsActivity extends AppCompatActivity {
                             String id = document.getId();
                             String userID = document.getString("userID");
                             String eventID = document.getString("eventID");
+                            String type = document.getString("notificationType");
 
-                            NotificationModel notification = new NotificationModel(title, message, status, id, Date, eventID, userID);
+                            NotificationModel notification = new NotificationModel(title, message, status, id, Date, eventID, userID, type);
                             notificationList.add(notification);
                         }
                         adapter.notifyDataSetChanged();
@@ -573,6 +580,12 @@ public class NotificationsActivity extends AppCompatActivity {
      *
      * @param notification The {@link NotificationModel} object representing the notification to be opened in detail view.
      */
+    /**
+     * Opens the detailed view of a selected notification in {@link NotificationDetailActivity}.
+     * Marks the notification as read in Firestore before transitioning to the detailed view.
+     *
+     * @param notification The {@link NotificationModel} object representing the notification to be opened in detail view.
+     */
     private void openNotificationDetail(NotificationModel notification) {
         db.collection("notifications").document(notification.getId())
                 .update("status", "read")
@@ -582,8 +595,13 @@ public class NotificationsActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NotificationDetailActivity.class);
         intent.putExtra("title", notification.getTitle());
         intent.putExtra("message", notification.getMessage());
-        intent.putExtra("status", notification.getStatus());
+        intent.putExtra("date", notification.getTimeStamp() != null ? notification.getTimeStamp().toString() : "Unknown Date");
+        intent.putExtra("userID", notification.getUserID());
+        intent.putExtra("eventID", notification.getEventID());
+        intent.putExtra("notificationType", notification.getType()); // Ensure this key is set
+
         startActivity(intent);
     }
+
 
 }

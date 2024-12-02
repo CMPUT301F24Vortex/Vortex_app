@@ -22,6 +22,25 @@
             android:textColor="#FF0000"
             android:textSize="24sp"
             android:textStyle="bold" />
+
+        <!-- Facility Selection -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Facility"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+
+        <Spinner
+            android:id="@+id/facility_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/white_box_background"
+            android:minHeight="48dp"
+            android:padding="10dp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,40 +64,23 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Location"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
-
-        <EditText
-            android:id="@+id/event_location_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint= "@string/address"
-            android:background="@drawable/white_box_background"
-            android:inputType="textPersonName"
-            android:minHeight="48dp"
-            android:padding="10dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:text="Class Day"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/black"/>
 
 
-        <Spinner
+        <EditText
             android:id="@+id/event_class_day_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/Week"
             android:layout_marginTop="10dp"
+            android:hint="Select Class Days"
             android:background="@drawable/white_box_background"
             android:minHeight="48dp"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:focusable="false"
+            android:clickable="true" />
 
         <TextView
             android:layout_width="match_parent"

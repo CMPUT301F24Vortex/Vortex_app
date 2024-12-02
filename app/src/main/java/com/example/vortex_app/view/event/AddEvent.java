@@ -8,45 +8,46 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.widget.ArrayAdapter;
+import android.provider.Settings;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.vortex_app.R;
-import com.example.vortex_app.view.organizer.OrganizerActivity;
-import com.example.vortex_app.view.organizer.OrganizerMenu;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.example.vortex_app.view.organizer.OrganizerInfo;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 public class AddEvent extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
     private FirebaseFirestore db;
     private StorageReference storageReference;
-    private Spinner eventClassDayInput, geoLocationSpinner;
-    private EditText eventNameInput, eventLocationInput, eventTimeInput, eventStartPeriodInput, eventEndPeriodInput,
-            eventRegDueDateInput, eventRegOpenDateInput, eventPriceInput, eventMaxPeopleInput, eventLimitInput;
+    private EditText eventNameInput, eventTimeInput, eventStartPeriodInput, eventEndPeriodInput,
+            eventRegDueDateInput, eventRegOpenDateInput, eventPriceInput, eventMaxPeopleInput, eventLimitInput, eventClassDayInput;
+    private ImageView imageUploadBox;
     private Button addButton, uploadButton;
     private Uri imageUri = null;
-    private ImageView imageUploadBox;
     private String eventID = null;
     private String existingImage;
+
+    // Multi-choice dialog variables
+    private String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    private boolean[] selectedDays = new boolean[daysOfWeek.length];
+    private List<String> selectedDayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +57,38 @@ public class AddEvent extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
 
-        // Initialize views
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        initializeUI();
+
+        // 检查是否是编辑已有事件
+        eventID = getIntent().getStringExtra("EVENT_ID");
+        if (eventID != null) {
+            loadEventDetails(eventID);
+        }
+
+        // 设置按钮监听器
+        uploadButton.setOnClickListener(v -> openImageChooser());
+        addButton.setOnClickListener(v -> {
+            if (imageUri != null) {
+                uploadImageToFirebase();
+            } else {
+                addOrUpdateEvent(existingImage);
+            }
+        });
+
+        // 设置日期和时间选择器
+        eventRegDueDateInput.setOnClickListener(v -> showDatePickerDialog(eventRegDueDateInput));
+        eventRegOpenDateInput.setOnClickListener(v -> showDatePickerDialog(eventRegOpenDateInput));
+        eventStartPeriodInput.setOnClickListener(v -> showDatePickerDialog(eventStartPeriodInput));
+        eventEndPeriodInput.setOnClickListener(v -> showDatePickerDialog(eventEndPeriodInput));
+        eventTimeInput.setOnClickListener(v -> showTimePickerDialog());
+
+        // 多选对话框用于选择 Class Day
+        eventClassDayInput.setOnClickListener(v -> showMultiChoiceDialog());
+    }
+
+    private void initializeUI() {
         eventNameInput = findViewById(R.id.event_name_input);
-        eventLocationInput = findViewById(R.id.event_location_input);
-        eventClassDayInput = findViewById(R.id.event_class_day_input);
+        eventClassDayInput = findViewById(R.id.event_class_day_input); // 对应 XML 中的 Spinner
         eventTimeInput = findViewById(R.id.event_time_input);
         eventStartPeriodInput = findViewById(R.id.event_start_period_input);
         eventEndPeriodInput = findViewById(R.id.event_end_period_input);
@@ -70,133 +97,79 @@ public class AddEvent extends AppCompatActivity {
         eventPriceInput = findViewById(R.id.event_price_input);
         eventMaxPeopleInput = findViewById(R.id.event_max_people_input);
         eventLimitInput = findViewById(R.id.event_waitlist_limit_input);
-        geoLocationSpinner = findViewById(R.id.spinnerGeoLocation);
+        imageUploadBox = findViewById(R.id.image_upload_box);
         addButton = findViewById(R.id.add_event_button);
         uploadButton = findViewById(R.id.upload_button);
-
-
-        imageUploadBox = findViewById(R.id.image_upload_box);
-
-        // Get the eventID passed from OrganizerInfo (for editing an existing event)
-        Intent intent = getIntent();
-        eventID = intent.getStringExtra("EVENT_ID");
-
-        if (eventID != null) {
-            loadEventDetails(eventID); // Load event data if editing
-        }
-
-        uploadButton.setOnClickListener(v -> openImageChooser());
-
-        addButton.setOnClickListener(v -> {
-            if (imageUri != null) {
-                uploadImageToFirebase();
-            } else {
-                addEvent(existingImage);
-            }
-        });
-
-        eventRegDueDateInput.setOnClickListener(v -> showDatePickerDialog(eventRegDueDateInput));
-        eventRegOpenDateInput.setOnClickListener(v -> showDatePickerDialog(eventRegOpenDateInput));
-        eventStartPeriodInput.setOnClickListener(v -> showDatePickerDialog(eventStartPeriodInput));
-        eventEndPeriodInput.setOnClickListener(v -> showDatePickerDialog(eventEndPeriodInput));
-        eventTimeInput.setOnClickListener(v -> showTimePickerDialog());
     }
 
     private void loadEventDetails(String eventID) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference eventRef = db.collection("events").document(eventID);
+        db.collection("events").document(eventID).get()
+                .addOnSuccessListener(document -> {
+                    if (document.exists()) {
+                        eventNameInput.setText(document.getString("eventName"));
+                        eventTimeInput.setText(document.getString("time"));
+                        eventStartPeriodInput.setText(document.getString("startPeriod"));
+                        eventEndPeriodInput.setText(document.getString("endPeriod"));
+                        eventRegDueDateInput.setText(document.getString("regDueDate"));
+                        eventRegOpenDateInput.setText(document.getString("regOpenDate"));
+                        eventPriceInput.setText(document.getString("price"));
+                        eventMaxPeopleInput.setText(document.getString("maxPeople"));
+                        eventLimitInput.setText(document.getString("waitlistLimit"));
 
-        // Fetch the document
-        eventRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                if (document != null && document.exists()) {
+                        // 加载选中的 Class Days
+                        List<String> classDays = (List<String>) document.get("classDays");
+                        if (classDays != null) {
+                            selectedDayList.clear();
+                            selectedDayList.addAll(classDays);
+                            for (int i = 0; i < daysOfWeek.length; i++) {
+                                selectedDays[i] = selectedDayList.contains(daysOfWeek[i]);
+                            }
+                            eventClassDayInput.setText(String.join(", ", selectedDayList));
+                        }
 
-                    String eventName = document.getString("eventName");
-                    String classDay = document.getString("classDay");
-                    String eventLocation = document.getString("eventLocation");
-                    String time = document.getString("time");
-                    String startPeriod = document.getString("startPeriod");
-                    String endPeriod = document.getString("endPeriod");
-                    String regDueDate = document.getString("regDueDate");
-                    String regOpenDate = document.getString("regOpenDate");
-                    String price = document.getString("price");
-                    String poster = document.getString("imageUrl");
-                    String maxPeople = document.getString("maxPeople");
-
-
-
-
-                    eventNameInput.setText(eventName);
-                    eventLocationInput.setText(eventLocation);
-
-                    // Set the spinner selection based on classDay
-                    if (classDay != null) {
-                        ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) eventClassDayInput.getAdapter();
-                        int spinnerPosition = adapter.getPosition(classDay);
-                        eventClassDayInput.setSelection(spinnerPosition);
+                        String imageUrl = document.getString("imageUrl");
+                        if (imageUrl != null) {
+                            Glide.with(this).load(imageUrl).into(imageUploadBox);
+                            existingImage = imageUrl;
+                        }
                     }
-
-                    eventTimeInput.setText(time);
-                    eventStartPeriodInput.setText(startPeriod);
-                    eventEndPeriodInput.setText(endPeriod);
-                    eventRegDueDateInput.setText(regDueDate);
-                    eventRegOpenDateInput.setText(regOpenDate);
-                    eventPriceInput.setText(price);
-                    eventMaxPeopleInput.setText(String.valueOf(maxPeople));
-
-                    if (poster != null) {
-                        Glide.with(AddEvent.this).load(poster).into(imageUploadBox);
-                        existingImage = poster;
-                    }
-                }
-            }
-        });
+                });
     }
 
+    private void showMultiChoiceDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Class Days");
+        builder.setMultiChoiceItems(daysOfWeek, selectedDays, (dialog, which, isChecked) -> {
+            if (isChecked) {
+                if (!selectedDayList.contains(daysOfWeek[which])) {
+                    selectedDayList.add(daysOfWeek[which]);
+                }
+            } else {
+                selectedDayList.remove(daysOfWeek[which]);
+            }
+        });
+        builder.setPositiveButton("OK", (dialog, which) -> eventClassDayInput.setText(String.join(", ", selectedDayList)));
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.show();
+    }
 
-    private void showDatePickerDialog(EditText dateEditText) {
+    private void showDatePickerDialog(EditText dateInput) {
         Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                AddEvent.this,
-                (view, year1, monthOfYear, dayOfMonth1) -> {
-                    Calendar selectedDate = Calendar.getInstance();
-                    selectedDate.set(year1, monthOfYear, dayOfMonth1);
-                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-                    dateEditText.setText(sdf.format(selectedDate.getTime()));
-                },
-                year, month, dayOfMonth);
-
-        datePickerDialog.show();
+        new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+            calendar.set(year, month, dayOfMonth);
+            String formattedDate = new SimpleDateFormat("MM/dd/yyyy", Locale.US).format(calendar.getTime());
+            dateInput.setText(formattedDate);
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     private void showTimePickerDialog() {
         Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY); // 24-hour format
-        int minute = calendar.get(Calendar.MINUTE);
-
-        TimePickerDialog timePickerDialog = new TimePickerDialog(
-                AddEvent.this,
-                (view, hourOfDay, minuteOfHour) -> {
-                    String period = "AM";
-                    if (hourOfDay >= 12) {
-                        period = "PM";
-                        if (hourOfDay > 12) {
-                            hourOfDay -= 12;
-                        }
-                    } else if (hourOfDay == 0) {
-                        hourOfDay = 12;
-                    }
-
-                    String time = String.format(Locale.US, "%02d:%02d %s", hourOfDay, minuteOfHour, period);
-                    eventTimeInput.setText(time);
-                },
-                hour, minute, false);
-        timePickerDialog.show();
+        new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+            String period = hourOfDay >= 12 ? "PM" : "AM";
+            if (hourOfDay > 12) hourOfDay -= 12;
+            else if (hourOfDay == 0) hourOfDay = 12;
+            eventTimeInput.setText(String.format(Locale.US, "%02d:%02d %s", hourOfDay, minute, period));
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();
     }
 
     private void openImageChooser() {
@@ -219,23 +192,14 @@ public class AddEvent extends AppCompatActivity {
         if (imageUri != null) {
             StorageReference fileRef = storageReference.child("event_images/" + System.currentTimeMillis() + ".jpg");
             fileRef.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String imageUrl = uri.toString();
-                            addEvent(imageUrl);
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(AddEvent.this, "Image upload failed", Toast.LENGTH_SHORT).show();
-                    });
+                    .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl()
+                            .addOnSuccessListener(uri -> addOrUpdateEvent(uri.toString())))
+                    .addOnFailureListener(e -> Toast.makeText(this, "Image upload failed", Toast.LENGTH_SHORT).show());
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private void addEvent(String imageUrl) {
+    private void addOrUpdateEvent(String imageUrl) {
         String eventName = eventNameInput.getText().toString();
-        String eventLocation = eventLocationInput.getText().toString();
-        String classDay = eventClassDayInput.getSelectedItem().toString();
         String time = eventTimeInput.getText().toString();
         String startPeriod = eventStartPeriodInput.getText().toString();
         String endPeriod = eventEndPeriodInput.getText().toString();
@@ -244,11 +208,11 @@ public class AddEvent extends AppCompatActivity {
         String price = eventPriceInput.getText().toString();
         String maxPeople = eventMaxPeopleInput.getText().toString();
         String eventLimit = eventLimitInput.getText().toString();
+        String organizerID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         Map<String, Object> event = new HashMap<>();
         event.put("eventName", eventName);
-        event.put("eventLocation", eventLocation);
-        event.put("classDay", classDay);
+        event.put("classDays", selectedDayList);
         event.put("time", time);
         event.put("startPeriod", startPeriod);
         event.put("endPeriod", endPeriod);
@@ -257,39 +221,28 @@ public class AddEvent extends AppCompatActivity {
         event.put("price", price);
         event.put("maxPeople", maxPeople);
         event.put("waitlistLimit", eventLimit);
-
-        if (imageUrl != null) {
-            event.put("imageUrl", imageUrl);
-        }
+        event.put("organizerId", organizerID);
+        event.put("imageUrl", imageUrl);
 
         if (eventID != null) {
-            // Update existing event
             db.collection("events").document(eventID).set(event)
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(AddEvent.this, "Event updated successfully", Toast.LENGTH_SHORT).show();
-                        navigateToOrganizerMenu(eventID,eventName);
+                        Toast.makeText(this, "Event updated successfully", Toast.LENGTH_SHORT).show();
+                        navigateBackToOrganizerInfo(eventID, eventName);
                     })
-                    .addOnFailureListener(e -> Toast.makeText(AddEvent.this, "Failed to update event", Toast.LENGTH_SHORT).show());
+                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to update event", Toast.LENGTH_SHORT).show());
         } else {
-            // Add new event
             db.collection("events").add(event)
                     .addOnSuccessListener(documentReference -> {
-                        Toast.makeText(AddEvent.this, "Event added successfully", Toast.LENGTH_SHORT).show();
-                        navigateToOrganizerActivity();
+                        Toast.makeText(this, "Event added successfully", Toast.LENGTH_SHORT).show();
+                        navigateBackToOrganizerInfo(documentReference.getId(), eventName);
                     })
-                    .addOnFailureListener(e -> Toast.makeText(AddEvent.this, "Failed to add event", Toast.LENGTH_SHORT).show());
+                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to add event", Toast.LENGTH_SHORT).show());
         }
     }
 
-
-    private void navigateToOrganizerActivity() {
-        Intent intent = new Intent(AddEvent.this, OrganizerActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    private void navigateToOrganizerMenu(String eventID, String eventName){
-        Intent intent = new Intent(AddEvent.this, OrganizerMenu.class);
+    private void navigateBackToOrganizerInfo(String eventID, String eventName) {
+        Intent intent = new Intent(this, OrganizerInfo.class);
         intent.putExtra("EVENT_ID", eventID);
         intent.putExtra("EVENT_NAME", eventName);
         startActivity(intent);
