@@ -1,0 +1,126 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- User's Avatar -->
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/profile" />
+
+        <!-- Full Name -->
+        <TextView
+            android:id="@+id/fullNameLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Full Name:"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/fullNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- First Name -->
+        <TextView
+            android:id="@+id/firstNameLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="First Name:"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/firstNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Last Name -->
+        <TextView
+            android:id="@+id/lastNameLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Last Name:"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/lastNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Email -->
+        <TextView
+            android:id="@+id/emailLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email:"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/emailTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Contact Info -->
+        <TextView
+            android:id="@+id/contactInfoLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Contact Information:"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/contactInfoTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Device Info -->
+        <TextView
+            android:id="@+id/deviceLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Device Info:"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/deviceTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Delete User Button -->
+        <Button
+            android:id="@+id/deleteUserButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Delete User"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+</ScrollView>

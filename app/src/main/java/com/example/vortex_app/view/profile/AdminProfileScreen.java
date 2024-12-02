@@ -1,4 +1,4 @@
-package com.example.vortex_app.view.admin;
+package com.example.vortex_app.view.profile;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vortex_app.R;
+import com.example.vortex_app.controller.adapter.AdminUserArrayAdapter;
 import com.example.vortex_app.model.User;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
@@ -22,42 +23,42 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * AdminProfileScreen allows administrators to browse user profiles and view details of each user.
+ */
 public class AdminProfileScreen extends AppCompatActivity {
 
-    String TAG = "AdminProfileScreen";
+    private static final String TAG = "AdminProfileScreen";
 
     private FirebaseFirestore db;
     private CollectionReference usersRef;
 
-    ImageButton buttonBack;
-    ListView userList;
-    ArrayList<User> userDataList;
-    AdminUserArrayAdapter userArrayAdapter;
-
-
-
+    private ImageButton buttonBack;
+    private ListView userList;
+    private ArrayList<User> userDataList;
+    private AdminUserArrayAdapter userArrayAdapter;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_profilescreen);
 
-        //Set Firestore references
+        // Initialize Firestore references
         db = FirebaseFirestore.getInstance();
         usersRef = db.collection("user_profile");
 
-        //Create new user dataList
+        // Initialize user data list
         userDataList = new ArrayList<>();
 
-        //Set List and Button
+        // Set up UI components
         buttonBack = findViewById(R.id.button_back);
         userList = findViewById(R.id.listview_users);
 
-        //Set user list array adapter
+        // Set up the user list array adapter
         userArrayAdapter = new AdminUserArrayAdapter(this, userDataList);
         userList.setAdapter(userArrayAdapter);
 
-        //Dynamically update user list
+        // Dynamically update user list from Firestore
         usersRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -66,6 +67,7 @@ public class AdminProfileScreen extends AppCompatActivity {
                     return;
                 }
 
+                // Clear the current list and add updated data
                 userDataList.clear();
                 for (QueryDocumentSnapshot doc : value) {
                     User user = doc.toObject(User.class);
@@ -75,22 +77,27 @@ public class AdminProfileScreen extends AppCompatActivity {
             }
         });
 
-
-        //Set list item click listener
+        // Set list item click listener to view user details
         userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //get id of user clicked
-                String userID = userDataList.get(position).getUserID();
+                // Get the selected user
+                User selectedUser = userDataList.get(position);
 
-                //start new activity to view user info
-                Intent intent = new Intent(AdminProfileScreen.this, AdminProfileViewer.class);
-                intent.putExtra("USERID", userID);
+                // Start UserDetailActivity to view detailed information
+                Intent intent = new Intent(AdminProfileScreen.this, UserDetailActivity.class);
+                intent.putExtra("USER_ID", selectedUser.getUserID());
+                intent.putExtra("FIRST_NAME", selectedUser.getFirstName());
+                intent.putExtra("LAST_NAME", selectedUser.getLastName());
+                intent.putExtra("EMAIL", selectedUser.getEmail());
+                intent.putExtra("CONTACT_INFO", selectedUser.getContactInfo());
+                intent.putExtra("DEVICE", selectedUser.getDevice());
+                intent.putExtra("AVATAR_URL", selectedUser.getAvatarUrl());
                 startActivity(intent);
             }
         });
 
-        //Set back button click listener
+        // Set back button click listener
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

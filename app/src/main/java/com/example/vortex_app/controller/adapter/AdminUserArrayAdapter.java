@@ -1,4 +1,4 @@
-package com.example.vortex_app.view.admin;
+package com.example.vortex_app.controller.adapter;
 
 import android.widget.ArrayAdapter;
 import android.content.Context;

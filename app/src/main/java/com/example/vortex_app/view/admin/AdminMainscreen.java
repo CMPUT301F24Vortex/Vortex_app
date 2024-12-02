@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vortex_app.R;
 import com.example.vortex_app.view.MainActivity;
+import com.example.vortex_app.view.profile.AdminProfileScreen;
 
 public class AdminMainscreen extends AppCompatActivity {
 

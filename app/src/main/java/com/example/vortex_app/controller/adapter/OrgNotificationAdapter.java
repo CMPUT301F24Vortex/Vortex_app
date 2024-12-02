@@ -4,16 +4,20 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
 import com.example.vortex_app.R;
-import com.example.vortex_app.model.NotificationModel;
 import com.example.vortex_app.model.OrgNotification;
+import com.example.vortex_app.model.User;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -48,4 +52,6 @@ public class OrgNotificationAdapter extends android.widget.ArrayAdapter<OrgNotif
 
         return convertView;
     }
+
+
 }
