@@ -224,6 +224,12 @@ public class AddEvent extends AppCompatActivity {
         event.put("organizerId", organizerID);
         event.put("imageUrl", imageUrl);
 
+        // Creates new eventID and adds it as a field in the event
+        if (eventID == null) {
+            eventID = db.collection("events").document().getId();
+            event.put("eventID", eventID);
+        }
+
         if (eventID != null) {
             db.collection("events").document(eventID).set(event)
                     .addOnSuccessListener(aVoid -> {

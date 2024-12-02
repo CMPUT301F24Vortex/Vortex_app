@@ -132,7 +132,7 @@ public class AdminFacilityScreen extends AppCompatActivity implements AdminConfi
         facilitiesRef = db.collection("facility");
 
         //Delete all events for the facility
-        Query queryEvents = eventsRef.whereEqualTo("facilityID", facilityID);
+        Query queryEvents = eventsRef.whereEqualTo("facilityName", facilityID);
         queryEvents.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -144,7 +144,7 @@ public class AdminFacilityScreen extends AppCompatActivity implements AdminConfi
             }
         });
 
-        Query queryFacilities = facilitiesRef.whereEqualTo("facilityID", facilityID);
+        Query queryFacilities = facilitiesRef.whereEqualTo("facilityName", facilityID);
         queryFacilities.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
