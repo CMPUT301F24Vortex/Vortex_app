@@ -56,7 +56,7 @@ public class AdminFacilityScreen extends AppCompatActivity implements AdminConfi
 
         //Set Firestore references
         db = FirebaseFirestore.getInstance();
-        facilitiesRef = db.collection("centers");
+        facilitiesRef = db.collection("facility");
 
         //Create new facility dataList
         facilityDataList = new ArrayList<>();
@@ -129,7 +129,7 @@ public class AdminFacilityScreen extends AppCompatActivity implements AdminConfi
         //Set Firestore references for all relevant collections
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
-        facilitiesRef = db.collection("centers");
+        facilitiesRef = db.collection("facility");
 
         //Delete all events for the facility
         Query queryEvents = eventsRef.whereEqualTo("facilityID", facilityID);
@@ -172,8 +172,8 @@ public class AdminFacilityScreen extends AppCompatActivity implements AdminConfi
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
         waitlistedRef = db.collection("waitlisted");
-        selectedRef = db.collection("selected");
-        enrolledRef = db.collection("enrolled");
+        selectedRef = db.collection("selected_but_not_confirmed");
+        enrolledRef = db.collection("final");
         cancelledRef = db.collection("cancelled");
 
         //For each collection, query by eventID to get relevant docs, and delete each

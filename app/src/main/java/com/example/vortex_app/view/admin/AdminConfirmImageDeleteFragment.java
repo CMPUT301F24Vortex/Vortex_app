@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -14,25 +13,24 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.vortex_app.R;
 
-public class AdminConfirmEventDeleteFragment extends DialogFragment {
-    String TAG = "AdminConfirmEventDeleteFragment";
+public class AdminConfirmImageDeleteFragment extends DialogFragment {
 
-    interface AdminConfirmEventDeleteListener {
-        void deleteEvent(String eventID);
+    interface AdminConfirmImageDeleteListener {
+        void deleteImage(String imageURL);
     }
-    private AdminConfirmEventDeleteListener listener;
-    private String eventID;
+    private AdminConfirmImageDeleteListener listener;
+    private String imageURL;
 
-    AdminConfirmEventDeleteFragment (String eventID) {this.eventID = eventID;}
+    AdminConfirmImageDeleteFragment (String imageURL) {this.imageURL = imageURL;}
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof AdminConfirmEventDeleteListener) {
-            listener = (AdminConfirmEventDeleteListener) context;
+        if (context instanceof AdminConfirmImageDeleteListener) {
+            listener = (AdminConfirmImageDeleteListener) context;
         }
         else {
-            throw new RuntimeException(context + " must implement AdminConfirmDeleteEventListener");
+            throw new RuntimeException(context + " must implement AdminConfirmDeleteImageListener");
         }
     }
 
@@ -44,10 +42,10 @@ public class AdminConfirmEventDeleteFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)
-                .setTitle("Delete event")
+                .setTitle("Delete image")
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("Ok", (dialog, which) -> {
-                    listener.deleteEvent(eventID);
+                    listener.deleteImage(imageURL);
                 })
                 .create();
     }
