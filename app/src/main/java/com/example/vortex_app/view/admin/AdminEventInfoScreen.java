@@ -1,7 +1,6 @@
 package com.example.vortex_app.view.admin;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,35 +20,40 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class AdminEventInfoScreen extends AppCompatActivity {
 
-    String TAG = "AdminEventScreen";
+    private static final String TAG = "AdminEventInfoScreen";
 
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
 
-    ImageButton buttonBack;
-    Button buttonQRCode;
-    TextView eventDays;
-    TextView eventTime;
-    TextView eventPeriod;
-    TextView eventRegDueDate;
-    TextView eventRegOpenDate;
-    TextView eventPrice;
-    TextView eventLocation;
-    TextView eventSpots;
+    private ImageButton buttonBack;
+    private Button buttonQRCode;
+    private TextView eventDays;
+    private TextView eventTime;
+    private TextView eventPeriod;
+    private TextView eventRegDueDate;
+    private TextView eventRegOpenDate;
+    private TextView eventPrice;
+    private TextView eventLocation;
+    private TextView eventSpots;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_eventinfoscreen);
 
-        //Get info from intent
+        // Get event ID from intent
         String eventID = getIntent().getStringExtra("EVENTID");
+        if (eventID == null || eventID.isEmpty()) {
+            Log.e(TAG, "Event ID is missing in the intent.");
+            finish();
+            return;
+        }
 
-        //Set Firestore references
+        // Initialize Firestore
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
 
-        //Set ui component references
+        // Initialize UI components
         buttonBack = findViewById(R.id.button_back);
         buttonQRCode = findViewById(R.id.button_qrcode);
         eventDays = findViewById(R.id.textView_eventdays);
@@ -61,31 +65,37 @@ public class AdminEventInfoScreen extends AppCompatActivity {
         eventLocation = findViewById(R.id.textView_location);
         eventSpots = findViewById(R.id.textView_maxpeople);
 
-        //Get event info from firestore
+        // Fetch event info from Firestore
         eventsRef.document(eventID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+            public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
-                    Log.w(TAG, "Listen failed", error);
+                    Log.e(TAG, "Error fetching event data", error);
                     return;
                 }
 
-                if (value != null && value.exists()) {
-                    Event event = value.toObject(Event.class);
-                    //Set all textViews to reflect user info
-                    eventDays.setText(String.join(", ", event.getClassDays()));
-                    eventTime.setText(event.getTime());
-                    eventPeriod.setText(event.getPeriod());
-                    eventRegDueDate.setText(event.getRegistrationDueDate());
-                    eventRegOpenDate.setText(event.getRegistrationOpenDate());
-                    eventPrice.setText(Double.toString(event.getPrice()));
-                    eventLocation.setText(event.getLocation());
-                    eventSpots.setText(Integer.toString(event.getMaxPeople()));
-
+                if (snapshot != null && snapshot.exists()) {
+                    Event event = snapshot.toObject(Event.class);
+                    if (event != null) {
+                        // Populate UI components
+                        eventDays.setText(event.getClassDays() != null ? String.join(", ", event.getClassDays()) : "N/A");
+                        eventTime.setText(event.getTime() != null ? event.getTime() : "N/A");
+                        eventPeriod.setText(event.getPeriod() != null ? event.getPeriod() : "N/A");
+                        eventRegDueDate.setText(event.getRegistrationDueDate() != null ? event.getRegistrationDueDate() : "N/A");
+                        eventRegOpenDate.setText(event.getRegistrationOpenDate() != null ? event.getRegistrationOpenDate() : "N/A");
+                        eventPrice.setText(event.getPrice() != null ? event.getPrice() : "N/A");
+                        eventLocation.setText(event.getLocation() != null ? event.getLocation() : "N/A");
+                        eventSpots.setText(event.getMaxPeople() != null ? event.getMaxPeople() : "N/A");
+                    } else {
+                        Log.e(TAG, "Event data is null.");
+                    }
+                } else {
+                    Log.w(TAG, "No such document for event ID: " + eventID);
                 }
             }
         });
 
+        // Set button listeners
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,11 +106,9 @@ public class AdminEventInfoScreen extends AppCompatActivity {
         buttonQRCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(AdminEventInfoScreen.this, );
-                //startActivity(intent);
+                // Placeholder for QR Code functionality
+                Log.d(TAG, "QR Code button clicked.");
             }
         });
-
-
     }
 }

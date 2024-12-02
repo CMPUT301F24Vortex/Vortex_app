@@ -7,17 +7,20 @@
     android:backgroundTint="@color/lightGray">
 
     <!-- Button to Change Role -->
-    <Button
-        android:id="@+id/button_change_role"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:minWidth="88dp"
-        android:minHeight="48dp"
-        android:backgroundTint="#4CAF50"
-        android:text="Change Role"
-        android:textColor="@android:color/white" />
 
     <!-- Title -->
+
+    <Button
+        android:id="@+id/button_change_role"
+        android:layout_width="361dp"
+        android:layout_height="48dp"
+        android:backgroundTint="@color/red"
+        android:minWidth="88dp"
+        android:minHeight="48dp"
+        android:text="Change Role"
+
+        android:textColor="@android:color/white" />
+
     <TextView
         android:id="@+id/title_organizer_events"
         android:layout_width="wrap_content"

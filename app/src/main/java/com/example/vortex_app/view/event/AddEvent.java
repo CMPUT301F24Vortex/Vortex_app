@@ -5,10 +5,10 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,11 +19,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.vortex_app.R;
-import com.example.vortex_app.view.organizer.OrganizerInfo;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -199,59 +199,81 @@ public class AddEvent extends AppCompatActivity {
     }
 
     private void addOrUpdateEvent(String imageUrl) {
+        // Get input values
         String eventName = eventNameInput.getText().toString();
-        String time = eventTimeInput.getText().toString();
-        String startPeriod = eventStartPeriodInput.getText().toString();
-        String endPeriod = eventEndPeriodInput.getText().toString();
-        String regDueDate = eventRegDueDateInput.getText().toString();
-        String regOpenDate = eventRegOpenDateInput.getText().toString();
-        String price = eventPriceInput.getText().toString();
-        String maxPeople = eventMaxPeopleInput.getText().toString();
-        String eventLimit = eventLimitInput.getText().toString();
-        String organizerID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        String eventTime = eventTimeInput.getText().toString();
+        String eventStartPeriod = eventStartPeriodInput.getText().toString();
+        String eventEndPeriod = eventEndPeriodInput.getText().toString();
+        String eventRegDueDate = eventRegDueDateInput.getText().toString();
+        String eventRegOpenDate = eventRegOpenDateInput.getText().toString();
+        String eventPrice = eventPriceInput.getText().toString();
+        String eventMaxPeople = eventMaxPeopleInput.getText().toString();
+        String eventWaitlistLimit = eventLimitInput.getText().toString();
 
-        Map<String, Object> event = new HashMap<>();
-        event.put("eventName", eventName);
-        event.put("classDays", selectedDayList);
-        event.put("time", time);
-        event.put("startPeriod", startPeriod);
-        event.put("endPeriod", endPeriod);
-        event.put("regDueDate", regDueDate);
-        event.put("regOpenDate", regOpenDate);
-        event.put("price", price);
-        event.put("maxPeople", maxPeople);
-        event.put("waitlistLimit", eventLimit);
-        event.put("organizerId", organizerID);
-        event.put("imageUrl", imageUrl);
+        // Create the event data map
+        Map<String, Object> eventData = new HashMap<>();
+        eventData.put("eventName", eventName);
+        eventData.put("time", eventTime);
+        eventData.put("startPeriod", eventStartPeriod);
+        eventData.put("endPeriod", eventEndPeriod);
+        eventData.put("regDueDate", eventRegDueDate);
+        eventData.put("regOpenDate", eventRegOpenDate);
+        eventData.put("price", eventPrice);
+        eventData.put("maxPeople", eventMaxPeople);
+        eventData.put("waitlistLimit", eventWaitlistLimit);
+        eventData.put("classDays", selectedDayList);
 
-        // Creates new eventID and adds it as a field in the event
+        // If an image is uploaded, add the image URL, else use the existing image
+        if (imageUrl != null) {
+            eventData.put("imageUrl", imageUrl);
+        } else if (existingImage != null) {
+            eventData.put("imageUrl", existingImage);
+        }
+
+        // Add or update the event in Firestore
         if (eventID == null) {
-            eventID = db.collection("events").document().getId();
-            event.put("eventID", eventID);
-        }
-
-        if (eventID != null) {
-            db.collection("events").document(eventID).set(event)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(this, "Event updated successfully", Toast.LENGTH_SHORT).show();
-                        navigateBackToOrganizerInfo(eventID, eventName);
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to update event", Toast.LENGTH_SHORT).show());
-        } else {
-            db.collection("events").add(event)
+            // Add a new event
+            db.collection("events").add(eventData)
                     .addOnSuccessListener(documentReference -> {
-                        Toast.makeText(this, "Event added successfully", Toast.LENGTH_SHORT).show();
-                        navigateBackToOrganizerInfo(documentReference.getId(), eventName);
+                        Toast.makeText(AddEvent.this, "Event added successfully", Toast.LENGTH_SHORT).show();
+                        finish();  // Finish the activity after adding the event
                     })
-                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to add event", Toast.LENGTH_SHORT).show());
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(AddEvent.this, "Failed to add event", Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            // Update the existing event
+            db.collection("events").document(eventID).set(eventData)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(AddEvent.this, "Event updated successfully", Toast.LENGTH_SHORT).show();
+                        finish();  // Finish the activity after updating the event
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(AddEvent.this, "Failed to update event", Toast.LENGTH_SHORT).show();
+                    });
         }
     }
 
-    private void navigateBackToOrganizerInfo(String eventID, String eventName) {
-        Intent intent = new Intent(this, OrganizerInfo.class);
-        intent.putExtra("EVENT_ID", eventID);
-        intent.putExtra("EVENT_NAME", eventName);
-        startActivity(intent);
-        finish();
+    private void uploadQRCodeToFirebase(Bitmap qrCodeBitmap) {
+        // Convert the Bitmap to a file (or a byte array) to upload it to Firebase Storage
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        qrCodeBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        // Create a reference to Firebase Storage
+        StorageReference qrCodeRef = storageReference.child("event_qrcodes/" + System.currentTimeMillis() + ".png");
+
+        // Upload the QR code image
+        qrCodeRef.putBytes(data)
+                .addOnSuccessListener(taskSnapshot -> qrCodeRef.getDownloadUrl()
+                        .addOnSuccessListener(uri -> {
+                            // Once the QR code is uploaded, update Firestore with the QR code URL
+                            String qrCodeUrl = uri.toString();
+                            addOrUpdateEvent(qrCodeUrl); // Use the QR code URL when updating the event
+                        }))
+                .addOnFailureListener(e -> Toast.makeText(this, "QR code upload failed", Toast.LENGTH_SHORT).show());
     }
+
+
+
 }

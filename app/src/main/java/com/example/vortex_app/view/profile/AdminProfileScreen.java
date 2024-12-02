@@ -71,6 +71,7 @@ public class AdminProfileScreen extends AppCompatActivity {
                 userDataList.clear();
                 for (QueryDocumentSnapshot doc : value) {
                     User user = doc.toObject(User.class);
+                    user.setUserID(doc.getId()); // Set the document ID as the userID
                     userDataList.add(user);
                 }
                 userArrayAdapter.notifyDataSetChanged();
@@ -86,7 +87,7 @@ public class AdminProfileScreen extends AppCompatActivity {
 
                 // Start UserDetailActivity to view detailed information
                 Intent intent = new Intent(AdminProfileScreen.this, UserDetailActivity.class);
-                intent.putExtra("USER_ID", selectedUser.getUserID());
+                intent.putExtra("USER_ID", selectedUser.getUserID()); // Pass the document ID as userID
                 intent.putExtra("FIRST_NAME", selectedUser.getFirstName());
                 intent.putExtra("LAST_NAME", selectedUser.getLastName());
                 intent.putExtra("EMAIL", selectedUser.getEmail());

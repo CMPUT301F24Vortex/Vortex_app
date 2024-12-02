@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.vortex_app.R;
+import com.example.vortex_app.view.facility.AdminFacilityScreen;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
@@ -24,6 +25,7 @@ public class UserDetailActivity extends AppCompatActivity {
     private ImageView profileImageView;
     private TextView fullNameTextView, firstNameTextView, lastNameTextView, emailTextView, contactInfoTextView, deviceTextView;
     private Button deleteUserButton;
+    private ImageView backButton;  // ImageView for the back button
 
     private String userId; // User ID to identify the user in Firestore
 
@@ -41,6 +43,7 @@ public class UserDetailActivity extends AppCompatActivity {
         contactInfoTextView = findViewById(R.id.contactInfoTextView);
         deviceTextView = findViewById(R.id.deviceTextView);
         deleteUserButton = findViewById(R.id.deleteUserButton);
+        backButton = findViewById(R.id.backButton);  // Initialize the back button ImageView
 
         // Get user details from the intent
         userId = getIntent().getStringExtra("USER_ID");
@@ -52,12 +55,12 @@ public class UserDetailActivity extends AppCompatActivity {
         String avatarUrl = getIntent().getStringExtra("AVATAR_URL");
 
         // Set user details in the UI
-        firstNameTextView.setText(firstName);
-        lastNameTextView.setText(lastName);
-        fullNameTextView.setText(firstName + " " + lastName);
-        emailTextView.setText(email);
-        contactInfoTextView.setText(contactInfo);
-        deviceTextView.setText(device);
+        firstNameTextView.setText(firstName != null ? firstName : "N/A");
+        lastNameTextView.setText(lastName != null ? lastName : "N/A");
+        fullNameTextView.setText((firstName != null ? firstName : "") + " " + (lastName != null ? lastName : ""));
+        emailTextView.setText(email != null ? email : "N/A");
+        contactInfoTextView.setText(contactInfo != null ? contactInfo : "N/A");
+        deviceTextView.setText(device != null ? device : "N/A");
 
         // Load the user's avatar image using Glide
         if (avatarUrl != null && !avatarUrl.isEmpty()) {
@@ -69,6 +72,14 @@ public class UserDetailActivity extends AppCompatActivity {
             // Set a default avatar if no URL is provided
             profileImageView.setImageResource(R.drawable.profile);
         }
+
+        // Set up the back button click listener
+        backButton.setOnClickListener(v -> {
+            // Navigate to AdminFacilityScreen
+            Intent intent = new Intent(UserDetailActivity.this, AdminFacilityScreen.class);
+            startActivity(intent);
+            finish();  // Close the current activity
+        });
 
         // Set up the delete button click listener
         deleteUserButton.setOnClickListener(v -> deleteUser());
@@ -87,7 +98,7 @@ public class UserDetailActivity extends AppCompatActivity {
         db.collection("user_profile").document(userId)
                 .delete()
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(UserDetailActivity.this, "User deleted successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UserDetailActivity.this, "User deleted successfully.", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "User deleted successfully");
                     finish(); // Close the activity
                 })

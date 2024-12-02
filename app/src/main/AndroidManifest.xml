@@ -77,14 +77,14 @@
         <activity android:name=".view.profile.EditProfileActivity" android:exported="false" />
         <activity android:name=".view.location.LocationActivity" android:exported="false" />
         <activity android:name=".view.admin.AdminMainscreen" android:exported="false" />
-        <activity android:name=".view.admin.AdminFacilityScreen" android:exported="false" />
-        <activity android:name=".view.admin.AdminEventScreen" android:exported="false" />
+        <activity android:name=".view.facility.AdminFacilityScreen" android:exported="false" />
+        <activity android:name=".view.event.AdminEventScreen" android:exported="false" />
         <activity android:name=".view.profile.AdminProfileScreen" android:exported="false" />
 <!--        <activity android:name=".view.profile.AdminProfileViewer" android:exported="false" />-->
         <activity android:name=".view.profile.UserDetailActivity" android:exported="false" />
         <activity android:name=".view.admin.AdminEventInfoScreen" android:exported="false" />
 
-        <activity android:name=".view.admin.AdminImageScreen" android:exported="false"/>
+        <activity android:name=".view.image.AdminImageScreen" android:exported="false"/>
 
     </application>
 </manifest>
